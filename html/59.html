@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>属性访问</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/59.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>属性访问</h1>
+			<div class="page"><a title="上一页" class="prev" href="58.html">上一页</a><a title="下一页" class="next" href="60.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP的模型对象实例本身也是一个数据对象，所以属性的访问就显得非常直观和简单，可以支持对象和数组两种方式来访问数据属性，例如下面的方式采用数据对象的方式来访问User模型的属性：<code class="prettyprint linenums lang-php">//实例化User模型<br />
+$User&nbsp;=&nbsp;D('User');<br />
+//查询用户数据<br />
+$User-&gt;find(1);<br />
+//获取name属性的值<br />
+echo&nbsp;$User-&gt;name;<br />
+//设置name属性的值<br />
+$User-&gt;name&nbsp;=&nbsp;'ThinkPHP';</code>除了find方法会产生数据对象属性外，data方法和create方法也会产生数据对象，例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;D('User');<br />
+$User-&gt;create();<br />
+echo&nbsp;$User-&gt;name;</code>还有一种属性的操作方式是通过返回数组的方式：<code class="prettyprint linenums lang-php">//实例化User模型<br />
+$User&nbsp;=&nbsp;D('User');<br />
+//查询用户数据<br />
+$data&nbsp;=&nbsp;$User-&gt;find(1);<br />
+//获取name属性的值<br />
+echo&nbsp;$data['name'];<br />
+//设置name属性的值<br />
+$data['name']&nbsp;=&nbsp;'ThinkPHP';</code>两种方式的属性获取区别是一个是对象的属性，一个是数组的索引，开发人员可以根据自己的需要选择什么方式。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="58.html">上一页</a><a title="下一页" class="next" href="60.html">下一页</a></div>
+		</div>
+	</body>
+</html>

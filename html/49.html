@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>判断请求类型</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/49.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>判断请求类型</h1>
+			<div class="page"><a title="上一页" class="prev" href="48.html">上一页</a><a title="下一页" class="next" href="50.html">下一页</a></div>
+		</div>
+		<div class="book-content">在很多情况下面，我们需要判断当前操作的请求类型是GET 、POST 、PUT或 DELETE，一方面可以针对请求类型作出不同的逻辑处理，另外一方面有些情况下面需要验证安全性，过滤不安全的请求。<br />
+系统Action类内置了一些判断方法用于判断请求类型，包括：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>方法</th>    <th>说明</th>  </tr>  <tr>    <td>isGet</td>    <td>判断是否是GET方式提交</td>  </tr>  <tr>    <td>isPost</td>    <td>判断是否是POST方式提交</td>  </tr>  <tr>    <td>isPut</td>    <td>判断是否是PUT方式提交</td>  </tr>  <tr>    <td>isDelete</td>    <td>判断是否是DELETE方式提交</td>  </tr>  <tr>    <td>isHead</td>    <td>判断是否是HEAD提交</td>  </tr></table>使用举例如下：<code class="prettyprint linenums lang-php">class&nbsp;UserAction&nbsp;extends&nbsp;Action{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;update(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;($this-&gt;isPost()){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$User&nbsp;=&nbsp;M('User');<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$User-&gt;create();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$User-&gt;save();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;success('保存完成');<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;error('非法请求');<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+}</code>另外还提供了一个判断当前是否属于AJAX提交的方法<br />
+isAjax 是否属于AJAX提交<br />
+需要注意的是，如果使用的是ThinkAjax或者自己写的Ajax类库的话，需要在表单里面添加一个隐藏域，告诉后台属于ajax方式提交，默认的隐藏域名称是ajax（可以通过VAR_AJAX_SUBMIT配置），如果是JQUERY类库的话，则无需添加任何隐藏域即可自动判断。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="48.html">上一页</a><a title="下一页" class="next" href="50.html">下一页</a></div>
+		</div>
+	</body>
+</html>

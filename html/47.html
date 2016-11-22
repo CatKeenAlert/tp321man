@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>重定向</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/47.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>重定向</h1>
+			<div class="page"><a title="上一页" class="prev" href="46.html">上一页</a><a title="下一页" class="next" href="48.html">下一页</a></div>
+		</div>
+		<div class="book-content">Action类的redirect方法可以实现页面的重定向功能。<br />
+redirect方法的参数用法和U函数的用法一致（参考上面的URL生成部分），例如：<code class="prettyprint linenums lang-php">//重定向到New模块的Category操作<br />
+$this-&gt;redirect('New/category',&nbsp;array('cate_id'&nbsp;=&gt;&nbsp;2),&nbsp;5,&nbsp;'页面跳转中...');</code>上面的用法是停留5秒后跳转到News模块的category操作，并且显示页面跳转中字样，重定向后会改变当前的URL地址。<br />
+如果你仅仅是想重定向要一个指定的URL地址，而不是到某个模块的操作方法，可以直接使用redirect方法重定向，例如：<code class="prettyprint linenums lang-php">//重定向到指定的URL地址<br />
+redirect('/New/category/cate_id/2',&nbsp;5,&nbsp;'页面跳转中...')</code>Redirect方法的第一个参数是一个URL地址。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="46.html">上一页</a><a title="下一页" class="next" href="48.html">下一页</a></div>
+		</div>
+	</body>
+</html>

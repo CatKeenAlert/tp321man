@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>字段排除</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/74.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>字段排除</h1>
+			<div class="page"><a title="上一页" class="prev" href="73.html">上一页</a><a title="下一页" class="next" href="75.html">下一页</a></div>
+		</div>
+		<div class="book-content">更多的情况下我们都是查询某些字段，但有些情况下面我们需要通过字段排除来更方便的查询字段，例如文章详细页，我们可能只需要排除status和update_time字段，这样就不需要写一堆的字段名称了（有些人可能觉得为什么不用“*”查询全部字段呢，不是更方便吗，但是有一点不可否认，即使列出所有字段也比查询所有字段的效率要高哦^_^），而新版的Model类的field方法可以支持排除（NOT）机制， 举个例子，例如我们有一个article表，定义了有id,name,title,status,create_time,read_count,comment_count字段，当使用普通的字段查询<code class="prettyprint linenums lang-php">$Model-&gt;field('id,name')-&gt;select();</code>这是我们比较常用的查询字段方式，表示查询id,name字段 。<br />
+生成的SQL语句应该是SELECT id,name FROM article<br />
+当使用下面的字段排除方式查询的时候<code class="prettyprint linenums lang-php">$Model-&gt;field('create_time,read_count,comment_count',true);&nbsp;</code>第二个参数表示field方法采用的是排除机制，因此实际查询的字段是除create_time,read_count,comment_count之外的其他数据表所有字段，最终要查询的字段根据实际的数据表字段有所不同。<br />
+生成的SQL语句就变成了SELECT id,name,title,status FROM article</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="73.html">上一页</a><a title="下一页" class="next" href="75.html">下一页</a></div>
+		</div>
+	</body>
+</html>

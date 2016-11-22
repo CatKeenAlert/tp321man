@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>URL模式</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/33.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>URL模式</h1>
+			<div class="page"><a title="上一页" class="prev" href="32.html">上一页</a><a title="下一页" class="next" href="34.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP框架基于模块和操作的方式进行访问，由于ThinkPHP框架的应用采用单一入口文件来执行，因此网站的所有的模块和操作都通过URL的参数来访问和执行。这样一来，传统方式的文件入口访问会变成由URL的参数来统一解析和调度。<br />
+ThinkPHP强大的URL解析、调度以及路由功能为这个功能实现提供了有力的保证，并且可以在绝大多数的服务器环境里面部署成功。<br />
+ThinkPHP支持四种URL模式，可以通过设置URL_MODEL参数来定义，包括普通模式、PATHINFO、REWRITE和兼容模式。<b>一、普通模式</b>：设置URL_MODEL 为0<br />
+采用传统的URL参数模式<code class="prettyprint linenums lang-php">http://serverName/appName/?m=module&a=action&id=1</code><b>二、PATHINFO模式（默认模式）</b>：设置URL_MODEL 为1<br />
+默认情况使用PATHINFO模式，ThinkPHP内置强大的PATHINFO支持，提供灵活和友好URL支持。PATHINFO模式自动识别模块和操作，例如<code class="prettyprint linenums lang-php">http://serverName/appName/module/action/id/1/</code>  或者 <code class="prettyprint linenums lang-php">http://serverName/appName/module,action,id,1/</code>在不考虑路由的情况下，第一个参数会被解析成模块名称（如果启用了分组的话，则依次往后递推），第二个参数会被解析成操作，后面的参数是显式传递的，而且必须成对出现，例如：<code class="prettyprint linenums lang-php">http://serverName/appName/module/action/year/2008/month/09/day/21/</code>其中参数之间的分割符号由URL_PATHINFO_DEPR参数设置，默认为”/”，例如我们设置URL_PATHINFO_DEPR为“-”的话，就可以使用下面的URL访问<code class="prettyprint linenums lang-php">http://serverName/appName/module-action-id-1/</code>注意不要使用”:” 和”&”符号进行分割，该符号有特殊用途。<br />
+略加修改，就可以展示出富有诗意的URL，呵呵～<br />
+如果想要简化URL的形式可以通过路由功能（后面会有描述）以及空模块和空操作。<br />
+在PATH_INFO模式下面，会把相关参数转换成GET变量，以及并入REQUEST变量，因此不妨碍URL里面的GET和REQUEST变量获取。<b>三、REWRITE模式</b>： 设置URL_MODEL 为2<br />
+该URL模式和PATHINFO模式功能一样，除了可以不需要在URL里面写入口文件，和可以定义.htaccess 文件外。在开启了Apache的URL_REWRITE模块后，就可以启用REWRITE模式了，具体参考下面的URL重写部分。<b>四、兼容模式</b>： 设置URL_MODEL 为3<br />
+兼容模式是普通模式和PATHINFO模式的结合，并且可以让应用在需要的时候直接切换到PATHINFO模式而不需要更改模板和程序，还可以和URL_WRITE模式整合。兼容模式URL可以支持任何的运行环境。<br />
+兼容模式的效果是：<code class="prettyprint linenums lang-php">http://serverName/appName/?s=/module/action/id/1/</code>并且也可以支持参数分割符号的定义，例如在URL_PATHINFO_DEPR为~的情况下，下面的URL有效：<code class="prettyprint linenums lang-php">http://serverName/appName/?s=module~action~id~1</code>其实是利用了VAR_PATHINFO参数，用普通模式的实现模拟了PATHINFO的模式。但是兼容模式并不需要自己传s变量，而是由系统自动完成URL部分。正是由于这个特性，兼容模式可以和PATHINFO模式之间直接切换，而不需更改模板文件里面的URL地址连接。<br />
+某些服务器环境不能良好的支持PATHINFO，但是在大多数环境下面ThinkPHP可以进行兼容判断，如果你的服务器环境或者空间仍然无法识别PAHTINFO的话，或者需要自己增加识别方法或者可以选择普通模式或者兼容模式URL运行。我们建议的方式是采用PATHINFO模式开发，如果部署的时候环境不支持PATHINFO则改成兼容URL模式部署即可，程序和模板都不需要做任何改动。<br />
+注意：如果当前设置的是其他模式，但是URL里面出现了兼容模式的匹配参数，则会自动识别，也就是说兼容模式是优先判断的。<br />
+由于PATHINFO模式使用较多，所以后面的内容将主要以PATHINFO模式为例来说明。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="32.html">上一页</a><a title="下一页" class="next" href="34.html">下一页</a></div>
+		</div>
+	</body>
+</html>

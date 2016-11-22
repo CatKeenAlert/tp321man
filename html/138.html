@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>快捷缓存</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/138.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>快捷缓存</h1>
+			<div class="page"><a title="上一页" class="prev" href="137.html">上一页</a><a title="下一页" class="next" href="139.html">下一页</a></div>
+		</div>
+		<div class="book-content">为了进一步简化缓存存取操作，ThinkPHP把所有的缓存机制统一成一个S方法来进行操作，所以在使用不同的缓存方式的时候并不需要关注具体的缓存细节。（如果是3.1版本以上，建议用新增的cache方法替代S方法）例如： <code class="prettyprint linenums lang-php">//&nbsp;使用data标识缓存$Data数据<br />
+S('data',$Data);<br />
+//&nbsp;缓存$Data数据3600秒<br />
+S('data',$Data,3600);<br />
+//&nbsp;获取缓存数据<br />
+$Data&nbsp;=&nbsp;S('data');<br />
+//&nbsp;删除缓存数据<br />
+S('data',NULL);</code>系统默认的缓存方式是采用File方式缓存，我们可以在项目配置文件里面定义其他的缓存方式，例如，修改默认的缓存方式为Xcache（当然，你的环境需要支持Xcache） <code class="prettyprint linenums lang-php">'DATA_CACHE_TYPE'=&gt;'Xcache'</code>通过上面的定义，相同的代码就会使用Xcache方式来缓存了，而事实上，代码并没有任何改变。 <br />
+当然，我们还可以在S方法里面显式的指定缓存方式，例如 <code class="prettyprint linenums lang-php">S('data',$Data,3600,'File');</code>S方法还支持对当前的缓存方式传入缓存参数，例如：<code class="prettyprint linenums lang-php">S('data',$Data,3600,'File',array('length'=&gt;10,'temp'=&gt;RUNTIME_PATH.'temp/'));</code>对于File方式缓存下的缓存目录下面因为缓存数据过多而导致存在大量的文件问题，ThinkPHP也给出了解决方案，可以启用哈希子目录缓存的方式，只需要设置 <code class="prettyprint linenums lang-php">'DATA_CACHE_SUBDIR'=&gt;true</code>还可以设置哈希目录的层次，例如：<code class="prettyprint linenums lang-php">'DATA_PATH_LEVEL'=&gt;2</code>就可以根据缓存标识的哈希自动创建多层子目录来缓存。为了更加方便的操作缓存，3.1版本新增了cache函数用以设置和操作缓存。<br />
+使用方法：<br />
+<b>1 缓存初始化 </b><code class="prettyprint linenums lang-php">cache(array('type'=&gt;'xcache','expire'=&gt;60));</code><b>2 缓存设置</b> <code class="prettyprint linenums lang-php">cache('a',$value);</code><b>3 缓存读取</b> <code class="prettyprint linenums lang-php">$value&nbsp;=&nbsp;cache('a');</code><b>4 缓存删除</b> <code class="prettyprint linenums lang-php">cache('a',null);</code>需要使用不同的缓存方式的时候 需要重新初始化，如果不初始化直接调用的话，则会按照系统配置自动初始化。<br />
+初始化的返回值，可以直接操作缓存：<code class="prettyprint linenums lang-php">$cache&nbsp;=&nbsp;cache(array('type'=&gt;'xcache','expire'=&gt;60));<br />
+$cache-&gt;set('name',$value);<br />
+$cache-&gt;get('name');<br />
+$cache-&gt;rm('name');</code>或者<code class="prettyprint linenums lang-php">$cache&nbsp;=&nbsp;cache(array('type'=&gt;'xcache','expire'=&gt;60));<br />
+$cache-&gt;name&nbsp;=&nbsp;$value;<br />
+echo&nbsp;$cache-&gt;name;<br />
+unset($cache-&gt;name);</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="137.html">上一页</a><a title="下一页" class="next" href="139.html">下一页</a></div>
+		</div>
+	</body>
+</html>

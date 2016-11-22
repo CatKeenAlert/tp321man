@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>使用运算符</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/96.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>使用运算符</h1>
+			<div class="page"><a title="上一页" class="prev" href="95.html">上一页</a><a title="下一页" class="next" href="97.html">下一页</a></div>
+		</div>
+		<div class="book-content">内置模板引擎包含了运算符的支持，包括对“+”“ ” “*” “/”和“%”的支持，例如：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>运算符</th>    <th>使用示例</th>  </tr>  <tr>    <td>+</td>    <td>{$a+$b}</td>  </tr>  <tr>    <td>-</td>    <td>{$a-$b}</td>  </tr>  <tr>    <td>*</td>    <td>{$a*$b}</td>  </tr>  <tr>    <td>/</td>    <td>{$a/$b}</td>  </tr>  <tr>    <td>%</td>    <td>{$a%$b}</td>  </tr>  <tr>    <td>++</td>    <td>{$a++}&nbsp;或&nbsp;&nbsp;{++$a}</td>  </tr>  <tr>    <td>--</td>    <td>{$a--}&nbsp;&nbsp;或&nbsp;{--$a}</td>  </tr>  <tr>    <td>综合运算</td>    <td>{$a+$b*10+$c}</td>  </tr></table>在使用运算符的时候，不再支持点语法和常规的函数用法，例如：<code class="prettyprint linenums lang-php">{$user.score+10}&nbsp;是错误的<br />
+{$user['score']+10}&nbsp;是正确的<br />
+{$user['score']*$user['level']}&nbsp;正确的<br />
+{$user['score']|myFun*10}&nbsp;错误的<br />
+{$user['score']+myFun($user['level'])}&nbsp;正确的</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="95.html">上一页</a><a title="下一页" class="next" href="97.html">下一页</a></div>
+		</div>
+	</body>
+</html>

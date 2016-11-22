@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>项目编译</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/18.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>项目编译</h1>
+			<div class="page"><a title="上一页" class="prev" href="17.html">上一页</a><a title="下一页" class="next" href="19.html">下一页</a></div>
+		</div>
+		<div class="book-content">项目编译机制作为ThinkPHP独创的功能特色，从1.0版本就延续至今，编译缓存的基础原理是第一次运行的时候把核心需要加载的文件去掉空白和注释后合并到一个文件中，第二次运行的时候就直接载入编译缓存而无需载入众多的核心文件，因为存在一个预编译的过程，所以还会进行一些相关的目录检测，对于不存在的目录可以自动生成，这个自动生成机制后面还会提到。当第二次执行的时候就会直接载入编译过的缓存文件，从而省去很多IO开销，加快执行速度。项目编译机制对运行没有任何影响，预编译操作和目录检测机制只会执行一次，因此无论在预编译过程中做了多少复杂的操作，对后面的执行没有任何效率的缺失。3.0版本的项目编译更是带来了新的飞跃，包括：<br />
+  <ul><li>首先是合并了2.0体系的核心编译缓存和项目编译缓存，不再生成两个缓存文件；</li>  <li>其次是融合了之前ALLINONE模式，直接对本地环境生成设置和常量定义，减少环境判断有效提升性能；</li>  <li>更具特色的是新版的编译缓存可以直接替换框架入口甚至网站入口，从某种程度来说，编译后的框架甚至可以脱离框架核心独立运行；</li>  <li>还可以通过参数设置，生成的编译缓存载入外部的常量定义文件，便于产品做用户定义；</li></ul>因为刚才我们并没有开启调试模式，所以第一次运行之后，除了已经自动生成目录结构外，同时也已经生成了编译缓存文件了。<br />
+编译缓存文件默认生成在项目的Runtime目录下面，我们可以在App/Runtime目录下面看到有一个~runtime.php文件，这个就是编译缓存文件。<br />
+如果你使用了模式扩展的话，编译缓存文件名称可能会有所变化，例如，如果你当前用的是REST模式，那么生成的编译缓存文件则会变成~rest_runtime.php。<br />
+注意：环境改变后需要删除编译缓存文件，也就是说你不能把本地生成的编译缓存拷贝到服务器或者其他环境直接使用。<br />
+编译缓存的内容通常包括：系统函数库、系统基础核心类库、核心或者扩展定义的核心行为类库、项目配置文件、项目函数文件。如果希望自己设置目录，可以在入口文件里面更改RUNTIME_PATH常量进行更改，例如：<code class="prettyprint linenums lang-php">define('RUNTIME_PATH','./App/temp/');</code>注意RUNTIME_PATH目录必须设置为可写权限。<br />
+除了自定义编译缓存目录之外，还支持自定义编译缓存文件名，例如：<code class="prettyprint linenums lang-php">define('RUNTIME_FILE','./App/temp/runtime_cache.php');</code>接下来要展示一个新版编译缓存的新特性，假如我们之前已经生成了App/Runtime/~runtime.php编译缓存文件，现在我们进行入口文件替换，修改入口文件如下：<code class="prettyprint linenums lang-php">&lt;?php<br />
+//&nbsp;替换入口文件为编译缓存文件<br />
+require&nbsp;'./App/Runtime/~runtime.php';</code>再次执行后运行依然正常，这个时候其实入口已经被编译缓存文件接管了，跳过了框架的入口文件ThinkPHP/ThinkPHP.php。<br />
+接下来，见证奇迹的时刻到来了^_^，我们把项目的入口文件index.php删除，并且把编译缓存文件拷贝到项目目录下面，更名为index.php，再次执行运行正常，说明我们已经跳过了入口文件，直接以编译缓存文件为项目运行入口了。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="17.html">上一页</a><a title="下一页" class="next" href="19.html">下一页</a></div>
+		</div>
+	</body>
+</html>

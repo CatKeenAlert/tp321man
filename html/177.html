@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>获取SAE</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/177.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>获取SAE</h1>
+			<div class="page"><a title="上一页" class="prev" href="176.html">上一页</a><a title="下一页" class="next" href="178.html">下一页</a></div>
+		</div>
+		<div class="book-content">有两种方式获取和安装SAE的ThinkPHP版本。<br />
+<b>SAE官方获取</b>：你可以在SAE的<a href="http://sae.sina.com.cn/?m=appstore&category=2" target="_blank">应用仓库</a>选择ThinkPHP框架的<a href="http://sae.sina.com.cn/?m=apps&a=detail&aid=24" target="_blank">SAE引擎</a>，点击安装，进行一键安装。在安装过程中SAE会自动为你做好一些列初始化工作。通过SAE官方获得的方法是最简单的，但获取的代码不一定是官方最新的。<br />
+<b>ThinkPHP官方获取</b>：可以在官方网站的下载-&gt;扩展（<a href="http://thinkphp.cn/down-extend.html" target="_blank">http://thinkphp.cn/down-extend.html</a>）中下载到最新的ThinkPHP的SAE引擎扩展，或通过SVN下载：<br />
+http://thinkphp.googlecode.com/svn/trunk/Extend/Engine/<br />
+你需要将下载的文件放在ThinkPHP的引擎目录下（ThinkPHP/Extend/Engine）<br />
+然后修改你的项目入口文件，把原来的<code class="prettyprint linenums lang-php">require&nbsp;'./ThinkPHP/ThinkPHP.php';</code>改成<code class="prettyprint linenums lang-php">require&nbsp;'./ThinkPHP/Extend/Engine/Sae.php';</code>注意，SAE引擎扩展具有横跨性，即使在本地开发也一样可以支持，所以你无需在本地开发的过程中切换不同的入口。接下来，你可以像标准模式的ThinkPHP开发一样进行SAE平台开发了。<br />
+在本地开发完成后，上传到SAE平台需要做一些初始化工作，例如初始化Mysql，Memcache，KVDB服务。SAE平台不支持IO写操作，所以你不能在SAE上首次运行入口文件生成项目目录。 你可以在本地运行入口文件，本地生成好项目目录后再提交到SAE上。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="176.html">上一页</a><a title="下一页" class="next" href="178.html">下一页</a></div>
+		</div>
+	</body>
+</html>

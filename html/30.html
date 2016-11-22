@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>函数库</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/30.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>函数库</h1>
+			<div class="page"><a title="上一页" class="prev" href="29.html">上一页</a><a title="下一页" class="next" href="31.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP中的函数库可以分为系统函数库和项目函数库。<h3>系统函数库</h3>库系统函数库位于系统的Common目录下面，有三个文件：<br />
+common.php是全局必须加载的基础函数库，在任何时候都可以直接调用；<br />
+functions.php是框架标准模式的公共函数库，其他模式可以替换加载自己的公共函数库或者对公共函数库中的函数进行重新定义；<br />
+runtime.php是框架运行时文件，仅在调试模式或者编译过程才会被加载，因此其中的方法在项目中不能直接调用；<h3>项目函数库</h3>库项目函数库通常位于项目的Common目录下面，文件名为common.php，该文件会在执行过程中自动加载，并且合并到项目编译统一缓存，如果使用了分组部署方式，并且该目录下存在"分组名称/function.php"文件，也会根据当前分组执行时对应进行自动加载，因此项目函数库的所有函数也都可以无需手动载入而直接使用。<br />
+如果项目配置中使用了动态函数加载配置的话，项目Common目录下面可能会存在更多的函数文件，动态加载的函数文件不会纳入编译缓存。<br />
+在特殊的情况下，模式可以改变自动加载的项目函数库的位置或者名称。<h3>扩展函数库</h3>库我们可以在项目公共目录下面定义扩展函数库，方便需要的时候加载和调用。扩展函数库的函数定义规范和项目函数库一致，只是函数库文件名可以随意命名，一般来说，扩展函数库并不会自动加载，除非你设置了动态载入。<h3>函数加载</h3>系统函数库和项目函数库中的函数无需加载就可以直接调用，对于项目的扩展函数库，可以采用下面两种方式调用：<br />
+动态载入<br />
+我们可以在项目配置文件中定义LOAD_EXT_FILE参数，例如：<code class="prettyprint linenums lang-php">"LOAD_EXT_FILE"=&gt;"user,db"</code>通过上面的设置，就会执行过程中自动载入项目公共目录下面的扩展函数库文件user.php和db.php，这样就可以直接在项目中调用扩展函数库user.php和db.php中的函数了，而且扩展函数库的函数修改是实时生效的。<br />
+<br />
+手动载入<br />
+如果你的函数只是个别模块偶尔使用，则不需要采用自动加载方式，可以在需要调用的时候采用load方法手动载入，方式如下：<code class="prettyprint linenums lang-php">load("@.user")</code>@.user表示加载当前项目的user函数文件，这样就可以直接user.php扩展函数库中的函数了。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="29.html">上一页</a><a title="下一页" class="next" href="31.html">下一页</a></div>
+		</div>
+	</body>
+</html>

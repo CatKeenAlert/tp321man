@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>导入文件</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/99.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>导入文件</h1>
+			<div class="page"><a title="上一页" class="prev" href="98.html">上一页</a><a title="下一页" class="next" href="100.html">下一页</a></div>
+		</div>
+		<div class="book-content">传统方式的导入外部JS和CSS文件的方法是直接在模板文件使用：<code class="prettyprint linenums lang-php">&lt;script&nbsp;type='text/javascript'&nbsp;src='/public/js/util/array.js'&gt;<br />
+&lt;link&nbsp;rel="stylesheet"&nbsp;type="text/css"&nbsp;href="/app/tpl/default/public/css/style.css"&nbsp;/&gt;</code>系统提供了专门的标签来简化上面的导入：<br />
+第一个是import标签 ，导入方式采用类似ThinkPHP的import函数的命名空间方式，例如：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>import标签（包含外部模板文件）</th>  </tr>  <tr>    <td>闭合</td>    <td>闭合标签</td>  </tr>  <tr>    <td>属性</td>    <td>file（必须）：要包含的模板文件，支持变量</td>  </tr></table>示例：<code class="prettyprint linenums lang-php">&lt;import&nbsp;type='js'&nbsp;file="Js.Util.Array"&nbsp;/&gt;</code>Type属性默认是js， 所以下面的效果是相同的：<code class="prettyprint linenums lang-php">&lt;import&nbsp;file="Js.Util.Array"&nbsp;/&gt;</code>还可以支持多个文件批量导入，例如：<code class="prettyprint linenums lang-php">&lt;import&nbsp;file="Js.Util.Array,Js.Util.Date"&nbsp;/&gt;</code>导入外部CSS文件必须指定type属性的值，例如：<code class="prettyprint linenums lang-php">&lt;import&nbsp;type='css'&nbsp;file="Css.common"&nbsp;/&gt;</code>上面的方式默认的import的起始路径是网站的Public目录，如果需要指定其他的目录，可以使用basepath属性，例如：<code class="prettyprint linenums lang-php">&lt;import&nbsp;file="Js.Util.Array"&nbsp;&nbsp;basepath="./Common"&nbsp;/&gt;</code>第二个是load标签，通过文件方式导入当前项目的公共JS或者CSS<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>load标签（采用url方式引入资源文件）</th>  </tr>  <tr>    <td>闭合</td>    <td>闭合标签</td>  </tr>  <tr>    <td>属性</td>    <td>href（必须）：要引入的资源文件url地址，支持变量</td>  </tr></table>例如： <code class="prettyprint linenums lang-php">&lt;load&nbsp;href="../public/js/common.js"&nbsp;/&gt;<br />
+&lt;load&nbsp;href="../public/css/common.css"&nbsp;/&gt;</code>在href属性中可以使用特殊模板标签替换，例如：<br />
+&lt;load href="__public__/js/common.js" /&gt;<br />
+Load标签可以无需指定type属性，系统会自动根据后缀自动判断。<br />
+系统还提供了两个标签别名js和css 用法和load一致，例如：<code class="prettyprint linenums lang-php">&lt;js&nbsp;href="__public__/js/common.js"&nbsp;/&gt;<br />
+&lt;css&nbsp;href="../public/css/common.css"&nbsp;/&gt;</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="98.html">上一页</a><a title="下一页" class="next" href="100.html">下一页</a></div>
+		</div>
+	</body>
+</html>

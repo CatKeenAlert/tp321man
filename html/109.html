@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>Defined标签</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/109.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>Defined标签</h1>
+			<div class="page"><a title="上一页" class="prev" href="108.html">上一页</a><a title="下一页" class="next" href="110.html">下一页</a></div>
+		</div>
+		<div class="book-content">可以使用defined标签判断常量是否已经有定义：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">defined标签和notdefined标签</th>  </tr>  <tr>    <td>闭合</td>    <td>非闭合标签</td>  </tr>  <tr>    <td>属性</td>    <td>name（必须）：变量名</td>  </tr></table>用法：<code class="prettyprint linenums lang-php">&lt;defined&nbsp;name="NAME"&gt;NAME常量已经定义&lt;/defined&gt;</code>如果判断没有被定义，可以使用：<code class="prettyprint linenums lang-php">&lt;notdefined&nbsp;name="NAME"&gt;NAME常量未定义&lt;/notdefined&gt;</code>可以把上面两个标签合并成为：<code class="prettyprint linenums lang-php">&lt;defined&nbsp;name="NAME"&gt;NAME常量已经定义&lt;else&nbsp;/&gt;&nbsp;NAME常量未定义&lt;/defined&gt;</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="108.html">上一页</a><a title="下一页" class="next" href="110.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>视图模型</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/77.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>视图模型</h1>
+			<div class="page"><a title="上一页" class="prev" href="76.html">上一页</a><a title="下一页" class="next" href="78.html">下一页</a></div>
+		</div>
+		<div class="book-content"><h3>视图定义</h3>视图通常是指数据库的视图，视图是一个虚拟表，其内容由查询定义。同真实的表一样，视图包含一系列带有名称的列和行数据。但是，视图并不在数据库中以存储的数据值集形式存在。行和列数据来自由定义视图的查询所引用的表，并且在引用视图时动态生成。对其中所引用的基础表来说，视图的作用类似于筛选。定义视图的筛选可以来自当前或其它数据库的一个或多个表，或者其它视图。分布式查询也可用于定义使用多个异类源数据的视图。如果有几台不同的服务器分别存储组织中不同地区的数据，而您需要将这些服务器上相似结构的数据组合起来，这种方式就很有用。<br />
+视图在有些数据库下面并不被支持，但是ThinkPHP模拟实现了数据库的视图，该功能可以用于多表联合查询。非常适合解决HAS_ONE 和  BELONGS_TO 类型的关联查询。<br />
+要定义视图模型，只需要继承ViewModel，然后设置viewFields属性即可。例如下面的例子，我们定义了一个BlogView模型对象，其中包括了Blog模型的id、name、title和User模型的name，以及Category模型的title字段，我们通过创建BlogView模型来快速读取一个包含了User名称和类别名称的Blog记录（集）。 <code class="prettyprint linenums lang-php">class&nbsp;BlogViewModel&nbsp;extends&nbsp;ViewModel&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;public&nbsp;$viewFields&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Blog'=&gt;array('id','name','title'),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Category'=&gt;array('title'=&gt;'category_name',&nbsp;'_on'=&gt;'Blog.category_id=Category.id'),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'User'=&gt;array('name'=&gt;'username',&nbsp;'_on'=&gt;'Blog.user_id=User.id'),<br />
+&nbsp;&nbsp;&nbsp;);<br />
+}</code>我们来解释一下定义的格式代表了什么。<br />
+$viewFields属性表示视图模型包含的字段，每个元素定义了某个数据表或者模型的字段。<br />
+例如：<code class="prettyprint linenums lang-php">'Blog'=&gt;array('id','name','title');</code>表示BlogView视图模型要包含Blog模型中的id、name和title字段属性，这个其实很容易理解，就和数据库的视图要包含某个数据表的字段一样。而Blog相当于是给Blog模型对应的数据表定义了一个别名。<br />
+默认情况下会根据定义的名称自动获取表名，如果希望指定数据表，可以使用：<code class="prettyprint linenums lang-php">'_table'=&gt;"test_db.test_table"</code>如果希望给当前数据表定义另外的别名，可以使用<code class="prettyprint linenums lang-php">'_as'=&gt;'myBlog'</code>BlogView视图模式除了包含Blog模型之外，还包含了Category和User模型，下面的定义：<code class="prettyprint linenums lang-php">'Category'=&gt;array('title'=&gt;'category_name');</code>和上面类似，表示BlogView视图模型还要包含Category模型的title字段，因为视图模型里面已经存在了一个title字段，所以我们通过 <code class="prettyprint linenums lang-php">'title'=&gt;'category_name'</code>把Category模型的title字段映射为category_name字段，如果有多个字段，可以使用同样的方式添加。可以通过_on来给视图模型定义关联查询条件，例如：<code class="prettyprint linenums lang-php">'_on'=&gt;'Blog.category_id=Category.id'</code>理解之后，User模型的定义方式同样也就很容易理解了。<code class="prettyprint linenums lang-php">Blog.categoryId=Category.id&nbsp;AND&nbsp;Blog.userId=User.id</code>最后，我们把视图模型的定义翻译成SQL语句就更加容易理解视图模型的原理了。假设我们不带任何其他条件查询全部的字段，那么查询的SQL语句就是<code class="prettyprint linenums lang-php">Select&nbsp;<br />
+Blog.id&nbsp;as&nbsp;id,<br />
+Blog.name&nbsp;as&nbsp;name,<br />
+Blog.title&nbsp;as&nbsp;title,<br />
+Category.title&nbsp;as&nbsp;category_name,<br />
+User.name&nbsp;as&nbsp;username&nbsp;<br />
+from&nbsp;think_blog&nbsp;Blog&nbsp;JOIN&nbsp;think_category&nbsp;Category&nbsp;JOIN&nbsp;think_user&nbsp;User&nbsp;<br />
+where&nbsp;Blog.category_id=Category.id&nbsp;AND&nbsp;Blog.user_id=User.id</code>视图模型的定义并不需要先单独定义其中的模型类，系统会默认按照系统的规则进行数据表的定位。如果Blog模型并没有定义，那么系统会自动根据当前模型的表前缀和后缀来自动获取对应的数据表。也就是说，如果我们并没有定义Blog模型类，那么上面的定义后，系统在进行视图模型的操作的时候会根据Blog这个名称和当前的表前缀设置（假设为Think_ ）获取到对应的数据表可能是think_blog。<br />
+ThinkPHP还可以支持视图模型的JOIN类型定义，我们可以把上面的视图定义改成：<br />
+<code class="prettyprint linenums lang-php">&nbsp;public&nbsp;$viewFields&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Blog'=&gt;array('id','name','title','_type'=&gt;'LEFT'),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Category'=&gt;array('title'=&gt;'category_name','_on'=&gt;'Category.id=Blog.category_id','_type'=&gt;'RIGHT'),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'User'=&gt;array('name'=&gt;'username','_on'=&gt;'User.id=Blog.user_id'),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);</code>需要注意的是，这里的_type定义对下一个表有效，因此要注意视图模型的定义顺序。Blog模型的<code class="prettyprint linenums lang-php">'_type'=&gt;'LEFT'</code>针对的是下一个模型Category而言，通过上面的定义，我们在查询的时候最终生成的SQL语句就变成：<br />
+Select <br />
+Blog.id as id,<br />
+Blog.name as name,<br />
+Blog.title as title,<br />
+Category.title as category_name,<br />
+User.name as username <br />
+from think_blog Blog LEFT JOIN think_category Category ON Blog.category_id=Category.id RIGHT JOIN think_user User ON Blog.user_id=User.id<br />
+我们可以在试图模型里面定义特殊的字段，例如下面的例子定义了一个统计字段<code class="prettyprint linenums lang-php">'Category'=&gt;array('title'=&gt;'category_name','COUNT(Blog.id)'=&gt;'count','_on'=&gt;'Category.id=Blog.category_id'),</code><h3>视图查询</h3>接下来，我们就可以和使用普通模型一样对视图模型进行操作了 。<code class="prettyprint linenums lang-php">$Model&nbsp;=&nbsp;D("BlogView");<br />
+$Model-&gt;field('id,name,title,category_name,username')-&gt;where('id&gt;10')-&gt;order('id&nbsp;desc')-&gt;select();</code>看起来和普通的模型操作并没有什么大的区别，可以和使用普通模型一样进行查询。如果发现查询的结果存在重复数据，还可以使用group方法来处理。<code class="prettyprint linenums lang-php">$Model-&gt;field('id,name,title,category_name,username')-&gt;order('id&nbsp;desc')-&gt;group('id')-&gt;select();</code>我们可以看到，即使不定义视图模型，其实我们也可以通过方法来操作，但是显然非常繁琐。<br />
+$Model=D("Blog");<code class="prettyprint linenums lang-php">$Model-&gt;table(<br />
+'think_blog&nbsp;Blog,<br />
+think_category&nbsp;Category,<br />
+think_user&nbsp;User')<br />
+-&gt;field(<br />
+'Blog.id,Blog.name,<br />
+Blog.title,<br />
+Category.title&nbsp;as&nbsp;category_name,<br />
+User.name&nbsp;as&nbsp;username')<br />
+-&gt;order('Blog.id&nbsp;desc')<br />
+-&gt;where('Blog.category_id=Category.id&nbsp;AND&nbsp;Blog.user_id=User.id')<br />
+-&gt;select();</code>而定义了视图模型之后，所有的字段会进行自动处理，添加表别名和字段别名，从而简化了原来视图的复杂查询。如果不使用视图模型，也可以用连贯操作的JOIN方法实现相同的功能。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="76.html">上一页</a><a title="下一页" class="next" href="78.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>WML开发</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/189.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>WML开发</h1>
+			<div class="page"><a title="上一页" class="prev" href="188.html">上一页</a><a title="下一页" class="next" href="190.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP不仅仅只是支持Html网站开发，如果我们的项目需要实现WAP支持，我们只需要做如下步骤就可以支持WML开发：<br />
+一、设置模板后缀为.wml<br />
+在项目配置里面增加配置参数 <code class="prettyprint linenums lang-php">'TMPL_TEMPLATE_SUFFIX'=>'.wml'</code>并确保你的所有模板文件都以wml后缀保存即可。并注意模板wml文件的定义规范~<br />
+<br />
+二、更改模板输出类型<br />
+系统默认的模板输出类型是HTML，也就是text/html，所以我们需要修改为WML的输出类型<code class="prettyprint linenums lang-php">'TMPL_CONTENT_TYPE'=>'text/vnd.wap.wml'</code>如果你的网站编码不是UTF-8的话，还需要设置<code class="prettyprint linenums lang-php">'DEFAULT_CHARSET'=>'gbk'</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="188.html">上一页</a><a title="下一页" class="next" href="190.html">下一页</a></div>
+		</div>
+	</body>
+</html>

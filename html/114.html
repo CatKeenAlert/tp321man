@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>使用PHP代码</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/114.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>使用PHP代码</h1>
+			<div class="page"><a title="上一页" class="prev" href="113.html">上一页</a><a title="下一页" class="next" href="115.html">下一页</a></div>
+		</div>
+		<div class="book-content">Php代码可以和标签在模板文件中混合使用，可以在模板文件里面书写任意的PHP语句代码 ，包括下面两种方式：<br />
+第一种是使用php标签：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">php标签（在模板中使用php代码）</th>  </tr>  <tr>    <td>闭合</td>    <td>非闭合标签</td>  </tr>  <tr>    <td>属性</td>    <td>无</td>  </tr></table>例如：<code class="prettyprint linenums lang-php">&lt;php&gt;echo&nbsp;'Hello,world!';&lt;/php&gt;</code>我们建议需要使用PHP代码的时候尽量采用php标签，因为原生的PHP语法可能会被配置禁用而导致解析错误。<br />
+第二种就是直接使用原始的php代码：<code class="prettyprint linenums lang-php">&lt;?php&nbsp;echo&nbsp;'Hello,world!';&nbsp;?&gt;</code>注意：php标签或者php代码里面就不能再使用标签（包括普通标签和XML标签）了，因此下面的几种方式都是无效的：<code class="prettyprint linenums lang-php">&lt;php&gt;&lt;eq&nbsp;name='name'value='value'&gt;value&lt;/eq&gt;&lt;/php&gt;</code>Php标签里面使用了eq标签，因此无效<code class="prettyprint linenums lang-php">&lt;php&gt;if(&nbsp;{$user}&nbsp;!=&nbsp;'ThinkPHP'&nbsp;)&nbsp;echo&nbsp;&nbsp;'ThinkPHP'&nbsp;;&lt;/php&gt;</code>Php标签里面使用了{$user}普通标签输出变量 ，因此无效。<code class="prettyprint linenums lang-php">&lt;php&gt;if(&nbsp;$user.name&nbsp;!=&nbsp;'ThinkPHP'&nbsp;)&nbsp;echo&nbsp;&nbsp;'ThinkPHP'&nbsp;;&lt;/php&gt;</code>Php标签里面使用了$user.name  点语法变量输出 ，因此无效。<br />
+简而言之，在PHP标签里面不能再使用PHP本身不支持的代码。<br />
+如果设置了TMPL_DENY_PHP参数为true，就不能在模板中使用原生的PHP代码，但是仍然支持PHP标签输出。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="113.html">上一页</a><a title="下一页" class="next" href="115.html">下一页</a></div>
+		</div>
+	</body>
+</html>

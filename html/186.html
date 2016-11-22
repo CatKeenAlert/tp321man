@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>Session支持</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/186.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>Session支持</h1>
+			<div class="page"><a title="上一页" class="prev" href="185.html">上一页</a><a title="下一页" class="next" href="187.html">下一页</a></div>
+		</div>
+		<div class="book-content">系统提供了Session管理和操作的完善支持，全部操作可以通过一个内置的session函数完成。<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th colspan="2">Session  用于Session 设置、获取、删除和管理操作</th>    </tr>    <tr>        <td>用法</td>        <td>session($name, $value='')</td>    </tr>    <tr>        <td>参数</td>        <td>name（必须）：如果传入数组 则表示进行session初始化，如果传入null表示清空当前session，如果是字符串则表示session赋值、获取或者操作。<br />
+Value（可选）：要设置的session值，如果传入null表示删除session，默认为空字符串</td>    </tr>    <tr>        <td>返回值</td>        <td>见详（根据具体的用法返回不同的值）</td>    </tr></table>session函数是一个多元化操作函数，传入不同的参数调用可以完成不同的功能操作，包括下面一些功能。<b>session初始化设置</b><br />
+如果session方法的name参数传入数组则表示进行session初始化设置，例如：<code class="prettyprint linenums lang-php">session(array('name'=&gt;'session_id','expire'=&gt;3600));</code>支持传入的session参数包括：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th>参数名</th>        <th>说明</th>    </tr>    <tr>        <td>id</td>        <td>session_id值</td>    </tr>    <tr>        <td>name</td>        <td>session_name 值</td>    </tr>    <tr>        <td>path</td>        <td>session_save_path 值</td>    </tr>    <tr>        <td>prefix</td>        <td>session 本地化空间前缀</td>    </tr>    <tr>        <td>expire</td>        <td>session.gc_maxlifetime 设置值</td>    </tr>    <tr>        <td>domain</td>        <td>session.cookie_domain 设置值</td>    </tr>    <tr>        <td>use_cookies</td>        <td>session.use_cookies 设置值</td>    </tr>    <tr>        <td>use_trans_sid</td>        <td>session.use_trans_sid 设置值</td>    </tr>    <tr>        <td>type</td>        <td>session hander类型，可以使用hander驱动扩展</td>    </tr></table>Session初始化设置方法 无需手动调用，在App类的初始化工作结束后会自动调用，通常项目只需要配置SESSION_OPTIONS参数即可，SESSION_OPTIONS参数的设置是一个数组，支持的索引名和前面的session初始化参数相同。<br />
+默认情况下，初始化之后系统会自动启动session，如果不希望系统自动启动session的话，可以设置SESSION_AUTO_START为false，例如：<code class="prettyprint linenums lang-php">'SESSION_AUTO_START'&nbsp;=&gt;false</code>关闭自动启动后可以项目的公共文件或者在控制器中通过手动调用session_start或者session('[start]') 启动session。<b>session赋值</b><br />
+Session赋值比较简单，直接使用：<code class="prettyprint linenums lang-php">session('name','value');&nbsp;&nbsp;//设置session</code><b>session取值</b><br />
+Session取值使用：<code class="prettyprint linenums lang-php">$value&nbsp;=&nbsp;session('name');</code><b>session删除</b><code class="prettyprint linenums lang-php">session('name',null);&nbsp;//&nbsp;删除name</code>要删除所有的session，可以使用：<code class="prettyprint linenums lang-php">session(null);&nbsp;//&nbsp;清空当前的session</code><b>session判断</b><br />
+要判断一个session值是否已经设置，可以使用<code class="prettyprint linenums lang-php">session('?name');</code>用于判断名称为name的session值是否已经设置<b>session管理</b><br />
+session方法支持一些简单的session管理操作，用法如下：<code class="prettyprint linenums lang-php">session('[操作名]');</code>支持的操作名包括：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th>操作名</th>        <th>含义</th>    </tr>    <tr>        <td>start</td>        <td>启动session</td>    </tr>    <tr>        <td>pause</td>        <td>暂停session写入</td>    </tr>    <tr>        <td>destroy</td>        <td>销毁session</td>    </tr>    <tr>        <td>regenerate</td>        <td>重新生成session id</td>    </tr></table>使用示例如下：<code class="prettyprint linenums lang-php">session('[pause]');&nbsp;//&nbsp;暂停session写入<br />
+session('[start]');&nbsp;//&nbsp;启动session<br />
+session('[destroy]');&nbsp;//&nbsp;销毁session<br />
+session('[regenerate]');&nbsp;//&nbsp;重新生成session&nbsp;id</code><b>本地化支持</b><br />
+如果在初始化session设置的时候传入prefix参数或者单独设置了SESSION_PREFIX参数的话，就可以启用本地化session管理支持。启动本地化session后，所有的赋值、取值、删除以及判断操作都会自动支持本地化session。<br />
+本地化session支持开启后，生成的session数据格式由原来的<code class="prettyprint linenums lang-php">$_SESSION['name']&nbsp;变成&nbsp;$_SESSION['前缀']&nbsp;['name']</code><b>session handler支持</b><br />
+是初始化session设置的时候，如果传入了type参数，则会自动引入对应的handler驱动，驱动扩展目录位于Extend/Driver/Session目录下面（详见扩展部分）。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="185.html">上一页</a><a title="下一页" class="next" href="187.html">下一页</a></div>
+		</div>
+	</body>
+</html>

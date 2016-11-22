@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>SAE开发</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/178.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>SAE开发</h1>
+			<div class="page"><a title="上一页" class="prev" href="177.html">上一页</a><a title="下一页" class="next" href="179.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP的SAE开发和标准版本的ThinkPHP基本一样，你无需了解SAE的接口用法，ThinkPHP的SAE引擎已经自动为你整合了SAE的接口，只要掌握ThinkPHP开发，你就能轻松掌握基于ThinkPHP的SAE开发。<br />
+下面是我们给出的一些利用SAE引擎开发过程的一些注意事项，能够帮助你更好的完成SAE的开发和部署。<h3>配置</h3>SAE引擎运行时拥有SAE自己的惯例配置和专有配置，因此配置文件加载顺序为：<br />
+惯例配置-&gt;项目配置-&gt;SAE惯例配置-&gt;SAE专有配置<br />
+SAE惯例配置和SAE专有配置中的配置项将会覆盖项目配置。<br />
+<b>SAE惯例配置</b>：位于 引擎目录/Sae/Conf/convention_sae.php，其中定义了程序在SAE上运行时固定的数据库连接配置项。<br />
+<b>SAE专有配置</b>：位于项目的Conf目录下，文件名为config_sae.php，大家可以将针对SAE的配置写到其中。<br />
+注：SAE惯例配置和SAE专有配置是针对SAE环境的独有配置，在本地运行时将不会加载。<h3>数据库</h3>开发者不需要在项目配置文件(config.php)中定义和SAE相关的数据库配置项，只需要定义本地调试时连接的数据库即可。代码提交到SAE时无需修改任何配置项也能运行，因为SAE惯例配置会自动覆盖你的项目配置文件中的数据库配置。<br />
+  代码在SAE上运行时会进行分布式数据库连接，并读写分离。<h3>缓存</h3>在SAE开发过程中，你仍然可以使用ThinkPHP内置的缓存方法进行处理。下面是SAE引擎使用不同的缓存方法在本地和SAE平台下的区别（注意这个区别SAE引擎会自动判断处理）：<table border="0" cellspacing="1" cellpadding="0">	<tr>		<td width="70">缓存方法 </td>		<td>本地运行 </td>		<td>SAE平台 </td>	</tr>	<tr>		<td>S缓存 </td>		<td>默认使用File方式实现 </td>		<td>固定使用Memcache实现，所以在SAE下 DATA_CACHE_TYPE配置项将失效。你如果需要使用SAE提供的Mecache服务，直接使用S函数就可以 </td>	</tr>	<tr>		<td>F缓存 </td>		<td>使用File实现 </td>		<td>使用KVDB实现 </td>	</tr>	<tr>		<td>静态缓存 </td>		<td>生成静态Html文件 </td>		<td>静态文件存入KVDB中 </td>	</tr>	<tr>		<td>SQL队列 </td>		<td>支持File、Xcache和APC方式 </td>		<td>使用KVDB存储 </td>	</tr></table>新版的ThinkPHP支持SQL缓存队列功能，我们可以配置DB_SQL_BUILD_CACHE 开启SQL语句解析缓存。在SAE平台下固定使用KVDB存储SQL缓存，因此DB_SQL_BUILD_QUEUE配置项将不起作用。并且在SAE下运行时会用Counter服务记录SQL缓存列队出队次数，在Counter的管理后台<br />
+http://sae.sina.com.cn/?m=counter <br />
+如果你看到计算器名称为think_queue_out_times 的数值很大，说明你设置的队列个数太小，需要调整DB_SQL_BUILD_LENGTH 配置项。<h3>文件上传</h3>文件上传仍然使用UploadFile扩展类库上传文件，使用方法不变。同样的代码在本地运行时将会上传到指定的目录，在SAE上运行时就会自动使用Storage服务，将文件上传到指定的Storage中。首先你需要在SAE平台上创建一个Storage的domain用于存放上传的文件：<code class="prettyprint linenums lang-php">http://sae.sina.com.cn/?m=storage</code>这里可以建立多个domain。而我们的文件会上传到哪个domain，是由上传路径的第一个目录名称决定的。如：<code class="prettyprint linenums lang-php">$upload-&gt;savePath&nbsp;=&nbsp;&nbsp;'./Public/Uploads/';</code>会上传到名为Public的domain。你也不用在这个domain下创建Uploads文件夹，SAE的Storage服务会为你自动创建。<br />
+<b>图片地址的问题</b>：<br />
+我们使用UploadFile类上传图片，在本地和在SAE下图片的浏览地址是不一样的。比如有张图片地址为  "__PUBLIC__/upload/1.jpg" ， __PUBLIC__ 是一个模板替换变量， 他会被替换为Public文件夹所在目录的地址， 我们可以通过浏览器的查看源代码功能查看被替换后是什么效果。 可以看见， 替换后为 "/Public/upload/1.jpg" 。 但是在SAE上图片并没有在Public/upload目录下，而是在storage中。 我们需要将 /Public/替换为storage的域名，在SAE上才能正常显示。<br />
+我们在SAE专有配置Conf/config_sae.php文件中 定义如下代码：<code class="prettyprint linenums lang-php">&lt;?php<br />
+return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'TMPL_PARSE_STRING'=&gt;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'/Public/upload'=&gt;sae_storage_root('Public').'/upload'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;)<br />
+);</code>这样，在SAE上会把 /Public/upload 替换为storage的地址， 在SAE上图片也能正常显示。<br />
+<b>文件删除问题</b>：<br />
+因为上传的文件在本地和SAE存放的地方不一样，所以我们不能直接用unlink删除文件。SAE版ThinkPHP新增sae_unlink函数实现兼容。如：<code class="prettyprint linenums lang-php">sae_unlink('./Public/Uploads/xxx.jpg');</code>在本地运行时，会删除Public/Uploads文件夹下的图片。而在SAE上运行时，会删除domain为Public的Storage中的图片。此函数会删除哪个domian的文件也是由路径的第一个目录名称决定的。<h3>图片处理</h3>SAE引擎在图片处理方面也做了自动处理，在本地和SAE平台的区别如下：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th>图片功能</th>        <th>本地运行</th>        <th>SAE平台</th>    </tr>    <tr>        <td>缩略图</td>        <td>调用Image类库处理</td>        <td>自动使用SaeImage服务</td>    </tr>    <tr>        <td>验证码</td>        <td>调用Image类库处理</td>        <td>自动使用SaeVcode服务</td>    </tr></table>你完全不用去学习怎么用SaeImage生成缩略图，也不用学习SaeVcode服务怎么用，你还是按照以前的方式使用ThinkPHP进行验证码和缩略图功能就可以了。<br />
+<p class="tips">使用验证码的时候需要注意，在本地运行时验证码默认为数字形式，而在SAE上运行时验证码为数字+字母形式，而且存在字母大小写问题。如果你希望验证码区分大小写的话，需要将验证码统一转化为大写后进行匹配。</p> 如:<code class="prettyprint linenums lang-php">if(md5(strtoupper($_POST['verify']))!=$_SESSION['verify']){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//验证错误处理代码<br />
+}</code><h3>日志记录</h3>SAE版ThinkPHP同样实现了生成系统日志功能，在本地运行会将日志记录到项目的项目的Runtime/Logs文件夹下，而在SAE上运行会将日志记录到SAE平台的日志中心：<br />
+http://sae.sina.com.cn/?m=applog<br />
+请在搜索框选择中的下拉菜单处选择“debug”进行查看。<h3>Trace信息</h3>建议在开发程序时配置SHOW_PAGE_TRACE=&gt;true 开启页面Trace信息。开启后，代码在SAE环境下运行时会显示一些SAE独有的Trace信息，有助于我们开发。你可能会到以下trace信息。<br />
+<b>模板缓存</b>：Trace信息名称为“[SAE]模板缓存”<br />
+在SAE下不会将模板编译缓存生成在Runtime目录下，而是存放在Memcache中。如果你想查看模板编译后的缓存，这里显示的就是模板缓存在Memcache中的缓存名称。你可以在SAE的memcache服务管理平台输入缓存名称得到缓存内容：<br />
+http://sae.sina.com.cn/?m=mcmng<br />
+注：你看得的缓存内容，都是以一串数字开始，这数字和缓存内容无关，是记录的缓存生成时间。<br />
+<b>核心缓存</b>：Trace信息名称为“[SAE]核心缓存”<br />
+它记录的是核心编译缓存在Memcache中的缓存名称。如果你要获得核心编译缓存，比如我们要用核心编译缓存代替入口文件的时候。你可以在SAE的Memcache服务管理平台 输入这里记录的缓存名称获得。<br />
+注：<ul><li>在开启调试时不会生成核心编译缓存，如果你获得核心编译缓存，请先关闭调试。</li><li>缓存内容开头的数字是记录的缓存生成时间，请将数字去掉后再作为入口文件。</li></ul><b>静态缓存</b>：Trace信息名称为“[SAE]静态缓存”<br />
+它记录了生成的静态缓存在KVDB中的名称。 目前SAE管理平台没有能直接输入KVDB名称获得内容的地方，大家需要自己写程序获取内容。<br />
+注：此Trace信息是在生成静态缓存的时候才会出现。如果你访问到的页面没有执行生成静态缓存的操作时，将不会有此条Trace信息。<h3>隐藏index.php</h3>SAE不支持.htaccess文件，但我们可以使用SAE提供的AppConfig服务实现伪静态。<br />
+在你项目的根目录建立config.yaml文件，代码为：<code class="prettyprint linenums lang-php">handle:<br />
+-&nbsp;rewrite:&nbsp;if(!is_dir()&nbsp;&&&nbsp;!is_file()&nbsp;&&&nbsp;path~"^(.*)$")&nbsp;goto&nbsp;"index.php/$1"</code>这样就可以隐藏入口了。<br />
+比如这样的地址 http://serverName/index.php/Blog/read/id/1也能通过<br />
+http://serverName/Blog/read/id/1访问。<h3>代码横跨性建议</h3>SAE版ThinkPHP，是具有横跨性的，请不要破坏它的横跨性。比如，不要在项目配置文件中写和SAE数据库相关配置项。 自己写代码时，也要尽量做到横跨性，这样就可以让同样的代码既能在SAE下运行，也能在普通环境下运行， 使你在本地调试完后上传到SAE也不用修改任何代码就能运行。<br />
+下面是一些保持代码横跨性的建议：<br />
+（1）尽量少使用原生的SAE服务<br />
+  能使用ThinkPHP自带函数替代的，尽量使用ThinkPHP自带函数。比如要使用SAE的KVDB服务，在ThinkPHP中完全可以用F函数代替。如果要使用SAE的Memcache服务，都使用S函数实现。 这样就不会导致你的代码从SAE转移到普通环境后性能很低。<br />
+  个别SAE服务无法使用ThinkPHP自带函数代替的，才考虑使用原生的SAE服务。<br />
+（2）利用IS_SAE常量<br />
+ThinkPHP的SAE引擎增加了IS_SAE常量，能判断代码运行环境是普通环境还是SAE环境。如果你有段代码在普通环境和在SAE环境下实现方式不同，你可以使用IS_SAE进行判断后做不同处理或者加载不同的文件。<br />
+（3）利用SAE专有文件<br />
+  在SAE惯例配置中，我们可以看见除了配置了固定的数据库配置项，还有一个SAE_SPECIALIZED_FILES配置项，它定义了系统专有文件。目前已经定义了UploadFile类和Image类的SAE专有文件，所以当我们的代码 import(“@.ORG.UploadFile”) 在本地运行时会按普通方式导入项目下Lib/ORG/UploadFile.class.php文件， 而在SAE上运行是系统检查到UploadFile.class.php有SAE专有文件，它导入的是SAE_SPECIALIZED_FILES配置项中定义的文件地址。这样实现了普通环境和SAE环境下同样的代码导入了不同类库，而类的调用方法都是一样的，只是现实方法不同，这样就能保证了代码的横跨性。<br />
+你也可以自己建立SAE专有文件，你可以将专有文件放在和普通文件同级目录，这样不用定义SAE_SPECIALIZED_FILE配置项，系统也能识别专有文件。比如我们在Image.class.php的文件的同级目录如果定义了一个名为Image_sae.class.php 的文件，则系统SAE上运行时，导入Image.class.php文件时会改为导入Image_sae.class.php文件。<br />
+ 如果一个类库既定义了同级目录下的专有文件，也在SAE_SPECIALIZED_FILE配置项中有定义，则会优先导入同级目录下的专有文件。建议大家如果需要建立专有文件时，在普通文件同级目录下建立。<br />
+如果导入的类库没有SAE专有文件，在SAE下运行时也会导入普通文件。<br />
+我们可以利用SAE专有文件，针对普通环境和SAE环境封装不同的类库，但类库的使用方法都是相同的，从而让类库的客户端代码具有横跨性。<br />
+（4）利用SAE专有配置<br />
+  当遇到SAE和普通环境配置需要不一样时，你可以把普通环境的配置写到项目配置文件Conf/config.php中，而 将SAE需要用的配置写到SAE专有配置Conf/config_sae.php中。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="177.html">上一页</a><a title="下一页" class="next" href="179.html">下一页</a></div>
+		</div>
+	</body>
+</html>

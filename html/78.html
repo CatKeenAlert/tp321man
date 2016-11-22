@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>关联模型</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/78.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>关联模型</h1>
+			<div class="page"><a title="上一页" class="prev" href="77.html">上一页</a><a title="下一页" class="next" href="79.html">下一页</a></div>
+		</div>
+		<div class="book-content"><h3>关联关系</h3>通常我们所说的关联关系包括下面三种：<br />
+一对一关联  ：ONE_TO_ONE，包括HAS_ONE和BELONGS_TO<br />
+一对多关联  ：ONE_TO_MANY，包括HAS_MANY和BELONGS_TO<br />
+多对多关联  ：MANY_TO_MANY<br />
+关联关系必然有一个参照表，例如：<br />
+有一个员工档案管理系统项目，这个项目要包括下面的一些数据表：基本信息表、员工档案表、部门表、项目组表、银行卡表（用来记录员工的银行卡资料）。<br />
+这些数据表之间存在一定的关联关系，我们以员工基本信息表为参照来分析和其他表之间的关联：<br />
+每个员工必然有对应的员工档案资料，所以属于HAS_ONE关联；<br />
+每个员工必须属于某个部门，所以属于BELONGS_TO关联；<br />
+每个员工可以有多个银行卡，但是每张银行卡只可能属于一个员工，因此属于HAS_MANY关联；<br />
+每个员工可以同时在多个项目组，每个项目组同时有多个员工，因此属于MANY_TO_MANY关联；<br />
+分析清楚数据表之前的关联关系后，我们才可以进行关联定义和关联操作。<h3>关联定义</h3>ThinkPHP可以很轻松的完成数据表的关联CURD操作，目前支持的关联关系包括下面四种：<b>HAS_ONE、BELONGS_TO、HAS_MANY和MANY_TO_MANY</b>。<br />
+一个模型根据业务模型的复杂程度可以同时定义多个关联，不受限制，所有的关联定义都统一在模型类的 $_link 成员变量里面定义，并且可以支持动态定义。要支持关联操作，模型类必须继承RelationModel类，关联定义的格式是：<code class="prettyprint linenums lang-php">protected&nbsp;$_link&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'关联1'&nbsp;&nbsp;=&gt;&nbsp;&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'关联属性1'&nbsp;=&gt;&nbsp;'定义',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'关联属性N'&nbsp;=&gt;&nbsp;'定义',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'关联2'&nbsp;&nbsp;=&gt;&nbsp;&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'关联属性1'&nbsp;=&gt;&nbsp;'定义',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'关联属性N'&nbsp;=&gt;&nbsp;'定义',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'关联3'&nbsp;&nbsp;=&gt;&nbsp;&nbsp;HAS_ONE,&nbsp;//&nbsp;快捷定义<br />
+&nbsp;&nbsp;&nbsp;&nbsp;...<br />
+);</code>下面我们首先来分析下各个关联方式的定义：<br />
+<b>HAS_ONE</b><br />
+HAS_ONE关联表示当前模型拥有一个子对象，例如，每个员工都有一个人事档案。我们可以建立一个用户模型UserModel，并且添加如下关联定义：<code class="prettyprint linenums lang-php">class&nbsp;UserModel&nbsp;extends&nbsp;RelationModel{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;$_link&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Profile'=&gt;&nbsp;HAS_ONE,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;);<br />
+}</code>上面是最简单的方式，表示其遵循了系统内置的数据库规范，完整的定义方式是：<code class="prettyprint linenums lang-php">class&nbsp;UserModel&nbsp;extends&nbsp;RelationModel{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;$_link&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Profile'=&gt;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'mapping_type'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;HAS_ONE,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'class_name'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'Profile',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;定义更多的关联属性<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;……<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br />
+}</code>关联HAS_ONE支持的关联属性有：<table border="0" cellspacing="1" cellpadding="0"><tr><td><b>mapping_type</b> </td><td width="450">关联类型，这个在HAS_ONE 关联里面必须使用HAS_ONE 常量定义。</td></tr><tr><td><b>class_name</b> </td><td>要关联的模型类名<br />
+例如，class_name 定义为Profile的话则表示和另外的Profile模型类关联，这个Profile模型类是无需定义的，系统会自动定位到相关的数据表进行关联。</td></tr><tr><td><b>mapping_name</b> </td><td>关联的映射名称，用于获取数据用<br />
+该名称不要和当前模型的字段有重复，否则会导致关联数据获取的冲突。如果mapping_name没有定义的话，会取class_name的定义作为mapping_name。如果class_name也没有定义，则以数组的索引作为mapping_name。</td></tr><tr><td><b>foreign_key</b> </td><td>关联的外键名称<br />
+外键的默认规则是当前数据对象名称_id，例如：<br />
+UserModel对应的可能是表think_user （注意：think只是一个表前缀，可以随意配置）<br />
+那么think_user表的外键默认为 user_id，如果不是，就必须在定义关联的时候显式定义 foreign_key 。</td></tr><tr><td><b>condition</b> </td><td>关联条件<br />
+关联查询的时候会自动带上外键的值，如果有额外的查询条件，可以通过定义关联的condition属性。</td></tr><tr><td><b>mapping_fields</b> </td><td>关联要查询的字段<br />
+默认情况下，关联查询的关联数据是关联表的全部字段，如果只是需要查询个别字段，可以定义关联的mapping_fields属性。</td></tr><tr><td><b>as_fields</b></td><td>直接把关联的字段值映射成数据对象中的某个字段<br />
+这个特性是ONE_TO_ONE 关联特有的，可以直接把关联数据映射到数据对象中，而不是作为一个关联数据。当关联数据的字段名和当前数据对象的字段名称有冲突时，还可以使用映射定义。</td></tr></table><b>BELONGS_TO</b><br />
+Belongs_to 关联表示当前模型从属于另外一个父对象，例如每个用户都属于一个部门。我们可以做如下关联定义。<code class="prettyprint linenums lang-php">&nbsp;'Dept'=&gt;&nbsp;BELONGS_TO</code>完整方式定义为：<br />
+<code class="prettyprint linenums lang-php">'Dept'=&gt;&nbsp;array(&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'mapping_type'=&gt;BELONGS_TO,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'class_name'=&gt;'Dept',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'foreign_key'=&gt;'userId',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'mapping_name'=&gt;'dept',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;定义更多的关联属性<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;……<br />
+),</code>关联BELONGS_TO定义支持的关联属性有：<table border="0" cellspacing="1" cellpadding="0"><tr><td>class_name</td><td> 要关联的模型类名</td></tr><tr><td>mapping_name </td><td>关联的映射名称，用于获取数据用<br />
+该名称不要和当前模型的字段有重复，否则会导致关联数据获取的冲突。</td></tr><tr><td>foreign_key </td><td>关联的外键名称</td></tr><tr><td>mapping_fields</td><td> 关联要查询的字段</td></tr><tr><td>condition</td><td> 关联条件</td></tr><tr><td>parent_key</td><td> 自引用关联的关联字段<br />
+默认为parent_id <br />
+自引用关联是一种比较特殊的关联，也就是关联表就是当前表。</td></tr><tr><td>as_fields</td><td>直接把关联的字段值映射成数据对象中的某个字段</td></tr></table><b>HAS_MANY</b><br />
+HAS_MANY 关联表示当前模型拥有多个子对象，例如每个用户有多篇文章，我们可以这样来定义：<code class="prettyprint linenums lang-php">'Article'=&gt;&nbsp;HAS_MANY</code>完整定义方式为：<br />
+<code class="prettyprint linenums lang-php">'Article'=&gt;&nbsp;array(&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'mapping_type'=&gt;HAS_MANY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'class_name'=&gt;'Article',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'foreign_key'=&gt;'userId',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'mapping_name'=&gt;'articles',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'mapping_order'=&gt;'create_time&nbsp;desc',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;定义更多的关联属性<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;……<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;),</code>关联HAS_MANY定义支持的关联属性有：<table border="0" cellspacing="1" cellpadding="0"><tr><td>class_name</td><td>要关联的模型类名</td></tr><tr><td>mapping_name</td><td> 关联的映射名称，用于获取数据用<br />
+该名称不要和当前模型的字段有重复，否则会导致关联数据获取的冲突。</td></tr><tr><td>foreign_key</td><td>  关联的外键名称<br />
+外键的默认规则是当前数据对象名称_id，例如：<br />
+UserModel对应的可能是表think_user （注意：think只是一个表前缀，可以随意配置）<br />
+那么think_user表的外键默认为 user_id，如果不是，就必须在定义关联的时候定义 foreign_key 。</td></tr><tr><td>parent_key</td><td>  自引用关联的关联字段<br />
+默认为parent_id </td></tr><tr><td>condition</td><td>  关联条件<br />
+关联查询的时候会自动带上外键的值，如果有额外的查询条件，可以通过定义关联的condition属性。</td></tr><tr><td>mapping_fields</td><td>  关联要查询的字段<br />
+默认情况下，关联查询的关联数据是关联表的全部字段，如果只是需要查询个别字段，可以定义关联的mapping_fields属性。</td></tr><tr><td>mapping_limit</td><td>  关联要返回的记录数目</td></tr><tr><td>mapping_order</td><td>  关联查询的排序</td></tr></table><b>MANY_TO_MANY</b><br />
+MANY_TO_MANY 关联表示当前模型可以属于多个对象，而父对象则可能包含有多个子对象，通常两者之间需要一个中间表类约束和关联。例如每个用户可以属于多个组，每个组可以有多个用户：<br />
+<code class="prettyprint linenums lang-php">'Group'=&gt;MANY_TO_MANY</code>完整定义方式为：<br />
+<code class="prettyprint linenums lang-php">array('mapping_type'=&gt;MANY_TO_MANY,<br />
+'class_name'=&gt;'Group',<br />
+'mapping_name'=&gt;'groups',<br />
+'foreign_key'=&gt;'userId',<br />
+'relation_foreign_key'=&gt;'goupId',<br />
+'relation_table'=&gt;'think_gourpUser'<br />
+)</code>MANY_TO_MANY支持的关联属性定义有：<table border="0" cellspacing="1" cellpadding="0"><tr><td>class_name</td><td>要关联的模型类名</td></tr><tr><td>mapping_name</td><td> 关联的映射名称，用于获取数据用<br />
+该名称不要和当前模型的字段有重复，否则会导致关联数据获取的冲突。</td></tr><tr><td>foreign_key</td><td> 关联的外键名称<br />
+外键的默认规则是当前数据对象名称_id</td></tr><tr><td>relation_foreign_key</td><td> 关联表的外键名称<br />
+默认的关联表的外键名称是表名_id</td></tr><tr><td>mapping_limit</td><td> 关联要返回的记录数目</td></tr><tr><td>mapping_order</td><td> 关联查询的排序</td></tr><tr><td>relation_table</td><td>多对多的中间关联表名称</td></tr></table>多对多的中间表默认表规则是：数据表前缀_关联操作的主表名_关联表名<br />
+如果think_user 和 think_group 存在一个对应的中间表，默认的表名应该是<br />
+如果是由group来操作关联表，中间表应该是 think_group_user，如果是从user表来操作，那么应该是think_user_group，也就是说，多对多关联的设置，必须有一个Model类里面需要显式定义中间表，否则双向操作会出错。<br />
+中间表无需另外的id主键（但是这并不影响中间表的操作），通常只是由 user_id 和 group_id 构成。<br />
+默认会通过当前模型的getRelationTableName方法来自动获取，如果当前模型是User，关联模型是Group，那么关联表的名称也就是使用 user_group这样的格式，如果不是默认规则，需要指定relation_table属性。<h3>关联查询</h3>由于性能问题，新版取消了自动关联查询机制，而统一使用relation方法进行关联操作，relation方法不但可以启用关联还可以控制局部关联操作，实现了关联操作一切尽在掌握之中。<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;D("User");<br />
+$user&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;$User-&gt;relation(true)-&gt;find(1);</code>输出$user结果可能是类似于下面的数据：<code class="prettyprint linenums lang-php">array(<br />
+'id'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;1,<br />
+'account'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;'ThinkPHP',<br />
+'password'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;'123456',<br />
+'Profile'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;array(<br />
+'email'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'liu21st@gmail.com',<br />
+'nickname'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'流年',<br />
+&nbsp;&nbsp;&nbsp;),<br />
+&nbsp;)</code>我们可以看到，用户的关联数据已经被映射到数据对象的属性里面了。其中Profile就是关联定义的mapping_name属性。<br />
+如果我们按照下面的方式定义了as_fields属性的话，<code class="prettyprint linenums lang-php">&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;$_link&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'profile'=&gt;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'mapping_type'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;HAS_ONE,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'class_name'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'Profile',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'foreign_key'=&gt;'userId',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'as_fields'=&gt;'email,nickname',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;),<br />
+);</code>查询的结果就变成了下面的结果<code class="prettyprint linenums lang-php">array(<br />
+'id'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;1,<br />
+'account'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;'ThinkPHP',<br />
+'password'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;'name',<br />
+'email'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'liu21st@gmail.com',<br />
+'nickname'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'流年',<br />
+&nbsp;)</code>email和nickname两个字段已经作为user数据对象的字段来显示了。<br />
+如果关联数据的字段名和当前数据对象的字段有冲突的话，怎么解决呢？<br />
+我们可以用下面的方式来变化下定义：<br />
+'as_fields'=&gt;'email,nickname:username',<br />
+表示关联表的nickname字段映射成当前数据对象的username字段。<br />
+默认会把所有定义的关联数据都查询出来，有时候我们并不希望这样，就可以给relation方法传入参数来控制要关联查询的。<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;D("User");<br />
+$user&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;$User-&gt;relation('Profile')-&gt;find(1);</code>关联查询一样可以支持select方法，如果要查询多个数据，并同时获取相应的关联数据，可以改成：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;D("User");<br />
+$list&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;$User-&gt;relation(true)-&gt;Select();</code>如果希望在完成的查询基础之上 再进行关联数据的查询，可以使用<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;D("User");<br />
+$user&nbsp;=&nbsp;$User-&gt;find(1);<br />
+//&nbsp;表示对当前查询的数据对象进行关联数据获取<br />
+$profile&nbsp;=&nbsp;$User-&gt;relationGet("Profile");</code>事实上，除了当前的参考模型User外，其他的关联模型是不需要创建的。<h3>关联操作</h3>除了关联查询外，系统也支持关联数据的自动写入、更新和删除<br />
+<b>关联写入</b><code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;D("User");<br />
+$data&nbsp;=&nbsp;array();<br />
+$data["account"]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;"ThinkPHP";<br />
+$data["password"]&nbsp;=&nbsp;"123456";<br />
+$data["Profile"]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'email'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'liu21st@gmail.com',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'nickname'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'流年',<br />
+);<br />
+$result&nbsp;=$User-&gt;relation(true)-&gt;add($data);</code>这样就会自动写入关联的Profile数据。<br />
+同样，可以使用参数来控制要关联写入的数据：<code class="prettyprint linenums lang-php">$result&nbsp;=&nbsp;$User-&gt;relation("Profile")-&gt;add($data);</code><b>关联更新</b><br />
+数据的关联更新和关联写入类似<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;D("User");<br />
+$data["account"]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;"ThinkPHP";<br />
+$data["password"]&nbsp;=&nbsp;"123456";<br />
+$data["Profile"]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'email'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'liu21st@gmail.com',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'nickname'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'流年',<br />
+);<br />
+$result&nbsp;=&nbsp;$User-&gt;&nbsp;relation(true)-&gt;where('id=3')-&gt;save($data);</code>Relation(true)会关联保存User模型定义的所有关联数据，如果只需要关联保存部分数据，可以使用：<code class="prettyprint linenums lang-php">$result&nbsp;=&nbsp;$User-&gt;relation("Profile")-&gt;save($data);</code>这样就只会同时更新关联的Profile数据。<br />
+关联保存的规则：<br />
+HAS_ONE： 关联数据的更新直接赋值<br />
+HAS_MANY： 的关联数据如果传入主键的值 则表示更新 否则就表示新增<br />
+MANY_TO_MANY： 的数据更新是删除之前的数据后重新写入<b>关联删除</b><br />
+删除用户ID为3的记录的同时删除关联数据<code class="prettyprint linenums lang-php">$result&nbsp;=&nbsp;$User-&gt;relation(true)-&gt;delete("3");</code>如果只需要关联删除部分数据，可以使用<code class="prettyprint linenums lang-php">$result&nbsp;=&nbsp;$User-&gt;relation("Profile")-&gt;delete("3");</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="77.html">上一页</a><a title="下一页" class="next" href="79.html">下一页</a></div>
+		</div>
+	</body>
+</html>

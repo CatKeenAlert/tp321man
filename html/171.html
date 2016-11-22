@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>隐藏index.php</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/171.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>隐藏index.php</h1>
+			<div class="page"><a title="上一页" class="prev" href="170.html">上一页</a><a title="下一页" class="next" href="172.html">下一页</a></div>
+		</div>
+		<div class="book-content">为了更好的实现SEO优化，我们需要隐藏URL地址中的index.php，由于不同的服务器环境配置方法区别较大，apache环境下面的配置我们可以参考5.9 URL重写来实现，就不再多说了，这里大概说明下IIS和Nginx下面的基本配置方法和思路。<br />
+<b>IIS环境</b><br />
+如果你的服务器环境支持ISAPI_Rewrite的话，可以配置httpd.ini文件，添加下面的内容：<code class="prettyprint linenums lang-php">RewriteRule&nbsp;(.*)$&nbsp;/index\.php\?s=$1&nbsp;[I]</code>在IIS的高版本下面可以配置web.Config，在中间添加rewrite节点：<code class="prettyprint linenums lang-php">&lt;rewrite&gt;<br />
+&lt;rules&gt;<br />
+&lt;rule&nbsp;name="OrgPage"&nbsp;stopProcessing="true"&gt;<br />
+&lt;match&nbsp;url="^(.*)$"&nbsp;/&gt;<br />
+&lt;conditions&nbsp;logicalGrouping="MatchAll"&gt;<br />
+&lt;add&nbsp;input="{HTTP_HOST}"&nbsp;pattern="^(.*)$"&nbsp;/&gt;<br />
+&lt;add&nbsp;input="{REQUEST_FILENAME}"&nbsp;matchType="IsFile"&nbsp;negate="true"&nbsp;/&gt;<br />
+&lt;add&nbsp;input="{REQUEST_FILENAME}”&nbsp;matchType="IsDirectory"&nbsp;negate="true"&nbsp;/&gt;<br />
+&lt;/conditions&gt;<br />
+&lt;action&nbsp;type="Rewrite"&nbsp;url="index.php/{R:1}"&nbsp;/&gt;<br />
+&lt;/rule&gt;<br />
+&lt;/rules&gt;<br />
+&lt;/rewrite&gt;</code><b>Nginx环境</b><br />
+在Nginx低版本中，是不支持PATHINFO的，但是可以通过在Nginx.conf中配置转发规则实现：<code class="prettyprint linenums lang-php">&nbsp;&nbsp;location&nbsp;/&nbsp;{&nbsp;//&nbsp;…..省略部分代码<br />
+&nbsp;&nbsp;&nbsp;if&nbsp;(!-e&nbsp;$request_filename)&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;rewrite&nbsp;&nbsp;^(.*)$&nbsp;&nbsp;/index.php?s=$1&nbsp;&nbsp;last;<br />
+&nbsp;&nbsp;&nbsp;break;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+}</code>其实内部是转发到了ThinkPHP提供的兼容模式的URL，利用这种方式，可以解决其他不支持PATHINFO的WEB服务器环境。<br />
+<br />
+如果你的ThinkPHP安装在二级目录，Nginx的伪静态方法设置如下，其中youdomain是所在的目录名称。<code class="prettyprint linenums lang-php">&nbsp;&nbsp;&nbsp;&nbsp;location&nbsp;/youdomain/&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(!-e&nbsp;$request_filename){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;&nbsp;^/youdomain/(.*)$&nbsp;&nbsp;/youdomain/index.php?s=$1&nbsp;&nbsp;last;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="170.html">上一页</a><a title="下一页" class="next" href="172.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>命名范围</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/70.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>命名范围</h1>
+			<div class="page"><a title="上一页" class="prev" href="69.html">上一页</a><a title="下一页" class="next" href="71.html">下一页</a></div>
+		</div>
+		<div class="book-content">模型命名范围功能，给模型操作提供了一系列的（连贯操作）封装，让你更方便的查询和操作数据。<h4>定义属性</h4>要使用命名范围功能，主要涉及到模型类的_scope属性定义和scope连贯操作方法的使用。<br />
+我们首先定义_scope属性：<code class="prettyprint linenums lang-php">class&nbsp;NewsModel&nbsp;extends&nbsp;Model&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;$_scope&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;命名范围normal<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'normal'=&gt;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'where'=&gt;array('status'=&gt;1),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;命名范围latest<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'latest'=&gt;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'order'=&gt;'create_time&nbsp;DESC',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'limit'=&gt;10,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;);<br />
+}</code>_scope属性是一个数组，每个数组项表示定义一个命名范围，命名范围的定义格式为：<br />
+<b>'命名范围标识名'=&gt;array('属性1'=&gt;'值1','属性2'=&gt;'值2'...)</b><br />
+<b>命名范围标识名</b>：可以是任意的字符串，用于标识当前定义的命名范围。<br />
+命名范围支持的属性包括：<table border="0" cellspacing="1" cellpadding="0"><tr><td>where</td><td>查询条件</td></tr><tr><td>field</td><td>查询字段</td></tr><tr><td>order</td><td>结果排序</td></tr><tr><td>table</td><td>查询表名</td></tr><tr><td>limit</td><td>结果限制</td></tr><tr><td>page</td><td>结果分页</td></tr><tr><td>having</td><td>having查询</td></tr><tr><td>group</td><td>group查询</td></tr><tr><td>lock</td><td>查询锁定</td></tr><tr><td>distinct</td><td>唯一查询</td></tr><tr><td>cache</td><td>查询缓存</td></tr></table>每个命名范围的定义可以包括这些属性中一个或者多个。<h4>方法调用</h4>属性定义完成后，接下来就是使用<b>scope方法</b>进行命名范围的调用了，每调用一个命名范围，就相当于执行了命名范围中定义的相关操作选项。<h4>调用某个命名范围</h4>最简单的调用方式就直接调用某个命名范围，例如：<code class="prettyprint linenums lang-php">$Model-&gt;scope('normal')-&gt;select();<br />
+$Model-&gt;scope('latest')-&gt;select();</code>生成的SQL语句分别是：<code class="prettyprint linenums lang-php">SELECT&nbsp;*&nbsp;FROM&nbsp;think_news&nbsp;WHERE&nbsp;status=1<br />
+SELECT&nbsp;*&nbsp;FROM&nbsp;think_news&nbsp;ORDER&nbsp;BY&nbsp;create_time&nbsp;DESC&nbsp;LIMIT&nbsp;10</code><h4>调用多个命名范围</h4>也可以支持同时调用多个命名范围定义，例如：<code class="prettyprint linenums lang-php">$Model-&gt;scope('normal')-&gt;scope('latest')-&gt;select();</code>或者简化为：<code class="prettyprint linenums lang-php">$Model-&gt;scope('normal,latest')-&gt;select();</code>生成的SQL都是：<code class="prettyprint linenums lang-php">SELECT&nbsp;*&nbsp;FROM&nbsp;think_news&nbsp;WHERE&nbsp;status=1&nbsp;ORDER&nbsp;BY&nbsp;create_time&nbsp;DESC&nbsp;LIMIT&nbsp;10</code>如果两个命名范围的定义存在冲突，则后面调用的命名范围定义会覆盖前面的相同属性的定义。<br />
+如果调用的命名范围标识不存在，则会忽略该命名范围，例如：<code class="prettyprint linenums lang-php">$Model-&gt;scope('normal,new')-&gt;select();</code>上面的命名范围中new是不存在的，因此只有normal命名范围生效，生成的SQL语句是：<code class="prettyprint linenums lang-php">SELECT&nbsp;*&nbsp;FROM&nbsp;think_news&nbsp;WHERE&nbsp;status=1</code><h4>默认命名范围</h4>系统支持默认命名范围功能，如果你定义了一个default命名范围，例如：<code class="prettyprint linenums lang-php">&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;$_scope&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;默认的命名范围<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'default'=&gt;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'where'=&gt;array('status'=&gt;1),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'limit'=&gt;10,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;);</code>那么调用default命名范围可以直接使用：<code class="prettyprint linenums lang-php">$Model-&gt;scope()-&gt;select();</code>而无需再传入命名范围标识名<code class="prettyprint linenums lang-php">$Model-&gt;scope('default')-&gt;select();</code>虽然这两种方式是等效的。<h4>命名范围调整</h4>如果你需要在normal命名范围的基础上增加额外的调整，可以使用：<code class="prettyprint linenums lang-php">$Model-&gt;scope('normal',array('limit'=&gt;5))-&gt;select();</code>生成的SQL语句是：<code class="prettyprint linenums lang-php">SELECT&nbsp;*&nbsp;FROM&nbsp;think_news&nbsp;WHERE&nbsp;status=1&nbsp;LIMIT&nbsp;5</code>当然，也可以在两个命名范围的基础上进行调整，例如：<code class="prettyprint linenums lang-php">$Model-&gt;scope('normal,latest',array('limit'=&gt;5))-&gt;select();</code>生成的SQL是：<code class="prettyprint linenums lang-php">SELECT&nbsp;*&nbsp;FROM&nbsp;think_news&nbsp;WHERE&nbsp;status=1&nbsp;ORDER&nbsp;BY&nbsp;create_time&nbsp;DESC&nbsp;LIMIT&nbsp;5</code><h4>自定义命名范围</h4>又或者，干脆不用任何现有的命名范围，我直接传入一个命名范围：<code class="prettyprint linenums lang-php">$Model-&gt;scope(array('field'=&gt;'id,title','limit'=&gt;5,'where'=&gt;'status=1','order'=&gt;'create_time&nbsp;DESC'))-&gt;select();</code>这样，生成的SQL变成：<code class="prettyprint linenums lang-php">SELECT&nbsp;id,title&nbsp;FROM&nbsp;think_news&nbsp;WHERE&nbsp;status=1&nbsp;ORDER&nbsp;BY&nbsp;create_time&nbsp;DESC&nbsp;LIMIT&nbsp;5</code><h4>与连贯操作混合使用</h4>命名范围一样可以和之前的连贯操作混合使用，例如定义了命名范围_scope属性：<code class="prettyprint linenums lang-php">protected&nbsp;$_scope&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'normal'=&gt;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'where'=&gt;array('status'=&gt;1),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'field'=&gt;'id,title',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'limit'=&gt;10,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;),<br />
+);</code>然后在使用的时候，可以这样调用：<code class="prettyprint linenums lang-php">$Model-&gt;scope('normal')-&gt;limit(8)-&gt;order('id&nbsp;desc')-&gt;select();</code>这样，生成的SQL变成：<code class="prettyprint linenums lang-php">SELECT&nbsp;id,title&nbsp;FROM&nbsp;think_news&nbsp;WHERE&nbsp;status=1&nbsp;ORDER&nbsp;BY&nbsp;id&nbsp;desc&nbsp;LIMIT&nbsp;8</code>如果定义的命名范围和连贯操作的属性有冲突，则后面调用的会覆盖前面的。<br />
+如果是这样调用：<code class="prettyprint linenums lang-php">$Model-&gt;limit(8)-&gt;scope('normal')-&gt;order('id&nbsp;desc')-&gt;select();</code>生成的SQL则是：<code class="prettyprint linenums lang-php">SELECT&nbsp;id,title&nbsp;FROM&nbsp;think_news&nbsp;WHERE&nbsp;status=1&nbsp;ORDER&nbsp;BY&nbsp;id&nbsp;desc&nbsp;LIMIT&nbsp;10</code>命名范围功能的优势在于可以一次定义多次调用，并且在项目中也能起到分工配合的规范，避免开发人员在写CURD操作的时候出现问题，项目经理只需要合理的规划命名范围即可。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="69.html">上一页</a><a title="下一页" class="next" href="71.html">下一页</a></div>
+		</div>
+	</body>
+</html>

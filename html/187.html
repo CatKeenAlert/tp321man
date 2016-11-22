@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>Cookie支持</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/187.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>Cookie支持</h1>
+			<div class="page"><a title="上一页" class="prev" href="186.html">上一页</a><a title="下一页" class="next" href="188.html">下一页</a></div>
+		</div>
+		<div class="book-content">系统内置了一个cookie函数用于支持和简化Cookie的相关操作。<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th colspan="2">Cookie  用于Cookie 设置、获取、删除操作</th>    </tr>    <tr>        <td>用法</td>        <td>cookie($name, $value='', $option=null)</td>    </tr>    <tr>        <td>参数</td>        <td>name（必须）：要操作的cookie变量<br />
+value（可选）：要设置的cookie值<br />
+option（可选）：传入的cookie设置参数，默认为空</td>    </tr>    <tr>        <td>返回值</td>        <td>见详（根据具体的用法返回不同的值）</td>    </tr></table>cookie函数是一个多元化操作函数，同一个函数的不同参数调用方式可以完成cookie的设置、获取和删除操作。<b>Cookie设置</b><code class="prettyprint linenums lang-php">cookie('name','value');&nbsp;&nbsp;//设置cookie<br />
+cookie('name','value',3600);&nbsp;//&nbsp;指定cookie保存时间</code>还可以支持参数传入的方式完成复杂的cookie赋值，下面是对cookie的值设置3600秒有效期，并且加上cookie前缀think_<code class="prettyprint linenums lang-php">cookie('name','value',array('expire'=&gt;3600,'prefix'=&gt;'think_'))</code>数组参数可以采用query形式参数<code class="prettyprint linenums lang-php">cookie('name','value','expire=3600&prefix=think_')</code>和上面的用法等效。<br />
+传入的option参数支持prefix,expire,path,domain四个索引参数，如果没有传入或者传入空值的话，会默认取COOKIE_PREFIX、COOKIE_EXPIRE、COOKIE_PATH和COOKIE_DOMAIN四个配置参数。如果只传入个别参数，那么也会和默认的配置参数合并。<b>Cookie获取</b><br />
+获取cookie很简单，无论是怎么设置的cookie，只需要使用：<code class="prettyprint linenums lang-php">$value&nbsp;=&nbsp;cookie('name');</code>如果没有设置cookie前缀的话 相当于<code class="prettyprint linenums lang-php">$value&nbsp;=&nbsp;$_COOKIE['name']</code>如果设置了cookie前缀的话，相当于<code class="prettyprint linenums lang-php">$value&nbsp;=&nbsp;$_COOKIE['前缀+name']</code><b>Cookie删除</b><br />
+删除某个cookie的值，使用：<code class="prettyprint linenums lang-php">cookie('name',null);</code>要删除所有的Cookie值，可以使用<code class="prettyprint linenums lang-php">cookie(null);&nbsp;//&nbsp;清空当前设定前缀的所有cookie值<br />
+cookie(null,'think_');&nbsp;//&nbsp;&nbsp;清空指定前缀的所有cookie值</code>3.1版本开始，cookie方法增加对数组的支持，采用轻量级的json编码格式保存 减少存储空间。<br />
+例如：<code class="prettyprint linenums lang-php">cookie('name',array('name1','name2'));</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="186.html">上一页</a><a title="下一页" class="next" href="188.html">下一页</a></div>
+		</div>
+	</body>
+</html>

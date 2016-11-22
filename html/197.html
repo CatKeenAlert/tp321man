@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>常量参考</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/197.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>常量参考</h1>
+			<div class="page"><a title="上一页" class="prev" href="196.html">上一页</a><a title="下一页" class="next" href="198.html">下一页</a></div>
+		</div>
+		<div class="book-content"><h3>预定义常量</h3><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th>常量 </th>		<th>说明 </th>	</tr>	<tr>		<td>URL_COMMON=0</td>		<td>普通模式 URL</td>	</tr>	<tr>		<td>URL_PATHINFO=1</td>		<td>PATHINFO URL</td>	</tr>	<tr>		<td>URL_REWRITE=2</td>		<td>REWRITE URL</td>	</tr>	<tr>		<td>URL_COMPAT=3</td>		<td>兼容模式 URL</td>	</tr>	<tr>		<td>HAS_ONE=1</td>		<td>HAS_ONE 关联定义 </td>	</tr>	<tr>		<td>BELONGS_TO=2</td>		<td>BELONGS_TO 关联定义 </td>	</tr>	<tr>		<td>HAS_MANY=3</td>		<td>HAS_MANY 关联定义 </td>	</tr>	<tr>		<td>MANY_TO_MANY=4</td>		<td>MANY_TO_MANY 关联定义 </td>	</tr>	<tr>		<td>THINK_VERSION</td>		<td>框架版本号 </td>	</tr>	<tr>		<td>THINK_RELEASE</td>		<td>框架发行日期 </td>	</tr></table>这些预定义常量不会随着环境的变化而变化。<h3>路径常量</h3>系统和项目的路径常量用于系统默认的目录规范，可以通过重新定义改变，如果不希望定制目录，这些常量一般不需要更改。<table border="0" cellspacing="1" cellpadding="0">	<tr>		<th>常量名 </th>		<th>说明 </th>		<th>默认值 </th>	</tr>	<tr>		<td>CORE_PATH</td>		<td>系统核心类库目录 </td>		<td>THINK_PATH.'Lib/'</td>	</tr>	<tr>		<td>EXTEND_PATH</td>		<td>系统扩展目录 </td>		<td>THINK_PATH.'Extend/'</td>	</tr>	<tr>		<td>MODE_PATH</td>		<td>模式扩展目录 </td>		<td>EXTEND_PATH.'Mode/'</td>	</tr>	<tr>		<td>ENGINE_PATH</td>		<td>引擎扩展目录 </td>		<td>EXTEND_PATH.'Engine/'</td>	</tr>	<tr>		<td>VENDOR_PATH</td>		<td>第三方类库目录 </td>		<td>EXTEND_PATH.'Vendor/'</td>	</tr>	<tr>		<td>LIBRARY_PATH</td>		<td>系统扩展类库目录 </td>		<td>EXTEND_PATH.'Library/'</td>	</tr>	<tr>		<td>COMMON_PATH</td>		<td>项目公共目录 </td>		<td>APP_PATH.'Common/'</td>	</tr>	<tr>		<td>LIB_PATH</td>		<td>项目类库目录 </td>		<td>APP_PATH.'Lib/'</td>	</tr>	<tr>		<td>RUNTIME_PATH</td>		<td>项目运行时目录 </td>		<td>APP_PATH.'Runtime/'</td>	</tr>	<tr>		<td>CONF_PATH</td>		<td>项目配置目录 </td>		<td>APP_PATH.'Conf/'</td>	</tr>	<tr>		<td>LOG_PATH</td>		<td>项目日志目录 </td>		<td>RUNTIME_PATH.'Logs/'</td>	</tr>	<tr>		<td>CACHE_PATH</td>		<td>项目模板缓存目录 </td>		<td>RUNTIME_PATH.'Cache/'</td>	</tr>	<tr>		<td>LANG_PATH</td>		<td>项目语言包目录 </td>		<td>APP_PATH.'Lang/'</td>	</tr>	<tr>		<td>TEMP_PATH</td>		<td>项目缓存目录 </td>		<td>RUNTIME_PATH.'Temp/'</td>	</tr>	<tr>		<td>DATA_PATH</td>		<td>项目数据目录 </td>		<td>RUNTIME_PATH.'Data/'</td>	</tr>	<tr>		<td>TMPL_PATH</td>		<td>项目模板目录 </td>		<td>APP_PATH.'Tpl/'</td>	</tr>	<tr>		<td>HTML_PATH</td>		<td>项目静态缓存目录 </td>		<td>APP_PATH.'Html/'</td>	</tr></table><h3>系统常量</h3>下面这些系统常量会随着开发环境的改变或者设置的改变而产生变化。<table border="0" cellspacing="1" cellpadding="0">	<tr>		<th>常量名 </th>		<th>说明 </th>	</tr>	<tr>		<td>IS_CGI</td>		<td>是否属于 CGI模式 </td>	</tr>	<tr>		<td>IS_WIN</td>		<td>是否属于Windows 环境 </td>	</tr>	<tr>		<td>IS_CLI</td>		<td>是否属于命令行模式 </td>	</tr>	<tr>		<td>__ROOT__</td>		<td>网站根目录地址 </td>	</tr>	<tr>		<td>__APP__</td>		<td>当前项目（入口文件）地址 </td>	</tr>	<tr>		<td>__GROUP__</td>		<td>当前分组的URL地址 </td>	</tr>	<tr>		<td>__URL__</td>		<td>当前模块的URL地址 </td>	</tr>	<tr>		<td>__ACTION__</td>		<td>当前操作的URL地址 </td>	</tr>	<tr>		<td>__SELF__</td>		<td>当前URL地址 </td>	</tr>	<tr>		<td>__INFO__</td>		<td>当前的PATH_INFO字符串 </td>	</tr>	<tr>		<td>__EXT__</td>		<td>当前URL地址的扩展名 </td>	</tr>	<tr>		<td>APP_NAME</td>		<td>当前项目名 </td>	</tr>	<tr>		<td>GROUP_NAME</td>		<td>当前分组名 </td>	</tr>	<tr>		<td>MODULE_NAME</td>		<td>当前模块名 </td>	</tr>	<tr>		<td>ACTION_NAME</td>		<td>当前操作名 </td>	</tr>	<tr>		<td>APP_DEBUG</td>		<td>是否开启调试模式 </td>	</tr>	<tr>		<td>MODE_NAME</td>		<td>当前模式名称 </td>	</tr>	<tr>		<td>APP_PATH</td>		<td>当前项目路径 </td>	</tr>	<tr>		<td>THINK_PATH</td>		<td>系统框架路径 </td>	</tr>	<tr>		<td>MEMORY_LIMIT_ON</td>		<td>系统内存统计支持 </td>	</tr>	<tr>		<td>RUNTIME_FILE</td>		<td>项目编译缓存文件名 </td>	</tr>	<tr>		<td>THEME_NAME</td>		<td>当前主题名称 </td>	</tr>	<tr>		<td>THEME_PATH</td>		<td>当前模板主题路径 </td>	</tr>	<tr>		<td>APP_TMPL_PATH</td>		<td>当前模板URL路径 </td>	</tr>	<tr>		<td>LANG_SET</td>		<td>当前浏览器语言 </td>	</tr>	<tr>		<td>MAGIC_QUOTES_GPC</td>		<td>MAGIC_QUOTES_GPC</td>	</tr>	<tr>		<td>NOW_TIME</td>		<td>当前请求时间（3.1新增）</td>	</tr>	<tr>		<td>IS_GET</td>		<td>当前是否GET请求（3.1新增）</td>	</tr>	<tr>		<td>IS_POST</td>		<td>当前是否POST请求（3.1新增）</td>	</tr>	<tr>		<td>IS_PUT</td>		<td>当前是否PUT请求（3.1新增）</td>	</tr>	<tr>		<td>IS_DELETE</td>		<td>当前是否DELETE请求（3.1新增）</td>	</tr>	<tr>		<td>IS_AJAX</td>		<td>当前是否AJAX请求（3.1新增）</td>	</tr></table></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="196.html">上一页</a><a title="下一页" class="next" href="198.html">下一页</a></div>
+		</div>
+	</body>
+</html>

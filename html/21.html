@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>配置格式</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/21.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>配置格式</h1>
+			<div class="page"><a title="上一页" class="prev" href="20.html">上一页</a><a title="下一页" class="next" href="22.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP框架中所有配置文件的定义格式均采用返回PHP数组的方式，格式为：<code class="prettyprint linenums lang-php">//项目配置文件<br />
+return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'DEFAULT_MODULE'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'Index',&nbsp;//默认模块<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'URL_MODEL'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'2',&nbsp;//URL模式<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'SESSION_AUTO_START'&nbsp;=&gt;&nbsp;true,&nbsp;//是否开启session<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//更多配置参数<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//...<br />
+);</code>配置参数不区分大小写（因为无论大小写定义都会转换成小写），所以下面的配置等效：<code class="prettyprint linenums lang-php">//项目配置文件<br />
+return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'default_module'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'Index',&nbsp;//默认模块<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'url_model'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'2',&nbsp;//URL模式<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'session_auto_start'&nbsp;=&gt;&nbsp;true,&nbsp;//是否开启session<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//更多配置参数<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//...<br />
+);</code>但是我们建议保持大写定义配置参数的规范。还可以在配置文件中可以使用二维数组来配置更多的信息，例如：<code class="prettyprint linenums lang-php">//项目配置文件<br />
+return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'DEFAULT_MODULE'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'Index',&nbsp;//默认模块<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'URL_MODEL'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'2',&nbsp;//URL模式<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'SESSION_AUTO_START'&nbsp;=&gt;&nbsp;true,&nbsp;//是否开启session<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'USER_CONFIG'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'USER_AUTH'&nbsp;=&gt;&nbsp;true,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'USER_TYPE'&nbsp;=&gt;&nbsp;2,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//更多配置参数<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//...<br />
+);</code>需要注意的是，二级参数配置区分大小写，也就说读取确保和定义一致。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="20.html">上一页</a><a title="下一页" class="next" href="22.html">下一页</a></div>
+		</div>
+	</body>
+</html>

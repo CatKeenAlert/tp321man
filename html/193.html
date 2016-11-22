@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>验证码</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/193.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>验证码</h1>
+			<div class="page"><a title="上一页" class="prev" href="192.html">上一页</a><a title="下一页" class="next" href="194.html">下一页</a></div>
+		</div>
+		<div class="book-content">要使用验证码，需要导入扩展类库中的ORG.Util.Image类库和ORG.Util.String类库。我们通过在在模块类中增加一个verify方法来用于显示验证码：<code class="prettyprint linenums lang-php">Public&nbsp;function&nbsp;verify(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;import('ORG.Util.Image');<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Image::buildImageVerify();<br />
+}</code>Image类的buildImageVerify方法用于生成验证码，<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="3">buildImageVerify 生成图像验证码</th>  </tr>  <tr>    <td>用法</td>    <td colspan="2">buildImageVerify($length,$mode,$type,$width,$height,$verifyName)</td>  </tr>  <tr>    <td rowspan="6">用法</td>    <td>length</td>    <td>验证码的长度，默认为4位数</td>  </tr>  <tr>    <td>model</td>    <td>验证字符串的类型，默认为数字，其他支持类型有0 字母 1 数字 2 大写字母 3 小写字母 4中文 5混合</td>  </tr><tr>    <td>type</td>    <td>验证码的图片类型，默认为png </td>  </tr><tr>    <td>width</td>    <td>验证码的宽度，默认会自动根据验证码长度自动计算</td>  </tr><tr>    <td>height</td>    <td>验证码的高度，默认为22</td>  </tr><tr>    <td>verifyName</td>    <td>验证码的SESSION记录名称，默认为verify</td>  </tr></table>定义完成后，验证码的显示只需要在模板文件中添加：<code class="prettyprint linenums lang-php">&lt;img&nbsp;src='__app__/public/verify/'&nbsp;/&gt;</code>运行后可以看到类似下面的验证码显示：<br />
+<img src="../images/img/7.png" /><br />
+每次生成验证码的时候，就会通过SESSION记录本次的验证码的md5后的字符串信息，所以，要检查验证码是否正确，我们只需要在Action中使用下面的代码就行了：<code class="prettyprint linenums lang-php">if($_SESSION['verify']&nbsp;!=&nbsp;md5($_POST['verify']))&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;$this-&gt;error('验证码错误！');<br />
+}</code>注意，这里的verify名称取决于你的验证码的verifyName参数的值。BuildImageVerify方法不支持中文验证码的显示，如果需要显示中文验证码，请使用<br />
+GBVerify方法，参数如下：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th colspan="2">GBVerify生成中文验证码 </th>    </tr>    <tr>        <td>用法 </td>        <td>GBVerify ($length,$type,$width,$height,$fontface,$verifyName)</td>    </tr>    <tr>        <td>参数 </td>        <td><b>length</b>：验证码的长度，默认为4位数<br />
+            <b>type</b>：验证码的图片类型，默认为png<br />
+            <b>width</b>：验证码的宽度，默认会自动根据验证码长度自动计算<br />
+            <b>height</b>：验证码的高度，默认为50<br />
+            <b>fontface</b>：使用的字体文件，使用完整文件名或者放到图像类所在的目录下面，默认使用的字体文件是simhei.ttf（该文件可以从window的Fonts目录下面找到<br />
+            <b>verifyName</b>：验证码的SESSION记录名称，默认为verify<br />
+        </td>    </tr></table>用法示例：<code class="prettyprint linenums lang-php">Public&nbsp;function&nbsp;verify(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;import("ORG.Util.Image");<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Image::GBVerify();<br />
+}</code>显示效果如下：<br />
+<img src="../images/img/8.png" /><br />
+如果无法显示验证码，请检查：<br />
+PHP是否已经安装GD库支持；<br />
+输出之前是否有任何的输出（尤其是UTF8的BOM头信息输出）；<br />
+Image类库是否正确导入；<br />
+如果是中文验证码检查是否有拷贝字体文件到类库所在目录；</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="192.html">上一页</a><a title="下一页" class="next" href="194.html">下一页</a></div>
+		</div>
+	</body>
+</html>

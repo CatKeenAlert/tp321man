@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>字段定义</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/57.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>字段定义</h1>
+			<div class="page"><a title="上一页" class="prev" href="56.html">上一页</a><a title="下一页" class="next" href="58.html">下一页</a></div>
+		</div>
+		<div class="book-content">通常情况下，你无须在模型类里面手动定义数据表的字段，系统会在模型首次实例化的时候自动获取数据表的字段信息（而且只需要一次，以后会永久缓存字段信息，除非设置不缓存或者删除），如果是调试模式则不会生成字段缓存文件，则表示每次都会重新获取数据表字段信息。<br />
+字段缓存保存在Runtime/Data/_fields/ 目录下面，缓存机制是每个模型对应一个字段缓存文件（而并非每个数据表对应一个字段缓存文件），命名格式是：<br />
+<b>数据库名.模型名.php</b><br />
+例如：<br />
+thinkphp.User.php  表示User模型生成的字段缓存文件<br />
+thinkphp.Article.php 表示Article模型生成的字段缓存文件<br />
+字段缓存包括数据表的字段信息、主键字段和是否自动增长，如果开启字段类型验证的话还包括字段类型信息等等，无论是用M方法还是D方法，或者用原生的实例化模型类一般情况下只要是不开启调试模式都会生成字段缓存（字段缓存可以单独设置关闭）。<br />
+<br />
+从3.1版本开始，模型的字段缓存文件名全部转换成小写，避免重复生成。可以通过设置DB_FIELDS_CACHE 参数来关闭字段自动缓存，如果在开发的时候经常变动数据库的结构，而不希望进行数据表的字段缓存，可以在项目配置文件中增加如下配置：<code class="prettyprint linenums lang-php">'DB_FIELDS_CACHE'=&gt;false</code>注意：调试模式下面由于考虑到数据结构可能会经常变动，所以默认是关闭字段缓存的。<br />
+如果需要显式获取当前数据表的字段信息，可以使用模型类的getDbFields方法来获取当前数据对象的全部字段信息，例如：<code class="prettyprint linenums lang-php">$fields&nbsp;=&nbsp;$User-&gt;getDbFields();</code>如果你在部署模式下面修改了数据表的字段信息，可能需要清空Data/_fields目录下面的缓存文件，让系统重新获取更新的数据表字段信息，否则会发生新增的字段无法写入数据库的问题。<br />
+如果不希望依赖字段缓存或者想提高性能，也可以在模型类里面手动定义数据表字段的名称，可以避免IO加载的效率开销，在模型类里面添加fields属性即可，定义格式如下：<code class="prettyprint linenums lang-php">&lt;?php<br />
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;UserModel&nbsp;extends&nbsp;Model{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;$fields&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id',&nbsp;'username',&nbsp;'email',&nbsp;'age',&nbsp;'_pk'&nbsp;=&gt;&nbsp;'id',&nbsp;'_autoinc'&nbsp;=&gt;&nbsp;true<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}</code>其中_pk 表示主键字段名称 _autoinc 表示主键是否自动增长类型，定义了fields属性之后，就不会自动获取数据表的字段信息了。如果有修改或者增加字段，必须手动修改fields属性的值。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="56.html">上一页</a><a title="下一页" class="next" href="58.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>序言</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/0.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>序言</h1>
+			<div class="page"><a title="下一页" class="next" href="1.html">下一页</a></div>
+		</div>
+		<div class="book-content"><a href="http://t.qq.com/topthink" target="_blank"><img src="../images/img/0.png" /></a> <h3>版权申明</h3>发布本资料须遵守开放出版许可协议 1.0 或者更新版本。<br />
+未经版权所有者明确授权，禁止发行本文档及其被实质上修改的版本。 <br />
+未经版权所有者事先授权，禁止将此作品及其衍生作品以标准（纸质）书籍形式发行。 <br />
+如果有兴趣再发行或再版本手册的全部或部分内容，不论修改过与否，或者有任何问题，请联系版权所有者 liu21st@gmail.com。<br />
+对ThinkPHP有任何疑问或者建议，请进入官方论坛 [ <a href="http://bbs.thinkphp.cn" target="_blank">http://bbs.thinkphp.cn</a> ] 发布相关讨论。并在此感谢ThinkPHP团队的所有成员和所有关注和支持ThinkPHP的朋友。 <br />
+有关ThinkPHP项目及本文档的最新资料，请及时访问ThinkPHP项目主站 <a href="http://thinkphp.cn" target="_blank">http://thinkphp.cn</a>。<br />
+本文档的版权归ThinkPHP文档小组所有，本文档及其描述的内容受有关法律的版权保护，对本文档内容的任何形式的非法复制，泄露或散布，将导致相应的法律责任。<h3>作者和贡献者</h3>本手册内容由ThinkPHP创始人刘晨（流年）撰写，以及文档小组的成员参与贡献。<br />
+他们是misn、<a href="http://www.zjzit.cn/" target="_blank">麦当苗儿</a>、luofei、<a href="http://www.hdj.me/" target="_blank">deeka</a>、yangweijie、<a href="http://www.4wei.cn/" target="_blank">vus520</a>。<br />
+并在此对所有参与手册纠错和建议的朋友表示感谢！<h3>捐赠我们</h3><b><font color="red">ThinkPHP一直在致力于简化企业和个人的WEB应用开发，您的帮助是对我们最大的支持和动力！<br />
+我们的团队七年来一直在坚持不懈地努力，并坚持开源和免费提供使用，帮助开发人员更加方便的进行WEB应用的快速开发，如果您对我们的成果表示认同并且觉得对你有所帮助我们愿意接受来自各方面的捐赠^_^。</font></b><br />
+<a href="http://me.alipay.com/thinkphp" target="_blank"><img src="../images/img/1.png" /></a></div>
+		<div class="book-footer">
+			<div class="page"><a title="下一页" class="next" href="1.html">下一页</a></div>
+		</div>
+	</body>
+</html>

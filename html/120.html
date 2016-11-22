@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>修改定界符</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/120.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>修改定界符</h1>
+			<div class="page"><a title="上一页" class="prev" href="119.html">上一页</a><a title="下一页" class="next" href="121.html">下一页</a></div>
+		</div>
+		<div class="book-content">模板文件可以包含普通模板标签和XML模板标签，内置模板引擎的普通模板标签默认以{ 和 } 作为开始和结束标识，并且在开始标记紧跟标签的定义，如果之间有空格或者换行则被视为非模板标签直接输出。 <br />
+例如：{$name} {$vo.name} {$vo['name']|strtoupper} 都属于普通模板标签 <br />
+要更改普遍模板的起始标签和结束标签，请使用下面的配置参数： <code class="prettyprint linenums lang-php">TMPL_L_DELIM&nbsp;&nbsp;//模板引擎普通标签开始标记&nbsp;<br />
+TMPL_R_DELIM&nbsp;&nbsp;&nbsp;&nbsp;//模板引擎普通标签结束标记</code>例如在项目配置文件中增加下面的配置：<code class="prettyprint linenums lang-php">'TMPL_L_DELIM'=&gt;'',</code>普通标签的定界符就被修改了，原来的<code class="prettyprint linenums lang-php">{$name}&nbsp;{$vo.name}</code>必须使用<code class="prettyprint linenums lang-php">&nbsp;&lt;{$name}&gt;&lt;{$vo.name}&gt;</code>才能生效了。<br />
+普通模板标签主要用于模板变量输出和模板注释。如果要使用其它功能，请使用XML模板标签。XML模板标签可以用于模板变量输出、文件包含、条件控制、循环输出等功能，而且完全可以自己扩展功能。如果你觉得XML标签无法在正在使用的编辑器里面无法编辑，还可以更改XML标签库的起始和结束标签，请修改下面的配置参数： <code class="prettyprint linenums lang-php">TAGLIB_BEGIN&nbsp;&nbsp;&nbsp;&nbsp;//标签库标签开始标签&nbsp;<br />
+TAGLIB_END&nbsp;&nbsp;&nbsp;&nbsp;//标签库标签结束标记</code>例如在项目配置文件中增加下面的配置：<code class="prettyprint linenums lang-php">'TAGLIB_BEGIN'=&gt;'[',<br />
+'TAGLIB_END'=&gt;']',</code>原来的<br />
+相等不相等<br />
+就必须改成<code class="prettyprint linenums lang-php">[eq&nbsp;name="name"&nbsp;value="value"]相等[else/]不相等[/eq]</code>注意：XML标签和普通标签的定界符不能冲突，否则会导致解析错误。如果你定制了普通表情的定界符，而且默认跳转页面用的是系统默认的话，记得修改下默认跳转模板中的变量定界符。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="119.html">上一页</a><a title="下一页" class="next" href="121.html">下一页</a></div>
+		</div>
+	</body>
+</html>

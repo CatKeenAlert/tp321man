@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>自动完成</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/71.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>自动完成</h1>
+			<div class="page"><a title="上一页" class="prev" href="70.html">上一页</a><a title="下一页" class="next" href="72.html">下一页</a></div>
+		</div>
+		<div class="book-content">在Model类定义 $_auto 属性，可以完成数据自动处理功能，用来处理默认值、数据过滤以及其他系统写入字段。$_auto属性是由多个填充因子组成的数组。<br />
+填充因子格式： <code class="prettyprint linenums lang-php">array(填充字段,填充内容,[填充条件,附加规则])</code><b>说明</b><table border="0" cellspacing="1" cellpadding="0">  <tr>    <td>填充字段</td>    <td>必须</td>    <td width="550">就是需要进行处理的表单字段，这个字段不一定是数据库字段，也可以是表单的一些辅助字段，例如确认密码和验证码等等。</td>  </tr>  <tr>    <td>填充规则</td>    <td>必须</td>    <td>配合附加规则完成</td>  </tr>  <tr>    <td>填充时间</td>    <td>可选</td>    <td><p>包括：</p><br />
+      <p>Model::&nbsp;MODEL_INSERT或者1&nbsp;新增数据的时候处理（默认）</p><br />
+      <p>Model::&nbsp;MODEL_UPDATE或者2更新数据的时候处理</p><br />
+    <p>Model::&nbsp;MODEL_BOTH或者3所有情况都进行处理</p></td>  </tr>  <tr>    <td>附加规则</td>    <td>可选</td>    <td><p>包括：</p><br />
+      <p>function&nbsp;：使用函数，表示填充的内容是一个函数名&nbsp;</p><br />
+      <p>callback&nbsp;：回调方法&nbsp;，表示填充的内容是一个当前模型的方法</p><br />
+      <p>field&nbsp;：用其它字段填充，表示填充的内容是一个其他字段的值</p><br />
+    <p>string&nbsp;：字符串（默认方式）</p></td>  </tr></table><b>示例</b>： <code class="prettyprint linenums lang-php">protected&nbsp;$_auto&nbsp;=&nbsp;array&nbsp;(&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('status','1'),&nbsp;&nbsp;//&nbsp;新增的时候把status字段设置为1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('password','md5',1,'function')&nbsp;,&nbsp;//&nbsp;对password字段在新增的时候使md5函数处理<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('name','getName',1,'callback'),&nbsp;//&nbsp;对name字段在新增的时候回调getName方法<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('create_time','time',2,'function'),&nbsp;//&nbsp;对create_time字段在更新的时候写入当前时间戳<br />
+);</code>使用自动填充可能会覆盖表单提交项目。其目的是为了防止表单非法提交字段。使用Model类的create方法创建数据对象的时候会自动进行表单数据处理。和自动验证一样，自动完成机制需要使用create方法才能生效。并且，也可以在操作方法中动态的更改自动完成的规则。<code class="prettyprint linenums lang-php">$auto&nbsp;=&nbsp;array&nbsp;(&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('password','md5',1,'function')&nbsp;//&nbsp;对password字段在新增的时候使md5函数处理<br />
+);<br />
+$User-&gt;&nbsp;setProperty("_auto",$auto);<br />
+$User-&gt;create();</code><b>动态设置自动完成规则</b><br />
+还可以使用auto方法动态设置自动完成规则，例如：<code class="prettyprint linenums lang-php">$this-&gt;auto($auto)-&gt;create();</code>其中$auto变量的规范和_auto属性的定义规则一致，而且还可以支持函数调用（由于PHP本身的限制，在类的属性定义中不能调用函数）。<br />
+通过这一改进，以前需要支持数据自动完成，必须定义模型类的情况已经不再出现，你完全可以通过M方法实例化模型类后使用动态设置完成自动完成操作。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="70.html">上一页</a><a title="下一页" class="next" href="72.html">下一页</a></div>
+		</div>
+	</body>
+</html>

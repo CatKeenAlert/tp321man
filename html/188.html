@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>日期和时间</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/188.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>日期和时间</h1>
+			<div class="page"><a title="上一页" class="prev" href="187.html">上一页</a><a title="下一页" class="next" href="189.html">下一页</a></div>
+		</div>
+		<div class="book-content">扩展类库ORG.Util.Date类提供了时间和日期的操作功能，目前提供的方法包括：<table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">isLeapYear判断是否是闰年</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">isLeapYear($year='')</td>	</tr>	<tr>		<td>参数</td>		<td>year（可选）：年，留空取实例化Date类的时候生成的year属性</td>	</tr>	<tr>		<td>返回值</td>		<td>布尔值</td>	</tr></table><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">dateDiff和实例化生成的日期计算日期差</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">dateDiff($date,$elaps=&ldquo;d&rdquo;)</td>	</tr>	<tr>		<td>参数</td>		<td>date（必须）：要比较的日期<br /><br />
+			elaps（可选）：比较的跨度，默认为d，支持<br /><br />
+			Y-年M-月w-星期d-天h-小时m-分钟s-秒</td>	</tr>	<tr>		<td>返回值</td>		<td>数字</td>	</tr></table><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">timeDiff个性化的计算日期差</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">timeDiff($time,$precision=false)</td>	</tr>	<tr>		<td>参数</td>		<td>time（必须）：要比较的时间<br /><br />
+			precision（可选）：返回的精度</td>	</tr>	<tr>		<td>返回值</td>		<td>字符串</td>	</tr></table><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">firstDayOfMonth计算月份的第一天</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">firstDayOfMonth()</td>	</tr>	<tr>		<td>参数</td>		<td>无</td>	</tr>	<tr>		<td>返回值</td>		<td>Date对象可直接输出</td>	</tr></table><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">firstDayOfYear计算年的第一天</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">firstDayOfYear()</td>	</tr>	<tr>		<td>参数</td>		<td>无</td>	</tr>	<tr>		<td>返回值</td>		<td>Date对象可直接输出</td>	</tr></table><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">lastDayOfMonth计算月份的最后一天</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">lastDayOfMonth()</td>	</tr>	<tr>		<td>参数</td>		<td>无</td>	</tr>	<tr>		<td>返回值</td>		<td>Date对象可直接输出</td>	</tr></table><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">lastDayOfYear计算年份的最后一天</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">lastDayOfYear()</td>	</tr>	<tr>		<td>参数</td>		<td>无</td>	</tr>	<tr>		<td>返回值</td>		<td>Date对象可直接输出</td>	</tr></table><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">maxDayOfMonth计算月份的最大天数</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">maxDayOfMonth()</td>	</tr>	<tr>		<td>参数</td>		<td>无</td>	</tr>	<tr>		<td>返回值</td>		<td>数字</td>	</tr></table><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">dateAdd取得指定间隔日期</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">dateAdd($number=0,$interval=&ldquo;d&rdquo;)</td>	</tr>	<tr>		<td>参数</td>		<td>number（可选）：间隔数目，默认为0<br /><br />
+			interval（可选）：间隔类型，默认为d，支持：<br /><br />
+			yyyy年<br /><br />
+			q-季度<br /><br />
+			m-月<br /><br />
+			y-dayofyear<br /><br />
+			d-日<br /><br />
+			w-周<br /><br />
+			ww-weekofyear<br /><br />
+			h-小时<br /><br />
+			n-分钟<br /><br />
+			s-秒</td>	</tr>	<tr>		<td>返回值</td>		<td>Date对象</td>	</tr></table><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">numberToCh日期数字转中文，用于日和月、周</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">numberToCh($number)</td>	</tr>	<tr>		<td>参数</td>		<td>number（必须）：日期数字</td>	</tr>	<tr>		<td>返回值</td>		<td>字符串</td>	</tr></table><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">yearToCh年份数字转中文</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">yearToCh($yearStr,$flag=false)</td>	</tr>	<tr>		<td>参数</td>		<td>yearStr（必须）：年份字<br /><br />
+			flag（可选）：是否显示公元</td>	</tr>	<tr>		<td>返回值</td>		<td>字符串</td>	</tr></table><table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">magicInfo判断日期所属干支生肖星座</th>	</tr>	<tr>		<td width="65">用法</td>		<td width="415">magicInfo($type)</td>	</tr>	<tr>		<td>参数</td>		<td>type（必须）：获取信息类型，支持<br /><br />
+			XZ星座GZ干支SX生肖</td>	</tr>	<tr>		<td>返回值</td>		<td>字符串</td>	</tr></table>要使用Date类，首先需要实例化，使用示例：<code class="prettyprint linenums lang-php">import('ORG.Util.Date');//&nbsp;导入日期类<br />
+$Date&nbsp;=&nbsp;new&nbsp;Date('2012-03-25');<br />
+$Date-&gt;isLeapYear();&nbsp;//&nbsp;判断是否闰年<br />
+echo&nbsp;$Date-&gt;dateDiff('2020-03-25','m');&nbsp;&nbsp;//&nbsp;比较日期差<br />
+echo&nbsp;$Date-&gt;lastDayOfMonth();&nbsp;//&nbsp;计算当月的最后一天<br />
+echo&nbsp;$Date-&gt;maxDayOfMonth();&nbsp;//&nbsp;计算当月的最大天数</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="187.html">上一页</a><a title="下一页" class="next" href="189.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>调试模式</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/19.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>调试模式</h1>
+			<div class="page"><a title="上一页" class="prev" href="18.html">上一页</a><a title="下一页" class="next" href="20.html">下一页</a></div>
+		</div>
+		<div class="book-content">虽然编译缓存很优秀，但是并不利于开发阶段中调试和排错，我们强烈建议ThinkPHP开发人员在开发阶段始终开启调试模式，方便及时发现隐患问题和分析、解决问题。开启调试模式很简单，只需要在入口文件中增加一行常量定义代码：<code class="prettyprint linenums lang-php">&lt?php<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//开启调试模式<br />
+&nbsp;&nbsp;&nbsp;&nbsp;define('APP_DEBUG',&nbsp;true);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//加载框架入口文件<br />
+&nbsp;&nbsp;&nbsp;&nbsp;require&nbsp;'./ThinkPHP/ThinkPHP.php';</code>在完成开发阶段部署到生产环境后，只需要删除调试模式定义代码即可切换到部署模式。开启调试模式后，系统会首先加载系统默认的调试配置文件，然后加载项目的调试配置文件，调试模式的优势在于：<br />
+  <ul><li>开启日志记录，任何错误信息和调试信息都会详细记录，便于调试；</li>  <li>关闭模板缓存，模板修改可以即时生效；</li>  <li>记录SQL日志，方便分析SQL；</li>  <li>关闭字段缓存，数据表字段修改不受缓存影响；</li>  <li>严格检查文件大小写（即使是Windows平台），帮助你提前发现Linux部署问题；</li>  <li>可以方便用于开发过程的不同阶段，包括开发、测试和演示等任何需要的情况，不同的应用模式可以配置独立的项目配置文件；</li></ul>关于调试模式的更多用法，我们会在后面进行更详细的讲解。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="18.html">上一页</a><a title="下一页" class="next" href="20.html">下一页</a></div>
+		</div>
+	</body>
+</html>

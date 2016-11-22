@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>Action参数绑定</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/52.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>Action参数绑定</h1>
+			<div class="page"><a title="上一页" class="prev" href="51.html">上一页</a><a title="下一页" class="next" href="53.html">下一页</a></div>
+		</div>
+		<div class="book-content">Action参数绑定提供了URL变量和操作方法的参数绑定支持，这一功能可以使得你的操作方法定义和参数获取更加清晰，也便于跨模块调用了。这一新特性对以往的操作方法使用没有任何影响，你也可以用新的方式来改造以往的操作方法定义。<br />
+Action参数绑定的原理是把URL中的参数（不包括分组、模块和操作地址）和控制器的操作方法中的参数进行绑定。例如，我们给Blog模块定义了两个操作方法read和archive方法，由于read操作需要指定一个id参数，archive方法需要指定年份（year）和月份（month）两个参数。<code class="prettyprint linenums lang-php">class&nbsp;BlogAction&nbsp;extends&nbsp;Action{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;read($id){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;'id='.$id;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$Blog&nbsp;=&nbsp;M('Blog');<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$Blog-&gt;find($id);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;archive($year='2012',$month='01'){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;'year='.$year.'&month='.$month;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$Blog&nbsp;=&nbsp;M('Blog');<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$year&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;$year;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$month&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;$month;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$begin_time&nbsp;=&nbsp;strtotime($year&nbsp;.&nbsp;$month&nbsp;.&nbsp;"01");<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$end_time&nbsp;=&nbsp;strtotime("+1&nbsp;month",&nbsp;$begin_time);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$map['create_time']&nbsp;=&nbsp;&nbsp;array(array('gt',$begin_time),array('lt',$end_time));<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$map['status']&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;1;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$list&nbsp;=&nbsp;$Blog-&gt;where($map)-&gt;select();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+}</code>URL的访问地址分别是：<code class="prettyprint linenums lang-php">http://serverName/index.php/Blog/read/id/5<br />
+http://serverName/index.php/Blog/archive/year/2012/month/03</code>两个URL地址中的id参数和year和month参数会自动和read操作方法以及archive操作方法的同名参数绑定。<br />
+输出的结果依次是：<code class="prettyprint linenums lang-php">id=5<br />
+year=2012&month=03</code>Action参数绑定的参数必须和URL中传入的参数名称一致，但是参数顺序不需要一致。也就是说<code class="prettyprint linenums lang-php">http://serverName/index.php/Blog/archive/month/03/year/2012</code>和上面的访问结果是一致的，URL中的参数顺序和操作方法中的参数顺序都可以随意调整，关键是确保参数名称一致即可。<br />
+如果用户访问的URL地址是（至于为什么会这么访问暂且不提）：<code class="prettyprint linenums lang-php">http://serverName/index.php/Blog/read/</code>那么会抛出下面的异常提示：<br />
+<b><font color="red">参数错误:id</font></b><br />
+报错的原因很简单，因为在执行read操作方法的时候，id参数是必须传入参数的，但是方法无法从URL地址中获取正确的id参数信息。由于我们不能相信用户的任何输入，因此建议你给read方法的id参数添加默认值，例如：<code class="prettyprint linenums lang-php">&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;read($id=0){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;'id='.$id;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$Blog&nbsp;=&nbsp;M('Blog');<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$Blog-&gt;find($id);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}</code>这样，当我们访问<code class="prettyprint linenums lang-php">http://serverName/index.php/Blog/read/</code>的时候 就会输出<code class="prettyprint linenums lang-php">id=0</code>当我们访问<code class="prettyprint linenums lang-php">http://serverName/index.php/Blog/archive/</code>的时候，输出：<code class="prettyprint linenums lang-php">year=2012&month=01</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="51.html">上一页</a><a title="下一页" class="next" href="53.html">下一页</a></div>
+		</div>
+	</body>
+</html>

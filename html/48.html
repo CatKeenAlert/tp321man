@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>获取系统变量</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/48.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>获取系统变量</h1>
+			<div class="page"><a title="上一页" class="prev" href="47.html">上一页</a><a title="下一页" class="next" href="49.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP没有改变原生的PHP系统变量获取方式，所以依然可以通过$_GET、 $_POST、$_SERVER、$_REQUEST 等方式来获取系统变量，不过系统的Action类提供了对系统变量的增强获取方法，包括对GET、POST、PUT、REQUEST、SESSION、COOKIE、SERVER和GLOBALS参数，除了获取变量值外，还提供变量过滤和默认值支持，用法很简单，只需要在Action中调用下面方法：<code class="prettyprint linenums lang-php">$this-&gt;方法名("变量名",["过滤方法"],["默认值"])</code>方法名可以支持：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>方法名</th>    <th>含义</th>  </tr>  <tr>    <td>_get</td>    <td>获取GET参数</td>  </tr>  <tr>    <td>_post</td>    <td>获取POST参数</td>  </tr>  <tr>    <td>_param</td>    <td>自动判断请求类型获取GET、POST或者PUT参数（3.1新增）</td>  </tr>  <tr>    <td>_request</td>    <td>获取REQUEST&nbsp;参数</td>  </tr>  <tr>    <td>_put</td>    <td>获取PUT&nbsp;参数</td>  </tr>  <tr>    <td>_session</td>    <td>获取&nbsp;$_SESSION&nbsp;参数</td>  </tr>  <tr>    <td>_cookie</td>    <td>获取&nbsp;$_COOKIE&nbsp;参数</td>  </tr>  <tr>    <td>_server</td>    <td>获取&nbsp;$_SERVER&nbsp;参数</td>  </tr>  <tr>    <td>_globals</td>    <td>获取&nbsp;$GLOBALS参数</td>  </tr></table><b>变量名</b>：（必须）是要获取的系统变量的名称<br />
+<b>过滤方法</b>：（可选）可以用任何的内置函数或者自定义函数名，如果没有指定的话，采用默认的htmlspecialchars函数进行安全过滤（由DEFAULT_FILTER 参数配置），参数就是前面方法名获取到的值，也就是说如果调用：<code class="prettyprint linenums lang-php">$this-&gt;_get("name");</code>最终调用的结果就是 htmlspecialchars($_GET["name"])，如果要改变过滤方法，可以使用：<code class="prettyprint linenums lang-php">$this-&gt;_get("name","strip_tags");</code><b>默认值</b>：（可选）是要获取的参数变量不存在的情况下设置的默认值，例如：<code class="prettyprint linenums lang-php">$this-&gt;_get("id","strip_tags",0);</code>如果$_GET["id"] 不存在的话，会返回0。<br />
+<p class="tips">如果没有设置任何默认值的话，系统默认返回NULL。</p><br />
+其他方法的用法类似。也可以支持多函数过滤。<br />
+例如，可以设置：<code class="prettyprint linenums lang-php">&nbsp;'DEFAULT_FILTER'=&gt;'htmlspecialchars,strip_tags'</code>那么在控制器类如果调用 <code class="prettyprint linenums lang-php">$this-&gt;_get('id');</code> 的话，会依次对$_GET['id'] 变量进行htmlspecialchars和strip_tags方法过滤后返回结果。<br />
+下面调用方式也同样支持：<code class="prettyprint linenums lang-php">$this-&gt;_get('id','htmlspecialchars,strip_tags',0);</code>其他变量获取方法用法相同。<br />
+支持获取全部变量，例如：<code class="prettyprint linenums lang-php">$this-&gt;_get();</code>表示获取$_GET变量值。<h3>支持不过滤处理</h3>如果不希望过滤某个参数，可以使用<code class="prettyprint linenums lang-php">$this-&gt;_get('id',false);<br />
+$this-&gt;_post('id',false);<br />
+//或者<br />
+$this-&gt;_get('id','');<br />
+$this-&gt;_post('id','');</code>第二个参数使用false或者空字符串则表示不作任何过滤处理，即使我们有配置默认的过滤方法。<br />
+如果我们忽略第二个参数调用的话<code class="prettyprint linenums lang-php">$this-&gt;_get('id');<br />
+$this-&gt;_post('id');</code>则表示调用默认的过滤方法（由DEFAULT_FILTER参数进行配置）。3.1版本开始，Action类增加_param方法，可以自动根据当前请求类型（例如GET POST)获取参数。<br />
+例如：<code class="prettyprint linenums lang-php">$this-&gt;_param('id');</code>当前为get方式提交的时候，就是获取$_GET['id']（进行默认过滤后）的值<br />
+当前为post方式提交的时候，就是获取$_POST['id']（进行默认过滤后）的值<br />
+<br />
+还可以用_param方法获取URL中的参数<code class="prettyprint linenums lang-php">$this-&gt;_param(0);&nbsp;//&nbsp;获取PATHINFO地址中的第一个参数<br />
+$this-&gt;_param(2);&nbsp;//&nbsp;获取PATHINFO地址中的第3个参数</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="47.html">上一页</a><a title="下一页" class="next" href="49.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>关于</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/202.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>关于</h1>
+			<div class="page"><a title="上一页" class="prev" href="201.html">上一页</a></div>
+		</div>
+		<div class="book-content"><p>本手册通过在线手册[ <a target="_blank" href="http://doc.thinkphp.cn/manual.html">http://doc.thinkphp.cn/manual.html</a> ]开放api获取内容编译生成，因此内容和在线手册一致。欢迎大家下载学习！</p>
+<p>官方会定期将在线手册编译成CHM版本供大家下载，敬请关注官网资讯。</p>
+
+
+<h3>版本信息</h3>
+<p>编译时间：2013-01-15 14:15:10</p>
+<p>下载地址：<a target="_blank" href="http://www.thinkphp.cn/down/267.html">http://www.thinkphp.cn/down/267.html</a></p>
+<p> BUG反馈：<a target="_blank" href="http://www.thinkphp.cn/bug/index.html">http://www.thinkphp.cn/bug/index.html</a></p>
+
+
+<h3>更新日志</h3>
+<p>[2013-01-10]</p>
+<p>・ 新增内容头部标题显示</p>
+<p>・ 新增了前后翻页按钮，让阅读变得更方便</p>
+<p>・ 改进图片显示，图片直接抓取到本地并编译到CHM中，解决了原来相对路径图片不显示的BUG，实现了整个手册完全离线</p>
+
+<p>[2013-01-04]</p>
+<p>・ 修复了搜索列表显示乱码的BUG</p>
+<p>・ 修复了Linux核心系统下目录显示乱码的BUG</p>
+
+<p>[2012-12-19]</p>
+<p>・ 完成第一次编译，发布下载</p>
+</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="201.html">上一页</a></div>
+		</div>
+	</body>
+</html>

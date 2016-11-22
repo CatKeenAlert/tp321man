@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>开发流程</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/13.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>开发流程</h1>
+			<div class="page"><a title="上一页" class="prev" href="12.html">上一页</a><a title="下一页" class="next" href="14.html">下一页</a></div>
+		</div>
+		<div class="book-content">使用ThinkPHP创建应用的一般开发流程是：<ul><li>系统设计、创建数据库和数据表；（可选）</li><li>项目命名并创建项目入口文件，开启调试模式；</li><li>完成项目配置；</li><li>创建项目函数库；（可选）</li><li>开发项目需要的扩展（模式、驱动、标签库等）；（可选）</li><li>创建控制器类；</li><li>创建模型类；（可选）</li><li>创建模板文件；</li><li>运行和调试、分析日志；</li><li>开发和设置缓存功能；（可选）</li><li>添加路由支持；（可选）</li><li>安全检查；（可选 ）</li><li>部署到生产环境。</li></ul>下面我们会详细描述如何在不同的环节使用ThinkPHP来最大程度地简化开发，体验使用ThinkPHP开发的乐趣。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="12.html">上一页</a><a title="下一页" class="next" href="14.html">下一页</a></div>
+		</div>
+	</body>
+</html>

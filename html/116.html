@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模板继承</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/116.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模板继承</h1>
+			<div class="page"><a title="上一页" class="prev" href="115.html">上一页</a><a title="下一页" class="next" href="117.html">下一页</a></div>
+		</div>
+		<div class="book-content">模板继承是3.1.2版本添加的一项更加灵活的模板布局方式，模板继承不同于模板布局，甚至来说，应该在模板布局的上层。模板继承其实并不难理解，就好比类的继承一样，模板也可以定义一个基础模板（或者是布局），并且其中定义相关的区块（block），然后继承（extend）该基础模板的子模板中就可以对基础模板中定义的区块进行重载。<br />
+因此，模板继承的优势其实是设计基础模板中的区块（block）和子模板中替换这些区块。<br />
+每个区块由&lt;block&gt;&lt;/block&gt;标签组成，并且不支持block标签的嵌套。<br />
+下面就是基础模板中的一个典型的区块设计（用于设计网站标题）：<code class="prettyprint linenums lang-php">&lt;block&nbsp;name="title"&gt;&lt;title&gt;网站标题&lt;/title&gt;&lt;/block&gt;</code>block标签必须指定name属性来标识当前区块的名称，这个标识在当前模板中应该是唯一的，block标签中可以包含任何模板内容，包括其他标签和变量，例如：<code class="prettyprint linenums lang-php">&lt;block&nbsp;name="title"&gt;&lt;title&gt;{$web_title}&lt;/title&gt;&lt;/block&gt;</code>你甚至还可以在区块中加载外部文件：<code class="prettyprint linenums lang-php">&lt;block&nbsp;name="include"&gt;&lt;include&nbsp;file="Public:header"&nbsp;/&gt;&lt;/block&gt;</code>一个模板中可以定义任意多个名称标识不重复的区块，例如下面定义了一个base.html基础模板：<code class="prettyprint linenums lang-php">&lt;html&gt;<br />
+&lt;head&gt;<br />
+&lt;meta&nbsp;http-equiv="Content-Type"&nbsp;content="text/html;&nbsp;charset=utf-8"&gt;<br />
+&lt;block&nbsp;name="title"&gt;&lt;title&gt;标题&lt;/title&gt;&lt;/block&gt;<br />
+&lt;/head&gt;<br />
+&lt;body&gt;<br />
+&lt;block&nbsp;name="menu"&gt;菜单&lt;/block&gt;<br />
+&lt;block&nbsp;name="left"&gt;左边分栏&lt;/block&gt;<br />
+&lt;block&nbsp;name="main"&gt;主内容&lt;/block&gt;<br />
+&lt;block&nbsp;name="right"&gt;右边分栏&lt;/block&gt;<br />
+&lt;block&nbsp;name="footer"&gt;底部&lt;/block&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;</code>然后我们在子模板（其实是当前操作的入口模板）中使用继承：<code class="prettyprint linenums lang-php">&lt;extend&nbsp;name="base"&nbsp;/&gt;<br />
+&lt;block&nbsp;name="title"&gt;&lt;title&gt;{$title}&lt;/title&gt;&lt;/block&gt;<br />
+&lt;block&nbsp;name="menu"&gt;<br />
+&lt;a&nbsp;href="/"&nbsp;&gt;首页&lt;/a&gt;<br />
+&lt;a&nbsp;href="/info/"&nbsp;&gt;资讯&lt;/a&gt;<br />
+&lt;a&nbsp;href="/bbs/"&nbsp;&gt;论坛&lt;/a&gt;<br />
+&lt;/block&gt;<br />
+&lt;block&nbsp;name="left"&gt;&lt;/block&gt;<br />
+&lt;block&nbsp;name="content"&gt;<br />
+&lt;volist&nbsp;name="list"&nbsp;id="vo"&gt;<br />
+&lt;a&nbsp;href="/new/{$vo.id}"&gt;{$vo.title}&lt;/a&gt;&lt;br/&gt;<br />
+{$vo.content}<br />
+&lt;/volist&gt;<br />
+&lt;/block&gt;<br />
+&lt;block&nbsp;name="right"&gt;<br />
+最新资讯：<br />
+&lt;volist&nbsp;name="news"&nbsp;id="new"&gt;<br />
+&lt;a&nbsp;href="/new/{$new.id}"&gt;{$new.title}&lt;/a&gt;&lt;br/&gt;<br />
+&lt;/volist&gt;<br />
+&lt;/block&gt;<br />
+&lt;block&nbsp;name="footer"&gt;<br />
+@ThinkPHP2012&nbsp;版权所有<br />
+&lt;/block&gt;</code>可以看到，子模板中使用了extend标签定义需要继承的模板，extend标签的用法和include标签一样，你也可以加载其他模板：<code class="prettyprint linenums lang-php">&lt;extend&nbsp;name="Public:base"&nbsp;/&gt;</code>或者使用绝对文件路径加载<code class="prettyprint linenums lang-php">&lt;extend&nbsp;name="./Tpl/Public/base.html"&nbsp;/&gt;</code>在当前子模板中，只能定义区块而不能定义其他的模板内容，否则将会直接忽略，并且只能定义基础模板中已经定义的区块。<br />
+例如，如果采用下面的定义：<code class="prettyprint linenums lang-php">&lt;block&nbsp;name="title"&gt;&lt;title&gt;{$title}&lt;/title&gt;&lt;/block&gt;<br />
+&lt;a&nbsp;href="/"&nbsp;&gt;首页&lt;/a&gt;<br />
+&lt;a&nbsp;href="/info/"&nbsp;&gt;资讯&lt;/a&gt;<br />
+&lt;a&nbsp;href="/bbs/"&nbsp;&gt;论坛&lt;/a&gt;</code>导航部分将是无效的，不会显示在模板中。<br />
+<br />
+在子模板中，可以对基础模板中的区块进行重载定义，如果没有重新定义的话，则表示沿用基础模板中的区块定义，如果定义了一个空的区块，则表示删除基础模板中的该区块内容。<br />
+上面的例子，我们就把left区块的内容删除了，其他的区块都进行了重载。<br />
+子模板中的区块定义顺序是随意的，模板继承的用法关键在于基础模板如何布局和设计规划了，如果结合原来的布局功能，则会更加灵活。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="115.html">上一页</a><a title="下一页" class="next" href="117.html">下一页</a></div>
+		</div>
+	</body>
+</html>

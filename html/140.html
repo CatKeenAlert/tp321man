@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>查询缓存</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/140.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>查询缓存</h1>
+			<div class="page"><a title="上一页" class="prev" href="139.html">上一页</a><a title="下一页" class="next" href="141.html">下一页</a></div>
+		</div>
+		<div class="book-content">对于及时性要求不高的数据查询，我们可以使用查询缓存功能来提高性能，而且无需自己使用缓存方法进行缓存和获取。<br />
+新版内置的查询缓存功能支持所有的数据库，并且支持所有的缓存方式和有效期。<br />
+在使用查询缓存的时候，只需要调用Model类的cache方法，例如：<code class="prettyprint linenums lang-php">$Model-&gt;cache(true)-&gt;select();</code>如果使用了cache(true) ，则在查询的同时会根据当前的查询SQL生成查询缓存，默认情况下缓存方式采用DATA_CACHE_TYPE参数设置的缓存方式（系统默认值为File表示采用文件方式缓存），缓存有效期是DATA_CACHE_TIME 参数设置的时间，也可以单独制定查询缓存的缓存方式和有效期：<code class="prettyprint linenums lang-php">$Model-&gt;cache(true,60,'xcache')-&gt;select();</code>表示当前查询缓存的缓存方式为xcache，并且缓存有效期为60秒。<br />
+同样的查询，如果没有使用cache方法，则不会获取或者生成任何缓存，即便是之前调用过Cache方法。<br />
+查询缓存只是供内部调用，如果希望查询缓存开放给其他程序调用，可以指定查询缓存的Key，例如：<code class="prettyprint linenums lang-php">$Model-&gt;cache('cache_name',60)-&gt;select();</code>则可以在外部通过S方法直接获取查询缓存的内容，<code class="prettyprint linenums lang-php">$value&nbsp;=&nbsp;S('cache_name');</code>除了select方法之外，查询缓存还支持find和getField方法，以及他们的衍生方法（包括统计查询和动态查询方法）。具体应用的时候可以根据需要选择缓存方式和缓存有效期。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="139.html">上一页</a><a title="下一页" class="next" href="141.html">下一页</a></div>
+		</div>
+	</body>
+</html>

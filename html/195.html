@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>IP获取和定位</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/195.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>IP获取和定位</h1>
+			<div class="page"><a title="上一页" class="prev" href="194.html">上一页</a><a title="下一页" class="next" href="196.html">下一页</a></div>
+		</div>
+		<div class="book-content">系统内置了get_client_ip方法用于获取客户端的IP地址，使用示例：<code class="prettyprint linenums lang-php">$ip&nbsp;=&nbsp;get_client_ip();</code>如果要支持IP定位功能，需要使用扩展类库ORG.Net.IpLocation，并且要配合IP地址库文件一起使用，例如：<code class="prettyprint linenums lang-php">import('ORG.Net.IpLocation');//&nbsp;导入IpLocation类<br />
+$Ip&nbsp;=&nbsp;new&nbsp;IpLocation('UTFWry.dat');&nbsp;//&nbsp;实例化类&nbsp;参数表示IP地址库文件<br />
+$area&nbsp;=&nbsp;$Ip-&gt;getlocation('203.34.5.66');&nbsp;//&nbsp;获取某个IP地址所在的位置</code>如果传入的参数为空，则会自动获取当前的客户端IP地址，要正确输出位置，必须配合UTF8编码的ip地址库文件，否则可能还需要进行编码转换。IP地址库文件和IpLocation类库位于同一目录即可。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="194.html">上一页</a><a title="下一页" class="next" href="196.html">下一页</a></div>
+		</div>
+	</body>
+</html>

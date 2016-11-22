@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>内置标签</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/97.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>内置标签</h1>
+			<div class="page"><a title="上一页" class="prev" href="96.html">上一页</a><a title="下一页" class="next" href="98.html">下一页</a></div>
+		</div>
+		<div class="book-content">变量输出使用普通标签就足够了，但是要完成其他的控制、循环和判断功能，就需要借助模板引擎的标签库功能了，系统内置标签库的所有标签无需引入标签库即可直接使用。<br />
+XML标签有两种，包括闭合标签和开放标签，一个标签在定义的时候就已经决定了是否是闭合标签还是开放标签，不可混合使用，例如：<br />
+闭合标签：<code class="prettyprint linenums lang-php">&lt;include&nbsp;file="read"&nbsp;/&gt;</code>开放标签：<code class="prettyprint linenums lang-php">&lt;gt&nbsp;name="name"&nbsp;value="5"&gt;value&lt;/gt&gt;</code>内置支持的标签和属性列表如下：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>标签名</th>    <th>作用</th>    <th>包含属性</th>  </tr>  <tr>    <td>include</td>    <td>包含外部模板文件（闭合）</td>    <td>file</td>  </tr>  <tr>    <td>import</td>    <td>导入资源文件（闭合&nbsp;包括js&nbsp;css&nbsp;load别名）</td>    <td>file,href,type,value,basepath</td>  </tr>  <tr>    <td>volist</td>    <td>循环数组数据输出</td>    <td>name,id,offset,length,key,mod</td>  </tr>  <tr>    <td>foreach</td>    <td>数组或对象遍历输出</td>    <td>name,item,key</td>  </tr>  <tr>    <td>for</td>    <td>For循环数据输出</td>    <td>name,from,to,before,step</td>  </tr>  <tr>    <td>switch</td>    <td>分支判断输出</td>    <td>name</td>  </tr>  <tr>    <td>case</td>    <td>分支判断输出（必须和switch配套使用）</td>    <td>value,break</td>  </tr>  <tr>    <td>default</td>    <td>默认情况输出（闭合&nbsp;必须和switch配套使用）</td>    <td>无</td>  </tr>  <tr>    <td>compare</td>    <td>比较输出（包括eq&nbsp;neq&nbsp;lt&nbsp;gt&nbsp;egt&nbsp;elt&nbsp;heq&nbsp;nheq等别名）</td>    <td>name,value,type</td>  </tr>  <tr>    <td>range</td>    <td>范围判断输出（包括in&nbsp;notin&nbsp;between&nbsp;notbetween别名）</td>    <td>name,value,type</td>  </tr>  <tr>    <td>present</td>    <td>判断是否赋值</td>    <td>name</td>  </tr>  <tr>    <td>notpresent</td>    <td>判断是否尚未赋值</td>    <td>name</td>  </tr>  <tr>    <td>empty</td>    <td>判断数据是否为空</td>    <td>name</td>  </tr>  <tr>    <td>notempty</td>    <td>判断数据是否不为空</td>    <td>name</td>  </tr>  <tr>    <td>defined</td>    <td>判断常量是否定义</td>    <td>name</td>  </tr>  <tr>    <td>notdefined</td>    <td>判断常量是否未定义</td>    <td>name</td>  </tr>  <tr>    <td>define</td>    <td>常量定义（闭合）</td>    <td>name,value</td>  </tr>  <tr>    <td>assign</td>    <td>变量赋值（闭合）</td>    <td>name,value</td>  </tr>  <tr>    <td>if</td>    <td>条件判断输出</td>    <td>condition</td>  </tr>  <tr>    <td>elseif</td>    <td>条件判断输出（闭合&nbsp;&nbsp;必须和if标签配套使用）</td>    <td>condition</td>  </tr>   <tr>    <td>else</td>    <td>条件不成立输出（闭合&nbsp;可用于其他标签）</td>    <td>无</td>  </tr>   <tr>    <td>php</td>    <td>使用php代码</td>    <td>无</td>  </tr></table>后面我们会详细描述每个标签的具体用法。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="96.html">上一页</a><a title="下一页" class="next" href="98.html">下一页</a></div>
+		</div>
+	</body>
+</html>

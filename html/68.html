@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>ActiveRecord</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/68.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>ActiveRecord</h1>
+			<div class="page"><a title="上一页" class="prev" href="67.html">上一页</a><a title="下一页" class="next" href="69.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP实现了ActiveRecords模式的ORM模型，采用了非标准的ORM模型：表映射到类，记录映射到对象。最大的特点就是使用方便和便于理解（因为采用了对象化），提供了开发的最佳体验，从而达到敏捷开发的目的。下面我们用AR模式来换一种方式重新完成CURD操作。<br />
+一、创建数据<code class="prettyprint linenums lang-php">$User=M("User");//实例化User对象<br />
+//然后直接给数据对象赋值<br />
+$User-&gt;name='ThinkPHP';<br />
+$User-&gt;email='ThinkPHP@gmail.com';<br />
+//把数据对象添加到数据库<br />
+$User-&gt;add();</code>如果使用了create方法创建数据对象的话，仍然可以在创建完成后进行赋值<code class="prettyprint linenums lang-php">$User=D("User");<br />
+$User-&gt;create();//创建User数据对象，默认通过表单提交的数据进行创建<br />
+//增加或者更改其中的属性<br />
+$User-&gt;status=1;<br />
+$User-&gt;create_time=time();<br />
+//把数据对象添加到数据库<br />
+$User-&gt;add();</code>二、查询记录<br />
+AR模式的数据查询比较简单，因为更多情况下面查询条件都是以主键或者某个关键的字段。这种类型的查询，ThinkPHP有着很好的支持。先举个最简单的例子，假如我们要查询主键为8的某个用户记录，如果按照之前的方式，我们可能会使用下面的方法： <code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;查找id为8的用户数据<br />
+$User-&gt;where('id=8')-&gt;find();</code>用AR模式的话可以直接写成：<code class="prettyprint linenums lang-php">$User-&gt;find(8);</code>如果要根据某个字段查询，例如查询姓名为ThinkPHP的可以用：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$User-&gt;getByName("ThinkPHP");</code>这个作为查询语言来说是最为直观的，如果查询成功，查询的结果直接保存在当前的数据对象中，在进行下一次查询操作之前，我们都可以提取，例如获取查询的结果数据： <code class="prettyprint linenums lang-php">echo&nbsp;$User-&gt;name;<br />
+echo&nbsp;$User-&gt;email;</code>如果要查询数据集，可以直接使用：<code class="prettyprint linenums lang-php">&nbsp;//&nbsp;查找主键为1、3、8的多个数据<br />
+$userList&nbsp;=&nbsp;$User-&gt;select('1,3,8');&nbsp;</code>三、更新记录<br />
+在完成查询后，可以直接修改数据对象然后保存到数据库。<code class="prettyprint linenums lang-php">$User-&gt;find(1);&nbsp;//&nbsp;查找主键为1的数据<br />
+$User-&gt;name&nbsp;=&nbsp;'TOPThink';&nbsp;//&nbsp;修改数据对象<br />
+$User-&gt;save();&nbsp;//&nbsp;保存当前数据对象</code>上面这种方式仅仅是示例，不代表保存操作之前一定要先查询。因为下面的方式其实是等效的：<code class="prettyprint linenums lang-php">$User-&gt;id&nbsp;=&nbsp;1;<br />
+$User-&gt;name&nbsp;=&nbsp;'TOPThink';&nbsp;//&nbsp;修改数据对象<br />
+$User-&gt;save();&nbsp;//&nbsp;保存当前数据对象</code>四、删除记录<br />
+可以删除当前查询的数据对象<code class="prettyprint linenums lang-php">$User-&gt;find(2);<br />
+$User-&gt;delete();&nbsp;//&nbsp;删除当前的数据对象</code>或者直接根据主键进行删除<code class="prettyprint linenums lang-php">$User-&gt;delete(8);&nbsp;//&nbsp;删除主键为8的数据<br />
+$User-&gt;delete('5,6');&nbsp;//&nbsp;删除主键为5、6的多个数据</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="67.html">上一页</a><a title="下一页" class="next" href="69.html">下一页</a></div>
+		</div>
+	</body>
+</html>

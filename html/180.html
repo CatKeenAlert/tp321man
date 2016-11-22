@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>REST介绍</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/180.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>REST介绍</h1>
+			<div class="page"><a title="上一页" class="prev" href="179.html">上一页</a><a title="下一页" class="next" href="181.html">下一页</a></div>
+		</div>
+		<div class="book-content">REST(Representational State Transfer表述性状态转移)是一种针对网络应用的设计和开发方式，可以降低开发的复杂性，提高系统的可伸缩性。REST提出了一些设计概念和准则：<br />
+1、网络上的所有事物都被抽象为资源（resource）；<br />
+2、每个资源对应一个唯一的资源标识（resource identifier）；<br />
+3、通过通用的连接器接口（generic connector interface）对资源进行操作；<br />
+4、对资源的各种操作不会改变资源标识；<br />
+5、所有的操作都是无状态的（stateless）。<br />
+需要注意的是，REST是设计风格而不是标准。REST通常基于使用HTTP，URI，和XML以及HTML这些现有的广泛流行的协议和标准。<br />
+传统的请求模式和REST模式的请求模式区别：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th>作用</th>        <th>传统模式</th>        <th>REST模式</th>    </tr>    <tr>        <td>列举出所有的用户</td>        <td>GET  /users/list</td>        <td>GET /users</td>    </tr>    <tr>        <td>列出ID为1的用户信息</td>        <td>GET /users/show/id/1</td>        <td>GET /users/1</td>    </tr>    <tr>        <td>插入一个新的用户</td>        <td>POST /users/add</td>        <td>POST /users</td>    </tr>    <tr>        <td>更新ID为1的用户信息</td>        <td>POST /users/mdy/id/1</td>        <td>PUT /users/1</td>    </tr>    <tr>        <td>删除ID为1的用户</td>        <td>POST /users/delete/id/1</td>        <td>DELETE /users/1</td>    </tr></table>关于更多的REST信息，可以参考：<a href="http://zh.wikipedia.org/wiki/rest" target="_blank">http://zh.wikipedia.org/wiki/REST</a></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="179.html">上一页</a><a title="下一页" class="next" href="181.html">下一页</a></div>
+		</div>
+	</body>
+</html>

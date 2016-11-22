@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>读取配置</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/26.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>读取配置</h1>
+			<div class="page"><a title="上一页" class="prev" href="25.html">上一页</a><a title="下一页" class="next" href="27.html">下一页</a></div>
+		</div>
+		<div class="book-content">定义了配置文件之后，可以使用系统提供的C方法（如果觉得比较奇怪的话，可以借助Config单词来帮助记忆）来读取已有的配置：<code class="prettyprint linenums lang-php">C('参数名称')//获取已经设置的参数值</code>例如，C('APP_STATUS') 可以读取到系统的调试模式的设置值，同样，由于配置参数不区分大小写，因此C('app_status')是等效的，但是建议使用大写方式的规范。<br />
+如果APP_STATUS尚未存在设置，则返回NULL。<br />
+C方法同样可以用于读取二维配置：<code class="prettyprint linenums lang-php">C('USER_CONFIG.USER_TYPE')//获取用户配置中的用户类型设置</code>因为配置参数是全局有效的，因此C方法可以在任何地方读取任何配置，哪怕某个设置参数已经生效过期了。后面我们还会了解到C方法同样还具有给配置参数赋值的作用。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="25.html">上一页</a><a title="下一页" class="next" href="27.html">下一页</a></div>
+		</div>
+	</body>
+</html>

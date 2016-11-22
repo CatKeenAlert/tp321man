@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>Mongo模型</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/79.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>Mongo模型</h1>
+			<div class="page"><a title="上一页" class="prev" href="78.html">上一页</a><a title="下一页" class="next" href="80.html">下一页</a></div>
+		</div>
+		<div class="book-content">Mongo模型是专门为Mongo数据库驱动而支持的Model扩展，如果需要操作Mongo数据库的话，自定义的模型类必须继承MongoModel。<br />
+Mongo模型为操作Mongo数据库提供了更方便的实用功能和查询用法，包括：<ul><li>对MongoId对象和非对象主键的全面支持；</li><li>保持了动态追加字段的特性；</li><li>数字自增字段的支持；</li><li>执行SQL日志的支持；</li><li>字段自动检测的支持；</li><li>查询语言的支持；</li><li>MongoCode执行的支持；</li></ul><h3>主键</h3>系统很好的支持Mongo的主键类型，Mongo默认的主键名是 _id，也可以通过设置pk属性改变主键名称（也许你需要用其他字段作为数据表的主键），例如：<code class="prettyprint linenums lang-php">Class&nbsp;UserModel&nbsp;extends&nbsp;MongoModel&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Protected&nbsp;$pk&nbsp;=&nbsp;'id';<br />
+}</code>主键支持三种类型（通过_idType属性设置），分别是：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>类型</th>    <th>描述</th>  </tr>  <tr>    <td>self::TYPE_OBJECT或者1<br />
+    （默认类型）</td>    <td>采用MongoId对象，写入或者查询的时候传入数字或者字符会自动转换，获取的时候会自动转换成字符串。</td>  </tr>  <tr>    <td>self::TYPE_INT或者2</td>    <td>整形，支持自动增长，通过设置_autoInc&nbsp;属性</td>  </tr>  <tr>    <td>self::TYPE_STRING或者3</td>    <td>字符串hash</td>  </tr></table>设置主键类型示例：<code class="prettyprint linenums lang-php">Class&nbsp;UserModel&nbsp;extends&nbsp;MongoModel&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Protected&nbsp;$_idType&nbsp;=&nbsp;self::TYPE_INT;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;$_autoInc&nbsp;=&nbsp;&nbsp;true;<br />
+}</code><h3>字段检测</h3>MongoModel默认关闭字段检测，是为了保持Mongo的动态追加字段的特性，如果你的应用不需要使用Mongo动态追加字段的特性，可以设置autoCheckFields为true即可开启字段检测功能，提高安全性。一旦开启字段检测功能后，系统会自动查找当前数据表的第一条记录来获取字段列表。<br />
+如果你关闭字段检测功能的话，将不能使用查询的字段排除功能。<h3>连贯操作</h3>MongoModel中有部分连贯操作暂时不支持，包括：group、union、join、having、lock和distinct操作。其他连贯操作都可以很好的支持，例如：<code class="prettyprint linenums lang-php">$Model&nbsp;=&nbsp;new&nbsp;MongoModel("User");<br />
+$Model-&gt;field("name,email,age")-&gt;order("status&nbsp;desc")-&gt;limit("10,8")-&gt;select();</code><h3>查询支持</h3>Mongo数据库的查询条件和其他数据库有所区别。<br />
+首先，支持所有的普通查询和快捷查询；<br />
+表达式查询增加了一些针对MongoDb的查询用法；<br />
+统计查询目前只能支持count操作，其他的可能要自己通过MongoCode来实现了；<br />
+MongoModel的组合查询支持<br />
+_string 采用MongoCode查询<br />
+_query 和其他数据库的请求字符串查询相同<br />
+_complex MongoDb暂不支持<br />
+MongoModel提供了MongoCode方法，可以支持MongoCode方式的查询或者操作。<h3>表达式查询</h3>表达式查询采用下面的方式：<br />
+$map['字段名']  = array('表达式','查询条件');<br />
+因为MongoDb的特性，MongoModel的表达式查询和其他的数据库有所区别，增加了一些新的用法。<br />
+表达式不分大小写，支持的查询表达式和Mongo原生的查询语法对照如下：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>查询表达式</th>    <th>含义</th>    <th>Mongo原生查询条件</th>  </tr>  <tr>    <td>neq&nbsp;或者ne</td>    <td>不等于</td>    <td>$ne</td>  </tr>  <tr>    <td>lt</td>    <td>小于</td>    <td>$lt</td>  </tr>  <tr>    <td>lte&nbsp;或者elt</td>    <td>小于等于</td>    <td>$lte</td>  </tr>  <tr>    <td>gt</td>    <td>大于</td>    <td>$gt</td>  </tr>  <tr>    <td>gte&nbsp;或者egt</td>    <td>大于等于</td>    <td>$gte</td>  </tr>  <tr>    <td>like</td>    <td>模糊查询&nbsp;用MongoRegex正则模拟</td>    <td>无</td>  </tr>  <tr>    <td>mod</td>    <td>取模运算</td>    <td>$mod</td>  </tr>  <tr>    <td>in</td>    <td>in查询</td>    <td>$in</td>  </tr>  <tr>    <td>nin或者not&nbsp;in</td>    <td>not&nbsp;in查询</td>    <td>$nin</td>  </tr>  <tr>    <td>all</td>    <td>满足所有条件</td>    <td>$all</td>  </tr>  <tr>    <td>between</td>    <td>在某个的区间</td>    <td>无</td>  </tr>  <tr>    <td>not&nbsp;between</td>    <td>不在某个区间</td>    <td>无</td>  </tr>  <tr>    <td>exists</td>    <td>字段是否存在</td>    <td>$exists</td>  </tr>  <tr>    <td>size</td>    <td>限制属性大小</td>    <td>$size</td>  </tr>  <tr>    <td>type</td>    <td>限制字段类型</td>    <td>$type</td>  </tr>  <tr>    <td>regex</td>    <td>MongoRegex正则查询</td>    <td>MongoRegex实现</td>  </tr>  <tr>    <td>exp</td>    <td>使用MongoCode查询</td>    <td>无</td>  </tr></table>注意，在使用like查询表达式的时候，和mysql的方式略有区别，对应关系如下：<table border="0" cellspacing="1" cellpadding="0">	<tr>		<td>Mysql模糊查询 </td>		<td>Mongo模糊查询 </td>	</tr>	<tr>		<td>array('like','%thinkphp%'); </td>		<td>array('like','thinkphp'); </td>	</tr>	<tr>		<td>array('like','thinkphp%'); </td>		<td>array('like','^thinkphp'); </td>	</tr>	<tr>		<td>array('like','%thinkphp');</td>		<td>array('like','thinkphp$');</td>	</tr></table>LIKE： 同sql的LIKE<br />
+例如：<code class="prettyprint linenums lang-php">$map['name']&nbsp;=&nbsp;array('like','^thinkphp');</code>查询条件就变成 name like 'thinkphp%'<h3>设置支持</h3>Mongo的数据更新设置用于数据保存和写入操作，可以支持：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>表达式</th>    <th>含义</th>    <th>Mongo原生用法</th>  </tr>  <tr>    <td>inc</td>    <td>数字字段增长或减少</td>    <td>$inc</td>  </tr>  <tr>    <td>set</td>    <td>字段赋值</td>    <td>$set</td>  </tr>  <tr>    <td>unset</td>    <td>删除字段值</td>    <td>$unset</td>  </tr>  <tr>    <td>push</td>    <td>追加一个值到字段（必须是数组类型）里面去</td>    <td>$push</td>  </tr>  <tr>    <td>pushall</td>    <td>追加多个值到字段（必须是数组类型）里面去</td>    <td>$pushall</td>  </tr>  <tr>    <td>addtoset</td>    <td>增加一个值到字段（必须是数组类型）内，而且只有当这个值不在数组内才增加</td>    <td>$addtoset</td>  </tr>  <tr>    <td>pop</td>    <td>根据索引删除字段（必须是数组字段）中的一个值</td>    <td>$pop</td>  </tr>  <tr>    <td>pull</td>    <td>根据值删除字段（必须是数组字段）中的一个值</td>    <td>$pull</td>  </tr>  <tr>    <td>pullall</td>    <td>一次删除字段（必须是数组字段）中的多个值</td>    <td>$pullall</td>  </tr></table>例如，<code class="prettyprint linenums lang-php">$data['id']&nbsp;=&nbsp;5;<br />
+$data['score']&nbsp;=&nbsp;array('inc',2);<br />
+$Model-&gt;save($data);</code><h3>其他</h3>MongoModel增加了几个方法<br />
+mongoCode 执行MongoCode<br />
+getMongoNextId([字段名]) 获取自增字段的下一个ID，可用于数字主键或者其他需要自增的字段，参数为空的时候表示或者主键的。<br />
+Clear 清空当前数据表方法</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="78.html">上一页</a><a title="下一页" class="next" href="80.html">下一页</a></div>
+		</div>
+	</body>
+</html>

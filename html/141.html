@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>SQL解析缓存</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/141.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>SQL解析缓存</h1>
+			<div class="page"><a title="上一页" class="prev" href="140.html">上一页</a><a title="下一页" class="next" href="142.html">下一页</a></div>
+		</div>
+		<div class="book-content">除了查询缓存之外，ThinkPHP还支持SQL解析缓存，因为ThinkPHP的ORM机制，所有的SQL都是动态生成的，然后由数据库驱动执行。<br />
+所以如果你的应用有大量的SQL查询需求，那么可以开启SQL解析缓存以减少SQL解析提高性能。要开启SQL解析缓存，只需要设置：<code class="prettyprint linenums lang-php">'DB_SQL_BUILD_CACHE'&nbsp;=&gt;&nbsp;true,</code>即可开启数据库查询的SQL创建缓存，默认缓存方式为文件方式，还可以支持xcache和apc方式缓存，只需要设置：<code class="prettyprint linenums lang-php">'DB_SQL_BUILD_QUEUE'&nbsp;=&gt;&nbsp;'xcache',</code>我们知道，一个项目的查询SQL的量可能会非常巨大，所以有必要设置下缓存的队列长度，例如，我们希望SQL解析缓存不超过20条记录，可以设置：<code class="prettyprint linenums lang-php">'DB_SQL_BUILD_LENGTH'&nbsp;=&gt;&nbsp;20,&nbsp;//&nbsp;SQL缓存的队列长度</code>注意：只有查询方法才支持SQL解析缓存</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="140.html">上一页</a><a title="下一页" class="next" href="142.html">下一页</a></div>
+		</div>
+	</body>
+</html>

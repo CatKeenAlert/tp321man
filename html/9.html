@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>MVC分层</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/9.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>MVC分层</h1>
+			<div class="page"><a title="上一页" class="prev" href="8.html">上一页</a><a title="下一页" class="next" href="10.html">下一页</a></div>
+		</div>
+		<div class="book-content">MVC 是一种将应用程序的逻辑层和表现层进行分离的方法。ThinkPHP 也是基于MVC设计模式的。MVC只是一个抽象的概念，并没有特别明确的规定，ThinkPHP中的MVC分层大致体现在：<br />
+<b>模型（M）：</b>模型的定义由Model类来完成。<br />
+<b>控制器（C）：</b>应用控制器（核心控制器App类）和Action控制器都承担了控制器的角色，Action控制器完成业务过程控制，而应用控制器负责调度控制。<br />
+<b>视图（V）：</b>由View类和模板文件组成，模板做到了100％分离，可以独立预览和制作。<br />
+但实际上，ThinkPHP并不依赖M或者V ，也就是说没有模型或者视图也一样可以工作。甚至也不依赖C，这是因为ThinkPHP在Action之上还有一个总控制器，即App控制器，负责应用的总调度。在没有C的情况下，必然存在视图V，否则就不再是一个完整的应用。<br />
+总而言之，ThinkPHP的MVC模式只是提供了一种敏捷开发的手段，而不是拘泥于MVC本身。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="8.html">上一页</a><a title="下一页" class="next" href="10.html">下一页</a></div>
+		</div>
+	</body>
+</html>

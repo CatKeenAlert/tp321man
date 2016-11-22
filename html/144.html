@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>行为扩展</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/144.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>行为扩展</h1>
+			<div class="page"><a title="上一页" class="prev" href="143.html">上一页</a><a title="下一页" class="next" href="145.html">下一页</a></div>
+		</div>
+		<div class="book-content"><h3>行为和标签</h3>行为在新版ThinkPHP的架构里面起着举足轻重的作用，在系统核心之上，设置了很多标签扩展位，而每个标签位置可以依次执行各自的独立行为。行为扩展就因此而诞生了，而且很多系统功能也是通过内置的行为扩展完成的，所有行为扩展都是可替换和增加的，由此形成了底层框架可组装的基础。<br />
+系统核心提供的标签位置包括下面几个（按照执行顺序排列）：<table border="0" cellspacing="1" cellpadding="0">  <tr><td>app_init</td><td>应用初始化标签位</td></tr>  <tr><td>path_info</td><td>PATH_INFO检测标签位</td></tr>  <tr><td>route_check</td><td>路由检测标签位</td></tr>  <tr><td>app_begin</td><td>应用开始标签位</td></tr>  <tr><td>action_name</td><td>操作方法名标签位</td></tr>  <tr><td>action_begin</td><td>控制器开始标签位</td></tr>  <tr><td>view_begin</td><td>视图输出开始标签位</td></tr>  <tr><td>view_template</td><td>视图模板解析标签位</td></tr>  <tr><td>view_parse</td><td>视图解析标签位</td></tr>  <tr><td>view_filter</td><td>视图输出过滤标签位</td></tr>  <tr><td>view_end</td><td>视图输出结束标签位</td></tr>  <tr><td>action_end</td><td>控制器结束标签位</td></tr>  <tr><td>app_end</td><td>应用结束标签位</td></tr></table>在每个标签位置，可以配置多个行为定义，行为的执行顺序按照定义的顺序依次执行。除非前面的行为里面中断执行了（某些行为可能需要中断执行，例如检测机器人或者非法执行行为），否则会继续下一个行为的执行。<br />
+除了这些系统内置标签之外，开发人员还可以在应用中添加自己的应用标签，例如我们给应用的公共Action类CommonAction添加一个action_init标签位。<code class="prettyprint linenums lang-php">Class&nbsp;CommonAction&nbsp;extends&nbsp;Action{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Public&nbsp;function&nbsp;_initialize(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tag('action_init');&nbsp;//&nbsp;添加action_init&nbsp;标签<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+}</code>注意：tag函数用于设置某个标签位，可以传入并且只接受一个参数，如果需要传入多个参数，请使用数组，该参数为引用传值，所以只能传入变量。<h3>内置行为</h3>新版系统的很多核心功能也是采用行为扩展组装的，虽然在开发过程中可能感觉不到这种变化，但正是由于这种架构设计的改变，让新版变得更加灵活和易扩展，这是一个里程碑式的改变，对于满足项目日益纷繁复杂的需求和定制底层框架提供了更多的方便和可能性。<br />
+内置的行为包括下面：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>行为名称</th>    <th>说明</th>    <th>对应标签位置</th>  </tr>  <tr>    <td>checkRoute</td>    <td>路由检测行为，完成内置的路由功能</td>    <td>route_check</td>  </tr>  <tr>    <td>LocationTemplate</td>    <td>模板定位行为，完成模板文件自动定位和输出规则</td>    <td>view_template</td>  </tr>  <tr>    <td>ParseTemplate</td>    <td>模板文件解析，并支持第三方模板引擎驱动</td>    <td>view_parse</td>  </tr>  <tr>    <td>ShowPageTrace</td>    <td>页面Trace功能行为，完成页面Trace功能</td>    <td>view_end</td>  </tr>  <tr>    <td>ShowRuntime</td>    <td>运行时间显示行为，完成运行时间显示</td>    <td>view_filter</td>  </tr>  <tr>    <td>TokenBuild</td>    <td>令牌生成行为，完成表单令牌的自动生成</td>    <td>view_filter</td>  </tr>  <tr>    <td>ReadHtmlCache</td>    <td>读取静态缓存行为</td>    <td>app_init</td>  </tr>  <tr>    <td>WriteHtmlCache</td>    <td>生成静态缓存行为</td>    <td>view_filter</td>  </tr></table><h3>行为扩展</h3>行为扩展首先是定义行为类，然后加入某个标签位置即可，内置的行为扩展就是一个很好的扩展示例。行为扩展类继承内置的行为基础类Behavior即可，类的命名规范是：<br />
+行为名称+Behavior<br />
+行为的执行入口方法是run方法，因此行为类只需要run方法具备public访问权限，入口方法只支持一个参数（可以用数组），并且采用引用方式传参，因此不需要任何返回值。每个行为可以定义options属性，该属性中的参数会自动转换成单独配置参数，下面是一个示例：<code class="prettyprint linenums lang-php">class&nbsp;TestBehavior&nbsp;extends&nbsp;Behavior&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;行为参数定义<br />
+&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;$options&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'TEST_PARAM'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;false,&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;行为参数&nbsp;会转换成TEST_PARAM配置参数<br />
+&nbsp;&nbsp;&nbsp;&nbsp;);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;行为扩展的执行入口必须是run<br />
+&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;run(&$params){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(C('TEST_PARAM'))&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;'RUNTEST&nbsp;BEHAVIOR&nbsp;'.$params;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}</code>我们把TestBehavior行为扩展类放到项目目录的Lib/Behavior目录下面，其中options属性必须是数组方式定义，而且在行为初始化的同时options属性中的参数会转换成全局的配置参数，所以，我们在入口方法里面可以直接使用：<code class="prettyprint linenums lang-php">C('TEST_PARAM&nbsp;')</code>TEST_PARAM参数是没有预先定义的，行为的options属性里面提供的参数只是一个初始值，所有的参数我们可以在项目配置文件中重新定义。例如，上面的Test行为如果要执行，我们需要在项目配置文件中添加下面的配置：<code class="prettyprint linenums lang-php">'TEST_PARAM'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;true</code><h3>行为调用</h3>定义了一个行为扩展之后，系统提供了三种方式可以调用行为：<br />
+一、添加到行为配置文件<br />
+为了执行Test行为，我们在这里把Test行为加入app_end 标签位置，在项目配置目录中添加tags.php文件，在其中添加下面代码：<code class="prettyprint linenums lang-php">return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'app_end'=&gt;array('Test'),&nbsp;//&nbsp;在app_end&nbsp;标签位添加Test行为<br />
+);</code>tags文件是项目的行为定义文件，在这个文件中可以给每个标签位置添加项目自己的扩展行为，当然你也可以添加到应用自己的标签位，例如，我们可以把Test行为添加到前面项目自己定义的action_init标签位置：<code class="prettyprint linenums lang-php">return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'action_init'=&gt;array('Test'),&nbsp;//&nbsp;在action_init&nbsp;标签位添加Test行为<br />
+);</code>应用行为的定义没有限制，你甚至可以把同一个行为放到多个标签位置执行多次，例如：<code class="prettyprint linenums lang-php">return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'app_begin'=&gt;array('Test'),&nbsp;//&nbsp;在app_begin&nbsp;标签位添加Test行为<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'app_end'=&gt;array('Test'),&nbsp;//&nbsp;在app_end&nbsp;标签位添加Test行为<br />
+);</code>默认情况下应用行为扩展会并入系统行为扩展一起执行，也就是说如果系统的行为定义中app_end标签中已经定义了其他行为，会首先执行系统行为扩展，然后再执行应用行为扩展，如果你希望项目的行为扩展完全替换系统的行为扩展，可以使用：<code class="prettyprint linenums lang-php">return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'app_end'=&gt;array('Test','_overlay'=&gt;1),<br />
+);</code>表示app_end标签位用定义的应用行为完全替换该位置的系统行为，也就是说即使系统标签在app_end定义了其他的系统行为也不会被执行，但是必须注意，行为的命名不要和系统行为一样。<br />
+<br />
+二、函数方式动态定义<br />
+除了定义tags行为配置文件之外，系统还提供了动态添加行为到标签位的方法，例如我们可以使用下面的方式添加Test行为到app_end标签位，而无需在tags文件中添加定义：<br />
+add_tag_behavior（'app_end','Test'）;<br />
+表示把Test行为添加到app_end标签位的最后，你可以把这个代码放到项目的公共函数文件中甚至直接放到行为类的最后（如果你确定这个行为扩展只有你的项目会用到的话）。<br />
+应用行为扩展类除了放到项目类库的Behavior目录外， 还可以放到系统的行为扩展目录Extend/Behavior/，行为类在执行过程中会自动加载。<br />
+<br />
+三、不放入标签直接执行<br />
+有时候，行为的调用不一定要放到标签才能调用，如果需要的话，我们可以在控制器中直接调用行为。例如，我们可以把用户权限检测封装成一个行为类，例如：<code class="prettyprint linenums lang-php">class&nbsp;AuthCheckBehavior&nbsp;extends&nbsp;Behavior&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;行为参数定义<br />
+&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;$options&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'USER_AUTH_ON'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;false,&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;是否开启用户认证<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'USER_AUTH_ID'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'user_id',&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;定义用户的id为权限认证字段<br />
+&nbsp;&nbsp;&nbsp;&nbsp;);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;行为扩展的执行入口必须是run<br />
+&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;run(&$return){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(C('USER_AUTH_ON&nbsp;'))&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;进行权限认证逻辑&nbsp;如果认证通过&nbsp;$return&nbsp;=&nbsp;true;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;否则用halt输出错误信息<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}</code>定义了AuthCheck行为后，然后在_initialize方法中直接用下面的方式调用：<code class="prettyprint linenums lang-php">B('AuthCheck');</code><p class="tips">注意：因为这种方式的行为调用需要在相关位置添加代码，所以一般只有在应用代码才直接使用B方法调用。</p></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="143.html">上一页</a><a title="下一页" class="next" href="145.html">下一页</a></div>
+		</div>
+	</body>
+</html>

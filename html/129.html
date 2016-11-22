@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>异常显示</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/129.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>异常显示</h1>
+			<div class="page"><a title="上一页" class="prev" href="128.html">上一页</a><a title="下一页" class="next" href="130.html">下一页</a></div>
+		</div>
+		<div class="book-content">抛出异常后通常会显示具体的错误信息，如果不想让用户看到具体的错误信息，可以设置关闭错误信息的显示并设置统一的错误提示信息，例如：<code class="prettyprint linenums lang-php">'SHOW_ERROR_MSG'&nbsp;=&gt;false,<br />
+'ERROR_MESSAGE'&nbsp;=&gt;'发生错误！'</code>设置之后，所有的异常页面只会显示“发生错误！”这样的提示信息，但是日志文件中仍然可以查看具体的错误信息。新版如果关闭调试模式的话，为了安全起见，默认就是关闭异常信息提示。<br />
+另外一种方式是配置ERROR_PAGE参数，把所有异常和错误都指向一个统一页面，从而避免让用户看到异常信息，通常在部署模式下面使用。ERROR_PAGE参数必须是一个完整的URL地址，例如：<code class="prettyprint linenums lang-php">'ERROR_PAGE'&nbsp;=&gt;'/Public/error.html'</code>如果不在当前域名，还可以指定域名：<code class="prettyprint linenums lang-php">'ERROR_PAGE'&nbsp;=&gt;'http://www.myDomain.com/Public/error.html'</code>注意ERROR_PAGE所指向的页面不能再使用异常的模板变量了。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="128.html">上一页</a><a title="下一页" class="next" href="130.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>分组配置</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/25.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>分组配置</h1>
+			<div class="page"><a title="上一页" class="prev" href="24.html">上一页</a><a title="下一页" class="next" href="26.html">下一页</a></div>
+		</div>
+		<div class="book-content">如果启用了模块分组，则可以在对每个分组单独定义配置文件，分组配置文件位于：<br />
+项目配置目录/分组名称/config.php<br />
+可以通过如下配置启用分组：<code class="prettyprint linenums lang-php">'APP_GROUP_LIST'&nbsp;=&gt;&nbsp;'Home,Admin',&nbsp;//项目分组设定<br />
+'DEFAULT_GROUP'&nbsp;&nbsp;=&gt;&nbsp;'Home',&nbsp;//默认分组</code>现在定义了Home和Admin两个分组，则我们可以定义分组配置文件如下：<br />
+Conf/Home/config.php<br />
+Conf/Admin/config.php<br />
+每个分组的配置文件仅在当前分组有效，分组配置的定义格式和项目配置是一样的。<br />
+注意：分组名称区分大小写，必须和定义的分组名一致。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="24.html">上一页</a><a title="下一页" class="next" href="26.html">下一页</a></div>
+		</div>
+	</body>
+</html>

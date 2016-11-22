@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>图片添加水印</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/194.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>图片添加水印</h1>
+			<div class="page"><a title="上一页" class="prev" href="193.html">上一页</a><a title="下一页" class="next" href="195.html">下一页</a></div>
+		</div>
+		<div class="book-content">可以通过使用Image类的水印方法给图片添加水印支持，例如：<table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">water 给图片添加水印</th>	</tr>	<tr>		<td width="45">用法 </td>		<td>water($source, $water, $savename=null, $alpha=80)</td>	</tr>	<tr>		<td>参数 </td>		<td>source（必须）：原图文件名。  <br />
+Water（必须）：水印图片文件名<br />
+savename（可选）：要保存的图片名，如果留空则用source<br />
+alpha（可选）：水印图片的alpha值，默认为80，范围为0~100</td>	</tr>	<tr>		<td>返回值 </td>		<td>无 </td>	</tr></table>使用示例：<code class="prettyprint linenums lang-php">import('ORG.Util.Image');<br />
+$Image&nbsp;=&nbsp;new&nbsp;Image();<br />
+//&nbsp;给avator.jpg&nbsp;图片添加logo水印<br />
+$Image-&gt;water('/avator.jpg','/logo.jpg');</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="193.html">上一页</a><a title="下一页" class="next" href="195.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>调试方法</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/133.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>调试方法</h1>
+			<div class="page"><a title="上一页" class="prev" href="132.html">上一页</a><a title="下一页" class="next" href="134.html">下一页</a></div>
+		</div>
+		<div class="book-content">调试模式并不能完全满足我们调试的需要，有时候我们需要手动的输出一些调试信息。除了本身可以借助一些开发工具进行调试外，ThinkPHP还提供了一些内置的调试函数和类库。<h3>变量调试</h3>输出某个变量是开发过程中经常会用到的调试方法，除了使用php内置的var_dump和print_r之外，ThinkPHP框架内置了一个对浏览器友好的var_dump方法，用于输出变量的信息到浏览器查看。<table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">dump  浏览器友好的变量输出</th></tr><tr><td>用法</td><td>dump($var, $echo=true, $label=null, $strict=true)</td></tr><tr><td>参数</td><td>var（必须）：要输出的变量，支持所有变量类型<br />
+echo（可选）：是否直接输出，默认为true，如果为false则返回但不输出<br />
+label（可选）：变量输出的label标识，默认为空<br />
+strict（可选）：输出变量类型，默认为true，如果为false则采用print_r输出</td></tr><tr><td>返回值</td><td>如果echo参数为false 则返回要输出的字符串</td></tr></table>使用示例：<code class="prettyprint linenums lang-php">$Blog&nbsp;=&nbsp;D("Blog");<br />
+$blog&nbsp;=&nbsp;$Blog-&gt;find(3);<br />
+dump($blog);</code>在浏览器输出的结果是：<code class="prettyprint linenums lang-php">array(12)&nbsp;{<br />
+&nbsp;&nbsp;["id"]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;string(1)&nbsp;"3"<br />
+&nbsp;&nbsp;["name"]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;string(0)&nbsp;""<br />
+&nbsp;&nbsp;["userId"]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;string(1)&nbsp;"0"<br />
+&nbsp;&nbsp;["categoryId"]&nbsp;&nbsp;&nbsp;=&gt;&nbsp;string(1)&nbsp;"0"<br />
+&nbsp;&nbsp;["title"]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;string(4)&nbsp;"test"<br />
+&nbsp;&nbsp;["content"]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;string(4)&nbsp;"test"<br />
+&nbsp;&nbsp;["cTime"]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;string(1)&nbsp;"0"<br />
+&nbsp;&nbsp;["mTime"]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;string(1)&nbsp;"0"<br />
+&nbsp;&nbsp;["status"]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;string(1)&nbsp;"0"<br />
+&nbsp;&nbsp;["readCount"]&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;string(1)&nbsp;"0"<br />
+&nbsp;&nbsp;["commentCount"]&nbsp;=&gt;&nbsp;string(1)&nbsp;"0"<br />
+&nbsp;&nbsp;["tags"]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;string(0)&nbsp;""<br />
+}</code><h3>性能调试</h3>开发过程中，有些时候为了测试性能，经常需要调试某段代码的运行时间或者内存占用开销，系统提供了一些方法可以很方便的获取某个区间的运行时间和内存占用情况。<table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">debug_start  区间调试开始（记录初始时间和内存占用）</th></tr><tr><td>用法</td><td>debug_start($label='')</td></tr><tr><td>参数</td><td>label（可选）：区间的label标识，默认为空</td></tr><tr><td>返回值</td><td>无</td></tr></table><table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">debug_end  区间调试结束（记录区间结束时间和内存占用 并输出结果）</th></tr><tr><td>用法</td><td>debug_end($label='')</td></tr><tr><td>参数</td><td>label（可选）：区间的label标识，默认为空，<br />必须和debug_start的label对应才能输出正确的区间结果</td></tr><tr><td>返回值</td><td>无</td></tr></table>注意：debug_start和debug_end 方法中的内存占用输出需要环境支持memory_get_usage方法，否则只会显示时间信息。<br />
+使用示例：<code class="prettyprint linenums lang-php">debug_start('run');<br />
+$blog&nbsp;=&nbsp;D("Blog");<br />
+$blog-&gt;select();<br />
+debug_end('run');</code>会输出下面的运行信息：<code class="prettyprint linenums lang-php">Process&nbsp;run:&nbsp;Times&nbsp;0.007730s&nbsp;Memories&nbsp;76&nbsp;k</code>如果仅仅需要调试时间开销，还可以使用内置的G函数来更方便实现<table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">G 用于记录和统计时间（微秒）</th></tr><tr><td>用法</td><td>G($start,$end='',$dec=4)</td></tr><tr><td>参数</td><td>start（必须）：起始位置标识<br />
+end（可选）：记录结束标记并统计时间<br />
+dec（可选）：调试时间的统计精度，默认为小数点后4位</td></tr><tr><td>返回值</td><td>如果end为空或者是一个浮点数， 无返回值。<br />
+如果end是一个字符串，则返回从start到end位置的使用时间。</td></tr></table>使用示例：<code class="prettyprint linenums lang-php">G('run');<br />
+$blog&nbsp;=&nbsp;D("Blog");<br />
+$blog-&gt;select();<br />
+echo&nbsp;G('run','end').'s';</code>除了上面的 函数外，系统还提供了一个扩展调试类Debug<table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">Debug::mark  标记调试位（并记录该位置的时间和内存占用）</th></tr><tr><td>用法</td><td>Debug::mark($name)</td></tr><tr><td>参数</td><td>name（必须）：调试标记位的name标识</td></tr><tr><td>返回值</td><td>无</td></tr><tr><th colspan="2">Debug::useTime  统计区间标记调试位的使用时间</th></tr><tr><td>用法</td><td>useTime($start,$end,$decimals = 6)</td></tr><tr><td>参数</td><td>start（必须）：调试开始位置标识<br />
+end（必须）：调试结束位置标识<br />
+decimals（精度）：调试时间的统计精度默认为小数点后6位</td></tr><tr><td>返回值</td><td>区间位置的使用时间（字符串）</td></tr>[table]<tr><th colspan="2">Debug::useMemory  统计区间标记调试位的内存占用</th></tr><tr><td>用法</td><td>useMemory($start,$end)</td></tr><tr><td>参数</td><td>start（必须）：调试开始位置标识<br />
+end（必须）：调试结束位置标识</td></tr><tr><td>返回值</td><td>区间位置的内存占用（字符串）</td></tr>[table]<tr><th colspan="2">Debug::getMemPeak  统计区间标记调试位的内存占用峰值</th></tr><tr><td>用法</td><td>getMemPeak ($start,$end)</td></tr><tr><td>参数</td><td>start（必须）：调试开始位置标识<br />
+end（必须）：调试结束位置标识</td></tr><tr><td>返回值</td><td>区间位置的内存占用峰值（字符串）</td></tr></table>要使用Debug类调试的话，首先需要导入Debug类，Debug类位于扩展目录下面的Library/ORG/Util/Debug.class.php ，所以首先要导入：<code class="prettyprint linenums lang-php">import('ORG.Util.Debug');<br />
+Debug::mark('run');<br />
+$blog&nbsp;=&nbsp;D("Blog");<br />
+$blog-&gt;select();<br />
+Debug::mark('end');<br />
+echo&nbsp;Debug::useTime('run','end').'s';<br />
+echo&nbsp;Debug::useMemory('run','end').'kb';</code><h3>断点调试</h3>凭借强大的页面Trace信息功能支持，ThinkPHP可以支持断点调试功能。<br />
+我们只需要在不同的位置对某个变量进行trace输出即可，例如：<code class="prettyprint linenums lang-php">$blog&nbsp;=&nbsp;D("Blog");<br />
+$vo&nbsp;=&nbsp;$blog-&gt;create();<br />
+trace('create&nbsp;vo',$vo);<br />
+$vo&nbsp;=&nbsp;$blog-&gt;find();<br />
+trace('find&nbsp;vo',$vo);</code><h3>错误调试</h3>如果需要我们可以使用下面的方法输出错误信息并中断执行：<br />
+halt($msg)//输出错误信息，并中止执行<h3>模型调试</h3>在模型操作中 ，为了更好的查明错误，经常需要查看下最近使用的SQL语句，我们可以用getLastsql方法来输出上次执行的sql语句。例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$User-&gt;find(1);<br />
+echo&nbsp;$User-&gt;getLastSql();</code>输出结果是<br />
+SELECT * FROM think_user  WHERE id = 1<br />
+新版每个模型都使用独立的最后SQL记录，互不干扰，但是可以用空模型的getLastSql方法获取全局的最后SQL记录。<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User模型<br />
+$Info&nbsp;=&nbsp;M("Info");&nbsp;//&nbsp;实例化Info模型<br />
+$User-&gt;find(1);<br />
+$Info-&gt;find(2);<br />
+echo&nbsp;M()-&gt;getLastSql();<br />
+echo&nbsp;$User-&gt;getLastSql();<br />
+echo&nbsp;$Info-&gt;getLastSql();</code>输出结果是<br />
+SELECT * FROM think_info  WHERE id = 2<br />
+SELECT * FROM think_user  WHERE id = 1<br />
+SELECT * FROM think_info  WHERE id = 2<br />
+<br />
+getLastSql方法只能获取最后执行的sql记录，如果需要了解更多的SQL日志，可以通过查看当前的页面Trace或者日志文件。<br />
+<p class="tips">注意：Mongo数据库驱动由于接口的特殊性，不存在执行SQL的概念，因此SQL日志记录功能是额外封装实现的，所以出于性能考虑，只有在开启调试模式的时候才支持使用getLastSql方法获取最后执行的SQL记录。</p></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="132.html">上一页</a><a title="下一页" class="next" href="134.html">下一页</a></div>
+		</div>
+	</body>
+</html>

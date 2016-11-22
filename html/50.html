@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>获取URL参数</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/50.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>获取URL参数</h1>
+			<div class="page"><a title="上一页" class="prev" href="49.html">上一页</a><a title="下一页" class="next" href="51.html">下一页</a></div>
+		</div>
+		<div class="book-content">一般情况下URL中的参数就是通过GET方法获取，但是由于PATHINFO的特殊性，URL地址最终需要被解析才能转换成GET参数，ThinkPHP对URL是按照一定的规则进行解析的，除非你使用了URL路由规则，如果你对URL做了特别的定制，但是又不想使用URL路由，那么可以使用框架提供的URL参数获取方法直接获取，例如，我们访问一个如下的网址：<br />
+http://serverName/News/archive/2012/01/15<br />
+正常情况下，只有通过路由才能解析后面的2012/01/15，现在我们可以直接在News控制器的archive操作方法里面直接使用：<code class="prettyprint linenums lang-php">Class&nbsp;NewsAction&nbsp;extends&nbsp;Action&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Public&nbsp;function&nbsp;archive(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$year&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;$_GET["_URL_"][2];&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$month&nbsp;&nbsp;=&nbsp;$_GET["_URL_"][3];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$day&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;$_GET["_URL_"][4];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+}</code>我们可以把URL地址 News/archive/2012/01/15 按照“/”分成多个参数，$_GET["_URL_"][0] 获取的就是News，$_GET["_URL_"][1]获取的就是archive，依次类推，可以通过数字索引获取所有的URL参数。3.0版开始支持URL地址中的PATH_INFO方式的URL的参数获取方式，需要配置<br />
+VAR_URL_PARAMS参数，默认值是：<code class="prettyprint linenums lang-php">&nbsp;&nbsp;&nbsp;&nbsp;'VAR_URL_PARAMS'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'_URL_',&nbsp;//&nbsp;PATHINFO&nbsp;URL参数变量</code>如果这个值不为空的话，就可以获取URL地址里面的PATH_INFO URL参数，例如<br />
+我们访问 <code class="prettyprint linenums lang-php">http://serverName.com/index.php/Blog/read/2012/03</code>则可以在Blog控制器的read操作方法里面采用 <br />
+$GET['_URL_'][2] 获取参数，表示获取PATH_INFO的URL参数<br />
+Blog/read/2012/03中的第3个参数（数组索引从0开始）<code class="prettyprint linenums lang-php">$year&nbsp;=&nbsp;$GET['_URL_'][2];&nbsp;//&nbsp;2012<br />
+$month&nbsp;=&nbsp;$GET['_URL_'][3];&nbsp;//&nbsp;&nbsp;03</code>3.1版本开始，建议使用_param方法获取URL参数，_param方法方法是3.1新增的方法，可以自动根据当前请求类型获取参数。<br />
+_param方法的用法同_get和_post等方法，区别在于，_param方法能够自动根据当前请求类型自动获取相应的参数，例如：<br />
+如果当前是get请求方式，<code class="prettyprint linenums lang-php">$this-&gt;_param('id');&nbsp;</code>将会返回$_GET['id'] 的处理数据<br />
+当采用POST请求方式的时候，同样的代码将会返回$_POST['id']的处理数据<br />
+如果采用的是PUT请求，那么会自动返回PUT的处理数据，而无需开发人员进行判断。<br />
+并且需要注意的是，无论是什么方式的请求，系统都可以支持URL参数的获取，如果C('VAR_URL_PARAMS')设置不为空的话，就可以使用：<code class="prettyprint linenums lang-php">$this-&gt;_param(1);<br />
+$this-&gt;_param(2);</code>来获取URL地址中的某个参数。<code class="prettyprint linenums lang-php">$year&nbsp;=&nbsp;$this-&gt;_param(2);<br />
+$month&nbsp;=&nbsp;$this-&gt;_param(3);</code>的方式来获取。<br />
+这样的好处是可以不需要使用路由功能就可以获取某个不规则的URL地址中的参数。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="49.html">上一页</a><a title="下一页" class="next" href="51.html">下一页</a></div>
+		</div>
+	</body>
+</html>

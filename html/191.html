@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>数据分页</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/191.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>数据分页</h1>
+			<div class="page"><a title="上一页" class="prev" href="190.html">上一页</a><a title="下一页" class="next" href="192.html">下一页</a></div>
+		</div>
+		<div class="book-content">通常在数据查询后都会对数据集进行分页操作，ThinkPHP也提供了分页类来对数据分页提供支持。<br />
+分页类位于扩展类库下面，需要先导入才能使用，下面是数据分页的两种示例。<br />
+<b>第一种：利用Page类和limit方法</b><code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M('User');&nbsp;//&nbsp;实例化User对象<br />
+import('ORG.Util.Page');//&nbsp;导入分页类<br />
+$count&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;$User-&gt;where('status=1')-&gt;count();//&nbsp;查询满足要求的总记录数<br />
+$Page&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;new&nbsp;Page($count,25);//&nbsp;实例化分页类&nbsp;传入总记录数和每页显示的记录数<br />
+$show&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;$Page-&gt;show();//&nbsp;分页显示输出<br />
+//&nbsp;进行分页数据查询&nbsp;注意limit方法的参数要使用Page类的属性<br />
+$list&nbsp;=&nbsp;$User-&gt;where('status=1')-&gt;order('create_time')-&gt;limit($Page-&gt;firstRow.','.$Page-&gt;listRows)-&gt;select();<br />
+$this-&gt;assign('list',$list);//&nbsp;赋值数据集<br />
+$this-&gt;assign('page',$show);//&nbsp;赋值分页输出<br />
+$this-&gt;display();&nbsp;//&nbsp;输出模板</code><b>第二种：分页类和page方法的实现</b><code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M('User');&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;进行分页数据查询&nbsp;注意page方法的参数的前面部分是当前的页数使用&nbsp;$_GET[p]获取<br />
+$list&nbsp;=&nbsp;$User-&gt;where('status=1')-&gt;order('create_time')-&gt;page($_GET['p'].',25')-&gt;select();<br />
+$this-&gt;assign('list',$list);//&nbsp;赋值数据集<br />
+import(“ORG.Util.Page”);//&nbsp;导入分页类<br />
+$count&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;$User-&gt;where('status=1')-&gt;count();//&nbsp;查询满足要求的总记录数<br />
+$Page&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;new&nbsp;Page($count,25);//&nbsp;实例化分页类&nbsp;传入总记录数和每页显示的记录数<br />
+$show&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;$Page-&gt;show();//&nbsp;分页显示输出<br />
+$this-&gt;assign('page',$show);//&nbsp;赋值分页输出<br />
+$this-&gt;display();&nbsp;//&nbsp;输出模板</code>带入查询条件<br />
+如果是POST方式查询，如何确保分页之后能够保持原先的查询条件呢，我们可以给分页类传入参数，方法是给分页类的parameter属性赋值：<code class="prettyprint linenums lang-php">import('ORG.Util.Page');//&nbsp;导入分页类<br />
+$mapcount&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;$User-&gt;where($map)-&gt;count();//&nbsp;查询满足要求的总记录数<br />
+$Page&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;new&nbsp;Page($count,25);//&nbsp;实例化分页类&nbsp;传入总记录数和每页显示的记录数<br />
+//分页跳转的时候保证查询条件<br />
+foreach($map&nbsp;as&nbsp;$key=&gt;$val)&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$Page-&gt;parameter&nbsp;&nbsp;&nbsp;.=&nbsp;&nbsp;&nbsp;"$key=".urlencode($val).'&';<br />
+}<br />
+$show&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;$Page-&gt;show();//&nbsp;分页显示输出</code>分页样式定制<br />
+默认的分页输出效果是<br />
+<br />
+我们可以对输出的分页样式进行定制，分页类Page提供了一个setConfig方法来修改默认的一些设置。例如：<code class="prettyprint linenums lang-php">$page-&gt;setConfig('header','个会员');</code>setConfig方法支持的属性包括：<br />
+<b>header</b>：头部描述信息，默认值 “条记录”<br />
+<b>prev</b>：上一页描述信息，默认值是“上一页”<br />
+<b>next</b>：下一页描述信息，默认值是“下一页”<br />
+<b>firs</b>t：第一页描述信息，默认值是“第一页”<br />
+<b>last</b>：最后一页描述信息，默认值是“最后一页”<br />
+<b>theme</b> ：分页主题描述信息，包括了上面所有元素的组合 ，设置该属性可以改变分页的各个单元的显示位置，默认值是<br />
+"%totalRow% %header% %nowPage%/%totalPage% 页 %upPage% %downPage% %first%  %prePage%  %linkPage%  %nextPage% %end%"<br />
+通过setConfig设置以上属性可以完美的定制出你的分页显示风格。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="190.html">上一页</a><a title="下一页" class="next" href="192.html">下一页</a></div>
+		</div>
+	</body>
+</html>

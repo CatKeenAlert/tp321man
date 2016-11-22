@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>CBD架构</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/10.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>CBD架构</h1>
+			<div class="page"><a title="上一页" class="prev" href="9.html">上一页</a><a title="下一页" class="next" href="11.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP3.0版本引入了全新的CBD（核心Core+行为Behavior+驱动Driver）架构模式，因为从底层开始，框架就采用核心+行为+驱动的架构体系，核心保留了最关键的部分，并在重要位置设置了标签用以标记，其他功能都采用行为扩展和驱动的方式组合，开发人员可以根据自己的需要，对某个标签位置进行行为扩展或者替换，就可以方便的定制框架底层，也可以在应用层添加自己的标签位置和添加应用行。而标签位置类似于AOP概念中的“切面”，行为都是围绕这个“切面”来进行编程，如果把系统内置的核心扩展看成是一种标准模式的话，那么用户可以把这一切的行为定制打包成一个新的模式，所以在ThinkPHP里面，称之为模式扩展，事实上，模式扩展不仅仅可以替换和增加行为，还可以对底层的MVC进行替换和修改，以达到量身定制的目的。利用这一新的特性，开发人员可以方便地通过模式扩展为自己量身定制一套属于自己或者企业的开发框架，新版的模式扩展是框架扩展的集大成者，开创了新的里程碑，这正是新版的真正魅力所在。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="9.html">上一页</a><a title="下一页" class="next" href="11.html">下一页</a></div>
+		</div>
+	</body>
+</html>

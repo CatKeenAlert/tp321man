@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>调试配置</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/24.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>调试配置</h1>
+			<div class="page"><a title="上一页" class="prev" href="23.html">上一页</a><a title="下一页" class="next" href="25.html">下一页</a></div>
+		</div>
+		<div class="book-content">新版增强了调试模式的配置文件，在开启调试模式的状态下，可以给项目设置不同的应用状态，并加载不同的项目配置文件，但是无论如何，都会首先导入框架默认的调试模式配置文件，该文件位于系统目录的Conf\debug.php。<br />
+通常情况下，调试配置文件里面可以进行一些开发模式所需要的配置。例如，配置额外的数据库连接用于调试，开启日志写入便于查找错误信息、开启页面Trace输出更多的调试信息等等。<br />
+注意：3.0版本的调试模式默认没有开启运行时间显示和页面Trace显示，需要自行开启，并且建议调试模式只开启页面Trace即可，新版的页面Trace显示信息已经包含了运行时间显示。<br />
+如果没有配置应用状态，系统默认则默认为debug状态，也就是说默认的配置参数是：<code class="prettyprint linenums lang-php">'APP_STATUS'&nbsp;=&gt;&nbsp;'debug',&nbsp;//应用调试模式状态</code>如果检测到项目的配置目录中有存在debug.php文件，则会自动加载该配置文件，并且和系统项目配置文件以及系统调试配置文件合并，也就是说，debug.php配置文件只需要配置和项目配置文件以及系统调试配置文件不同的参数或者新增的参数。<br />
+如果想在调试模式下面增加应用状态，例如测试状态，则可以在项目配置文件中改变设置如下：<code class="prettyprint linenums lang-php">'APP_STATUS'&nbsp;=&gt;&nbsp;'test',&nbsp;//应用调试模式状态</code>这样的话，系统会自动尝试加载项目配置目录下面的test.php 配置文件，可以在test配置文件中改变相关设置，例如改变测试数据库的连接信息等等。<br />
+由于调试模式没有任何缓存，因此涉及到较多的文件IO操作和模板实时编译，所以在开启调试模式的情况下，性能会有一定的下降，但不会影响部署模式的性能。<br />
+注意：一旦关闭调试模式，项目的调试配置文件即刻失效。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="23.html">上一页</a><a title="下一页" class="next" href="25.html">下一页</a></div>
+		</div>
+	</body>
+</html>

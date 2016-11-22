@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>URL路由</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/40.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>URL路由</h1>
+			<div class="page"><a title="上一页" class="prev" href="39.html">上一页</a><a title="下一页" class="next" href="41.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP支持URL路由功能，要启用路由功能，需要设置URL_ROUTER_ON 参数为true。开启路由功能后，并且配置URL_ROUTE_RULES参数后，系统会自动进行路由检测，如果在路由定义里面找到和当前URL匹配的路由名称，就会进行路由解析和重定向。<br />
+3.0版本的路由支持做了增强，包含规则路由和正则路由支持。<br />
+<b>一、规则路由</b><br />
+规则路由是由2.1版本的简单路由进化而来，定义格式为：<br />
+格式1：'路由规则'=&gt;'[分组/模块/操作]?额外参数1=值1&额外参数2=值2...'<br />
+格式2：'路由规则'=&gt;array('[分组/模块/操作]','额外参数1=值1&额外参数2=值2...')<br />
+格式3：'路由规则'=&gt;'外部地址'<br />
+格式4：'路由规则'=&gt;array('外部地址','重定向代码')<br />
+<b>注意事项</b>：<br />
+	<ul><li>路由规则中如果以“:”开头，表示动态变量，否则为静态地址</li>	<li>格式2的额外参数可以传入数组或者字符串</li>	<li>外部地址中如果要引用动态变量， 采用 :1、:2 的方式</li>	<li>路由规则支持变量的数字约束定义，例如：'news/:id\d'=&gt;'News/read'</li>	<li>规则路由可以支持 全动态和动静结合定义，例如':user/blog/:id'=&gt;'Home/Blog/user'</li>	<li>路由规则非数字变量支持排除，例如 'news/:cate^add|edit|delete'=&gt;'News/category'</li>	<li>路由规则中的静态地址部分不区分大小写</li></ul>下面是规则路由的定义示例：<code class="prettyprint linenums lang-php">'URL_ROUTER_ON'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;true,&nbsp;//开启路由<br />
+'URL_ROUTE_RULES'&nbsp;=&gt;&nbsp;array(&nbsp;//定义路由规则<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'news/:year/:month/:day'&nbsp;=&gt;&nbsp;array('News/archive',&nbsp;'status=1'),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'news/:id'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'News/read',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'news/read/:id'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'/news/:1',<br />
+),</code>其中定义了3条路由规则，如果我们访问下面的URL<code class="prettyprint linenums lang-php">http://serverName/index.php/news/8<br />
+http://serverName/index.php/news/10</code>则会匹配到第二条规则路由，并解析到News模块的read操作，而且后面的数字会传入$_GET['id']变量。<br />
+如果我们访问下面的URL<code class="prettyprint linenums lang-php">http://serverName/index.php/news/2012/01/08<br />
+http://serverName/index.php/news/2012/01/15</code>则会匹配到第一条规则路由，并解析到News模块的archive操作，而且会传入year、month和day的GET变量。<br />
+第一条路由规则还可以改成<code class="prettyprint linenums lang-php">'news/:year/:month/:day/'=&gt;'News/archive?status=1',</code>通常情况下，需要传入数组参数的时候才会需要使用格式数组来定义<br />
+第三条路由规则是一个路由重定向，一般是用于网站改版后的URL迁移，如果之前的URL访问规则是<code class="prettyprint linenums lang-php">http://serverName/index.php/news/read/8</code>那么会重定向到新的内部路由规则<code class="prettyprint linenums lang-php">http://serverName/index.php/news/8</code>这里之所以用了重定向路由是为了告诉搜索引擎这些地址已经发生改变了 而且以后是不需要保留。<br />
+<br />
+有些情况下，可能会存在冲突，假如要支持通过标识来访问文章，<code class="prettyprint linenums lang-php">http://serverName/index.php/news/hello_world</code>那么解析规则就会混淆，但是我们可以更改路由规则如下：<code class="prettyprint linenums lang-php">'URL_ROUTER_ON'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;true,&nbsp;//开启路由<br />
+'URL_ROUTE_RULES'&nbsp;=&gt;&nbsp;array(&nbsp;//定义路由规则<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'news/:year/:month/:day'&nbsp;=&gt;&nbsp;array('News/archive',&nbsp;'status=1'),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'news/:id\d'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'News/read',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'news/:name'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'News/read',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'news/read/:id'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'/news/:1',<br />
+),&nbsp;</code>news/:id\d 规则表示当URL中id参数为数字时才会匹配<br />
+而 news/:name 规则定义 则会匹配所有的字符情况，这也是默认的情况，目前规则路由只区分数字和所有字符的情况，如果需要严格的类型约束，请采用正则路由定义规则。举个例子，我们现在用规则路由来实现之前用空操作实现的城市功能，我们定义了City控制器如下：<code class="prettyprint linenums lang-php">class&nbsp;CityAction&nbsp;extends&nbsp;Action{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;city(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//读取城市名<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$cityName&nbsp;=&nbsp;$_GET['name'];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;'当前城市'&nbsp;.&nbsp;$cityName;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+}</code>我们只需要定义下面的路由规则<code class="prettyprint linenums lang-php">'city/:name'&nbsp;&nbsp;=&gt;'City/city'</code>就能实现之前用空操作实现的同样功能了。<br />
+接下来，我们就可以在浏览器里面输入<br />
+http://serverName/index.php/City/beijing/<br />
+http://serverName/index.php/City/shanghai/<br />
+http://serverName/index.php/City/shenzhen/<br />
+会看到依次输出的结果是：<br />
+当前城市:beijing<br />
+当前城市:shanghai<br />
+当前城市:Shenzhen规则路由可以支持动态和静态混合甚至是全动态，例如：<code class="prettyprint linenums lang-php">'URL_ROUTER_ON'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;true,&nbsp;//开启路由<br />
+'URL_ROUTE_RULES'&nbsp;=&gt;&nbsp;array(&nbsp;//定义路由规则<br />
+&nbsp;&nbsp;&nbsp;&nbsp;':user/bolg/:id'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'Blog/read',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;':user/:blog_name'&nbsp;=&gt;&nbsp;'Blog/read',<br />
+),</code>第一条路由会匹配下列URL访问<br />
+http://serverName/index.php/user1/blog/25/<br />
+http://serverName/index.php/username2/blog/245/<br />
+并解析到Blog模块的read操作方法 ，传入user和id两个GET参数。<br />
+第二条路由会匹配到下面的URL访问<br />
+http://serverName/index.php/user1/hello_world<br />
+http://serverName/index.php/username2/test_nme<br />
+同样解析到Blog模块的read操作方法，只是传入的参数变成blog_name 一个GET参数。<b>二、正则路由</b><br />
+正则路由可以实现更加复杂的路由定义，支持的定义格式如下：<br />
+格式1：'路由正则'=&gt;'[分组/模块/操作]?参数1=值1&参数2=值2...'<br />
+格式2：'路由正则'=&gt;array('[分组/模块/操作]','参数1=值1&参数2=值2...')<br />
+格式3：'路由正则'=&gt;'外部地址'<br />
+格式4：'路由正则'=&gt;array('外部地址','重定向代码') <br />
+<br /><br />
+注意事项：<ul><li>正则路由规则必须以“/”开始和结束</li><li>格式2的参数可以传入数组或者字符串</li><li>参数值和外部地址中可以用动态变量 采用 :1、 :2 的方式 </li></ul>下面是正则路由的定义示例：<code class="prettyprint linenums lang-php">'URL_ROUTER_ON'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;true,&nbsp;//开启路由<br />
+'URL_ROUTE_RULES'&nbsp;=&gt;&nbsp;array(&nbsp;//定义路由规则<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'/^blog\/(\d+)$/'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'Blog/read?id=:1',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'/^blog\/(\d+)\/(\d+)$/'&nbsp;=&gt;&nbsp;'Blog/achive?year=:1&month=:2',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'/^blog\/(\d+)_(\d+)$/'&nbsp;&nbsp;=&gt;&nbsp;'blog.php?id=:1&page=:2',<br />
+),</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="39.html">上一页</a><a title="下一页" class="next" href="41.html">下一页</a></div>
+		</div>
+	</body>
+</html>

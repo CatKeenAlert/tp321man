@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>手动记录</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/125.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>手动记录</h1>
+			<div class="page"><a title="上一页" class="prev" href="124.html">上一页</a><a title="下一页" class="next" href="126.html">下一页</a></div>
+		</div>
+		<div class="book-content">通常日志文件的写入是自动完成的，如果我们需要在开发的过程中手动记录日志信息，可以使用Log类的方法来操作。日志文件的写入有两种方法：<br />
+一、使用Log::write 方法<table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">Log::write  直接写入日志</th></tr><tr><td>用法</td><td>Log::write($message,$level=self::ERR,$type='',$destination='',$extra='')</td></tr><tr><td>参数</td><td>message（必须）：要记录的日志信息，字符串<br /><br />
+level（可选）：要记录的日志级别，默认为ERR 错误<br /><br />
+type（可选）：日志记录方式，默认为空取LOG_TYPE配置<br /><br />
+destination（可选）：日志记录目标，默认为空自动生成或LOG_DEST配置<br /><br />
+extra（可选）：日志记录额外参数，默认为空取LOG_EXTRA配置</td></tr><tr><td>返回值</td><td>	无</td></tr></table>使用示例：<code class="prettyprint linenums lang-php">Log::write('调试的SQL：'.$SQL,&nbsp;Log::SQL);</code>表示用默认的日志记录方式记录调试SQL信息<br />
+二、使用Log::record和 Log::save方法<table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">Log::record记录日志</th></tr><tr><td>用法</td><td>Log::record($message,$level=self::ERR,$record=false)</td></tr><tr><td>参数</td><td>message（必须）：要记录的日志信息，字符串<br />
+level（可选）：要记录的日志级别，默认为ERR 错误<br />
+record（可选）：是否强制记录，默认为false表示判断LOG_LEVEL配置</td></tr><tr><td>返回值</td><td>无</td></tr></table>Log::record方法必须结合Log::save方法才能完成日志记录，因为record方法只是把日志信息保存到内存，并没有真正写入日志，直到调用Log::save方法。<table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">Log::save  保存记录的日志</th></tr><tr><td>用法</td><td>Log::save($type='',$destination='',$extra='')</td></tr><tr><td>参数</td><td>type（可选）：日志记录方式，默认为空取LOG_TYPE配置<br />
+destination（可选）：日志记录目标，默认为空自动生成或LOG_DEST配置<br />
+extra（可选）：日志记录额外参数，默认为空取LOG_EXTRA配置</td></tr><tr><td>返回值</td><td>无</td></tr></table>使用示例：<code class="prettyprint linenums lang-php">Log::record('测试调试错误信息',&nbsp;Log::DEBUG);<br />
+Log::record('调试的SQL：'.$SQL,&nbsp;Log::SQL);<br />
+Log::save();</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="124.html">上一页</a><a title="下一页" class="next" href="126.html">下一页</a></div>
+		</div>
+	</body>
+</html>

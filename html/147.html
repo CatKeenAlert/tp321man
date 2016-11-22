@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模型扩展</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/147.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模型扩展</h1>
+			<div class="page"><a title="上一页" class="prev" href="146.html">上一页</a><a title="下一页" class="next" href="148.html">下一页</a></div>
+		</div>
+		<div class="book-content">模型扩展目录位于Extend/Model下面，ThinkPHP本身提供了丰富的模型扩展，例如：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>模型名</th>    <th>名称</th>    <th>说明</th>  </tr>  <tr>    <td>AdvModel</td>    <td>高级模型</td>    <td>扩展了文本字段、只读字段、序列化字段、延迟写入、乐观锁等高级特性</td>  </tr>  <tr>    <td>ViewModel</td>    <td>视图模型</td>    <td>扩展了模型的视图操作功能</td>  </tr>  <tr>    <td>RelationModel</td>    <td>关联模型</td>    <td>扩展了模型的关联操作</td>  </tr>  <tr>    <td>MongoModel</td>    <td>Mongo模型</td>    <td>扩展了对Mongo数据库的数据操作支持</td>  </tr></table>这些扩展模型都是基于系统的基础模型类Model扩展而来。<h3>模型扩展接口</h3>ThinkPHP的新版基础模型类Model具有很好的扩展性，对模型的CURD方法都提供了扩展接口，包含：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>接口名称</th>    <th>所属方法</th>    <th>接口方法（参数）</th>  </tr>  <tr>    <td>初始化接口</td>    <td>全局</td>    <td>_initialize()</td>  </tr>  <tr>    <td>表达式过滤接口</td>    <td>全局</td>    <td>_options_filter(&amp;$options)</td>  </tr>  <tr>    <td>写入前置接口</td>    <td>add方法</td>    <td>_before_insert(&amp;$data,$options)</td>  </tr>  <tr>    <td>写入后置接口</td>    <td>add方法</td>    <td>_after_insert($data,$options)</td>  </tr>  <tr>    <td>更新前置接口</td>    <td>save方法</td>    <td>_before_update(&amp;$data,$options)</td>  </tr>  <tr>    <td>更新后置接口</td>    <td>save方法</td>    <td>_after_update($data,$options)</td>  </tr>  <tr>    <td>数据写入接口</td>    <td>add、save方法</td>    <td>_facade($data)</td>  </tr>  <tr>    <td>数据库切换接口</td>    <td>db方法</td>    <td>_after_db()</td>  </tr>  <tr>    <td>删除后置接口</td>    <td>delete方法</td>    <td>_after_delete($data,$options)</td>  </tr>  <tr>    <td>查询后置接口</td>    <td>select方法</td>    <td>_after_select(&amp;$result,$options)</td>  </tr>  <tr>    <td>查询后置接口</td>    <td>find方法</td>    <td>_after_find(&amp;$result,$options)</td>  </tr></table>目前提供的的扩展模型包括：高级模型（AdvModel）、视图模型（ViewModel）、关联模型（RelationModel）和Mongo模型都是继承Model类并且都通过了扩展完成了很多其他的功能。<br />
+不过在某些情况下，模型扩展并不一定要继承基础模型Model。<h3>调用扩展模型</h3>定义了模型扩展之后，有多种方式可以使用扩展模型：<br />
+<b>一、继承扩展模型</b><br />
+最普遍的用法就是项目中的自定义模型或者公共模型直接继承扩展模型，例如：<br />
+我们需要使用Mongo模型的话，可以：<code class="prettyprint linenums lang-php">Class&nbsp;UserModel&nbsp;extends&nbsp;MongoModel{}</code>把原来的继承从Model类改为扩展模型MongoModel，就可以使用MongoModel的所有功能。<br />
+如果你的项目大部分模型都继承了一个公共的模型类CommonModel的话，只需要改下CommonModel的继承定义：<code class="prettyprint linenums lang-php">Class&nbsp;CommonModel&nbsp;extends&nbsp;MongoModel{}</code>所有继承自CommonModel的自定义模型也可以使用MongoModel的功能。<b>二、使用动态模型切换的方式</b><br />
+例如，我们定义了一个UserModel如下：<code class="prettyprint linenums lang-php">Class&nbsp;UserModel&nbsp;extends&nbsp;Model{}</code>为了使用AdvModel高级模型的功能，我们使用下面的方式切换到高级模型进行操作：<code class="prettyprint linenums lang-php">$User-&gt;switchModel("Adv")-&gt;top10();</code>注意：动态模型切换方法switchModel调用的时候无需写完整的扩展模型名称，需要去掉扩展模型的Model后缀后调用。<b>三、M方法实例化</b><br />
+如果我们没有定义自定义模型，则可以直接采用M方法实例化需要继承的扩展模型，例如：<br />
+M("AdvModel:User")-&gt;top10();<br />
+这里表示实例化User模型，而且该模型使用的基础模型类为AdvModel扩展模型类，这里引用的扩展模型需要使用全名。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="146.html">上一页</a><a title="下一页" class="next" href="148.html">下一页</a></div>
+		</div>
+	</body>
+</html>

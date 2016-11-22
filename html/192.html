@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>文件上传</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/192.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>文件上传</h1>
+			<div class="page"><a title="上一页" class="prev" href="191.html">上一页</a><a title="下一页" class="next" href="193.html">下一页</a></div>
+		</div>
+		<div class="book-content">上传类使用ORG.Net.UpdateFile类，最新版本的上传类包含的功能如下（有些功能需要结合ThinkPHP系统其他类库）：<ul><li>基本上传功能</li><li>支持批量上传</li><li>支持生成图片缩略图</li><li>自定义参数上传</li><li>上传检测（包括大小、后缀和类型）</li><li>支持覆盖方式上传</li><li>支持上传类型、附件大小、上传路径定义</li><li>支持哈希或者日期子目录保存上传文件</li><li>上传图片的安全性检测</li><li>支持上传文件命名规则</li><li>支持对上传文件的Hash验证</li></ul>在ThinkPHP中使用上传功能无需进行特别处理。例如，下面是一个带有附件上传的表单提交：<code class="prettyprint linenums lang-html">&lt;input&nbsp;type=&quot;file&quot;&nbsp;&nbsp;name=&quot;photo1&quot;&gt;<br />
+&lt;input&nbsp;type=&quot;file&quot;&nbsp;&nbsp;name=&quot;photo2&quot;&gt;<br />
+&lt;input&nbsp;type=&quot;file&quot;&nbsp;&nbsp;name=&quot;photo3&quot;&gt;</code>  <br />
+<br />
+注意表单的Form标签中一定要添加 enctype=”multipart/form-data”文件才能上传。因为表单提交到当前模块的upload操作方法，所以我们在模块类里面添加下面的<b>upload</b>方法即可：<code class="prettyprint linenums lang-php">Public&nbsp;function&nbsp;upload(){<br />
+import('ORG.Net.UploadFile');<br />
+$upload&nbsp;=&nbsp;new&nbsp;UploadFile();//&nbsp;实例化上传类<br />
+$upload-&gt;maxSize&nbsp;&nbsp;=&nbsp;3145728&nbsp;;//&nbsp;设置附件上传大小<br />
+$upload-&gt;allowExts&nbsp;&nbsp;=&nbsp;array('jpg',&nbsp;'gif',&nbsp;'png',&nbsp;'jpeg');//&nbsp;设置附件上传类型<br />
+$upload-&gt;savePath&nbsp;=&nbsp;&nbsp;'./Public/Uploads/';//&nbsp;设置附件上传目录<br />
+if(!$upload-&gt;upload())&nbsp;{//&nbsp;上传错误提示错误信息<br />
+$this-&gt;error($upload-&gt;getErrorMsg());<br />
+}else{//&nbsp;上传成功&nbsp;获取上传文件信息<br />
+$info&nbsp;=&nbsp;&nbsp;$upload-&gt;getUploadFileInfo();<br />
+}<br />
+<br />
+//&nbsp;保存表单数据&nbsp;包括附件数据<br />
+$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$User-&gt;create();&nbsp;//&nbsp;创建数据对象<br />
+$User-&gt;photo&nbsp;=&nbsp;$info[0]['savename'];&nbsp;//&nbsp;保存上传的照片根据需要自行组装<br />
+$User-&gt;add();&nbsp;//&nbsp;写入用户数据到数据库<br />
+$this-&gt;success('数据保存成功！');<br />
+}</code>首先是实例化上传类<code class="prettyprint linenums lang-php">import('ORG.Net.UploadFile');<br />
+$upload&nbsp;=&nbsp;new&nbsp;UploadFile();//&nbsp;实例化上传类</code>实例化上传类之后，就可以设置一些上传的属性（参数），支持的属性有：<table border="0" cellspacing="1" cellpadding="0">	<tr>		<td>maxSize</td>		<td>文件上传的最大文件大小（以字节为单位）默认为-1 不限大小 </td>	</tr>	<tr>		<td>savePath</td>		<td>文件保存路径，如果留空会取UPLOAD_PATH常量定义的路径 </td>	</tr>	<tr>		<td>saveRule</td>		<td>上传文件的保存规则，必须是一个无需任何参数的函数名，例如可以是 time、 uniqid com_create_guid 等，但必须能保证生成的文件名是唯一的，默认是uniqid</td>	</tr>	<tr>		<td>hashType</td>		<td>上传文件的哈希验证方法，默认是md5_file</td>	</tr>	<tr>		<td>autoCheck</td>		<td>是否自动检测附件，默认为自动检测 </td>	</tr>	<tr>		<td>uploadReplace</td>		<td>存在同名文件是否是覆盖 </td>	</tr>	<tr>		<td>allowExts</td>		<td>允许上传的文件后缀（留空为不限制），使用数组设置，默认为空数组 </td>	</tr>	<tr>		<td>allowTypes</td>		<td>允许上传的文件类型（留空为不限制），使用数组设置，默认为空数组 </td>	</tr>	<tr>		<td>thumb</td>		<td>是否需要对图片文件进行缩略图处理，默认为false</td>	</tr>	<tr>		<td>thumbMaxWidth</td>		<td>缩略图的最大宽度，多个使用逗号分隔 </td>	</tr>	<tr>		<td>thumbMaxHeight</td>		<td>缩略图的最大高度，多个使用逗号分隔 </td>	</tr>	<tr>		<td>thumbPrefix</td>		<td>缩略图的文件前缀，默认为thumb_</td>	</tr>	<tr>		<td>thumbSuffix</td>		<td>缩略图的文件后缀，默认为空 </td>	</tr>	<tr>		<td>thumbPath</td>		<td>缩略图的保存路径，留空的话取文件上传目录本身 </td>	</tr>	<tr>		<td>thumbFile</td>		<td>指定缩略图的文件名 </td>	</tr>	<tr>		<td>thumbRemoveOrigin</td>		<td>生成缩略图后是否删除原图 </td>	</tr>	<tr>		<td>autoSub</td>		<td>是否使用子目录保存上传文件 </td>	</tr>	<tr>		<td>subType</td>		<td>子目录创建方式，默认为hash，可以设置为hash或者date</td>	</tr>	<tr>		<td>dateFormat</td>		<td>子目录方式为date的时候指定日期格式 </td>	</tr>	<tr>		<td>hashLevel</td>		<td>子目录保存的层次，默认为一层 </td>	</tr></table>以上属性都可以直接设置，例如：<code class="prettyprint linenums lang-php">$upload-&gt;thumb&nbsp;=&nbsp;true;<br />
+$upload-&gt;thumbMaxWidth&nbsp;=&nbsp;'50,200';<br />
+$upload-&gt;thumbMaxHeight&nbsp;=&nbsp;'50,200';</code>其中生成缩略图功能需要Image类的支持。<br />
+<br />
+设置好上传的参数后，就可以调用UploadFile类的upload方法进行附件上传，如果失败，返回false，并且用getErrorMsg方法获取错误提示信息；如果上传成功，可以通过调用<b>getUploadFileInfo</b>方法获取成功上传的附件信息列表。因此getUploadFileInfo方法的返回值是一个数组，其中的每个元素就是上传的附件信息。每个附件信息又是一个记录了下面信息的数组，包括：<table border="0" cellspacing="1" cellpadding="0">	<tr>		<td><b>key</b></td>		<td>附件上传的表单名称 </td>	</tr>	<tr>		<td><b>savepath</b></td>		<td>上传文件的保存路径 </td>	</tr>	<tr>		<td><b>name</b></td>		<td>上传文件的原始名称 </td>	</tr>	<tr>		<td><b>savename</b></td>		<td>上传文件的保存名称 </td>	</tr>	<tr>		<td><b>size</b></td>		<td>上传文件的大小 </td>	</tr>	<tr>		<td><b>type</b></td>		<td>上传文件的MIME类型 </td>	</tr>	<tr>		<td><b>extension</b></td>		<td>上传文件的后缀类型 </td>	</tr>	<tr>		<td><b>hash</b></td>		<td>上传文件的哈希验证字符串 </td>	</tr></table>文件上传成功后，就可以通过这些附件信息来进行其他的数据存取操作，例如保存到当前数据表或者单独的附件数据表都可以。<br />
+<br />
+如果需要使用多个文件上传，只需要修改表单，把<code class="prettyprint linenums lang-php">&lt;input&nbsp;type='file'&nbsp;&nbsp;name='photo'&gt;</code>改为<code class="prettyprint linenums lang-php">&lt;input&nbsp;type='file'&nbsp;&nbsp;name='photo1'&gt;<br />
+&lt;input&nbsp;type='file'&nbsp;&nbsp;name='photo2'&gt;<br />
+&lt;input&nbsp;type='file'&nbsp;&nbsp;name='photo3'&gt;</code>或者<code class="prettyprint linenums lang-php">&lt;input&nbsp;type='file'&nbsp;&nbsp;name='photo[]'&gt;<br />
+&lt;input&nbsp;type='file'&nbsp;&nbsp;name='photo[]'&gt;<br />
+&lt;input&nbsp;type='file'&nbsp;&nbsp;name='photo[]'&gt;</code>两种方式的多附件上传系统的文件上传类都可以自动识别。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="191.html">上一页</a><a title="下一页" class="next" href="193.html">下一页</a></div>
+		</div>
+	</body>
+</html>

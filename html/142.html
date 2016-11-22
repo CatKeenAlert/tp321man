@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>静态缓存</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/142.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>静态缓存</h1>
+			<div class="page"><a title="上一页" class="prev" href="141.html">上一页</a><a title="下一页" class="next" href="143.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP内置了静态缓存的功能，并且支持静态缓存的规则定义。<br />
+要使用静态缓存功能，需要开启<b>HTML_CACHE_ON</b> 参数，并且使用<b>HTML_CACHE_RULES</b>配置参数设置静态缓存规则文件 。<br />
+静态规则的定义方式如下：<code class="prettyprint linenums lang-php">'HTML_CACHE_ON'=&gt;true,<br />
+'HTML_CACHE_RULES'=&gt;&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'ActionName'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;array('静态规则',&nbsp;'静态缓存有效期',&nbsp;'附加规则'),&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'ModuleName(小写)'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;array('静态规则',&nbsp;'静态缓存有效期',&nbsp;'附加规则'),&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'ModuleName(小写):ActionName'&nbsp;=&gt;&nbsp;array('静态规则',&nbsp;'静态缓存有效期',&nbsp;'附加规则'),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'*'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;array('静态规则',&nbsp;'静态缓存有效期',&nbsp;'附加规则'),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//…更多操作的静态规则<br />
+)</code>静态缓存文件的根目录在HTML_PATH 定义的路径下面，并且只有定义了静态规则的操作才会进行静态缓存，注意，静态规则的定义有三种方式：<br />
+第一种是定义全局的操作静态规则，例如定义所有的read操作的静态规则为<br />
+	<code class="prettyprint linenums lang-php">'read'=&gt;array('{id}','60')</code> <br />
+	其中，{id} 表示取$_GET['id'] 为静态缓存文件名，第二个参数表示缓存60秒<br />
+第二种是定义全局的模块静态规则，例如定义所有的User模块的静态规则为<br />
+	<code class="prettyprint linenums lang-php">'user:'=&gt;array('User/{:action}_{id}','600')</code> <br />
+	其中，{:action} 表示当前的操作名称 静态<br />
+第三种是定义某个模块的操作的静态规则，例如，我们需要定义Blog模块的read操作进行静态缓存<code class="prettyprint linenums lang-php">'blog:read'=&gt;array('{id}',0)</code>有个别特殊的规则，例如空模块和空操作的静态规则的定义，可以使用下面的方式：<code class="prettyprint linenums lang-php">'empty:index'=&gt;array('{:module}_{:action}',0)&nbsp;&nbsp;//&nbsp;定义空模块的静态规则<br />
+'User:_empty'=&gt;array('User/{:action}',0)&nbsp;&nbsp;//&nbsp;定义空操作的静态规则</code>第四种方式是定义全局的静态缓存规则，这个属于特殊情况下的使用，任何模块的操作都适用，例如<code class="prettyprint linenums lang-php">'*'=&gt;array('{$_SERVER.REQUEST_URI|md5}'),</code> 根据当前的URL进行缓存<br />
+<br />
+静态规则是用于定义要生成的静态文件的名称，写法可以包括以下情况<br />
+1、使用系统变量 包括 _GET _REQUEST _SERVER _SESSION _COOKIE<br />
+格式：<code class="prettyprint linenums lang-php">{$_×××|function}</code>例如：<code class="prettyprint linenums lang-php">{$_GET.name}&nbsp;{$_SERVER.&nbsp;REQUEST_URI|md5}</code>2、使用框架特定的变量<br />
+例如：{:app}、{:group} 、{:module} 和{:action} 分别表示当前项目名、分组名、模块名和操作名<br />
+<br />
+3、使用_GET变量<br />
+{var|function}	<br />
+也就是说 {id} 其实等效于 {$_GET.id}<br />
+<br />
+4、直接使用函数<br />
+{|function}  	<br />
+例如：{|time}<br />
+<br />
+5、支持混合定义，例如我们可以定义一个静态规则为：<br />
+'{id},{name|md5}' <br />
+在{}之外的字符作为字符串对待，如果包含有”/”，会自动创建目录。<br />
+例如，定义下面的静态规则：<br />
+{:module}/{:action}_{id}<br />
+则会在静态目录下面创建模块名称的子目录，然后写入操作名_id.shtml 文件。<br />
+<br />
+静态有效时间 单位为秒如果不定义，则会获取配置参数HTML_CACHE_TIME 的设置值，如果定义为0则表示永久缓存。<br />
+附加规则通常用于对静态规则进行函数运算，例如<code class="prettyprint linenums lang-php">'read'=&gt;array('Think{id},{name}','60',&nbsp;'md5')&nbsp;</code>翻译后的静态规则是 md5('Think'.$_GET['id']. ', '.$_GET['name']);<br />
+和静态缓存相关的配置参数包括：<br />
+HTML_CACHE_ON 是否开启静态缓存功能<br />
+HTML_FILE_SUFFIX 静态文件后缀 惯例配置的值是 .html<br />
+HTML_CACHE_TIME 默认的静态缓存有效期 默认60秒 可以在静态规则定义覆盖</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="141.html">上一页</a><a title="下一页" class="next" href="143.html">下一页</a></div>
+		</div>
+	</body>
+</html>

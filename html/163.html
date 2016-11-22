@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>关闭调试模式</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/163.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>关闭调试模式</h1>
+			<div class="page"><a title="上一页" class="prev" href="162.html">上一页</a><a title="下一页" class="next" href="164.html">下一页</a></div>
+		</div>
+		<div class="book-content">首先确认你已经关闭了调试模式，由于关闭调试模式之后，系统会自动生成项目编译缓存以及关闭日志写入，这样可以减少很多的IO加载和日志写入的开销。<br />
+要关闭调试模式，只需要在入口文件中删除常量APP_DEBUG的定义或者定义为false。关闭调试模式即表示启用部署模式。<br />
+以官方的Hello 示例和blog示例首页为例进行测试调试模式开启和关闭的对比数据：<br />
+  <table border="0" cellspacing="1" cellpadding="0">    <tr>      <th>Hello示例</th>      <th>开启调试模式</th>      <th>关闭调试模式</th>    </tr>    <tr>      <td>加载文件</td>      <td>29</td>      <td>5</td>    </tr>    <tr>      <td>运行时间</td>      <td>0.0231s</td>      <td>0.0023s</td>    </tr>    <tr>      <td>内存占用</td>      <td>817kb</td>      <td>800kb</td>    </tr>    <tr>      <td>每秒请求次数</td>      <td>127.35</td>      <td>188.54</td>    </tr></table><table border="0" cellspacing="1" cellpadding="0">    <tr>      <th>blog示例</th>      <th>开启调试模式</th>      <th>关闭调试模式</th>    </tr>    <tr>      <td>加载文件</td>      <td>41</td>      <td>19</td>    </tr>    <tr>      <td>运行时间</td>      <td>0.1584s</td>      <td>0.0514s</td>    </tr>    <tr>      <td>内存占用</td>      <td>2,189kb</td>      <td>2,162kb</td>    </tr>    <tr>      <td>每秒请求次数</td>      <td>28.17</td>      <td>52.25</td>    </tr>  </table>注：为确保数据准确，每次测试都重启Apache服务。<h3>开启页面压缩输出</h3>3.1版本开始，增加了OUTPUT_ENCODE配置参数，用于控制页面压缩输出。<br />
+会自动检测zlib.output_compression配置，如果php.ini里面zlib.output_compression没有开启，并且OUTPUT_ENCODE配置开启 则会进行页面压缩输出。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="162.html">上一页</a><a title="下一页" class="next" href="164.html">下一页</a></div>
+		</div>
+	</body>
+</html>

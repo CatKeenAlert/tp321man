@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>Foreach标签</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/101.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>Foreach标签</h1>
+			<div class="page"><a title="上一页" class="prev" href="100.html">上一页</a><a title="下一页" class="next" href="102.html">下一页</a></div>
+		</div>
+		<div class="book-content">foreach标签也是用于循环输出<table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">foreach标签（循环输出数据）</th></tr><tr><td>闭合</td><td>非闭合标签</td></tr><tr><td>属性</td><td>name（必须）：要输出的数据模板变量<br />
+item（必须）：循环单元变量<br />
+key（可选）：循环的key变量，默认值为key</td></tr></table>示例：<code class="prettyprint linenums lang-php">&lt;foreach&nbsp;name="list"&nbsp;item="vo"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;{$vo.id}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;{$vo.name}<br />
+&lt;/foreach&gt;</code>Foreach标签相对比volist标签简洁，没有volist标签那么多的功能。优势是可以对对象进行遍历输出，而volist标签通常是用于输出数组。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="100.html">上一页</a><a title="下一页" class="next" href="102.html">下一页</a></div>
+		</div>
+	</body>
+</html>

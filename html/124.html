@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>记录方式</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/124.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>记录方式</h1>
+			<div class="page"><a title="上一页" class="prev" href="123.html">上一页</a><a title="下一页" class="next" href="125.html">下一页</a></div>
+		</div>
+		<div class="book-content">日志的记录方式包括下面四种方式：<table border="0" cellspacing="1" cellpadding="0"><tr><th>记录方式</th><th>说明</th><th>常量标识</th></tr><tr><td>SYSTEM</td><td>日志发送到PHP的系统日志记录</td><td>0</td></tr><tr><td>MAIL</td><td>日志通过邮件方式发送</td><td>1</td></tr><tr><td>FILE</td><td>日志通过文件方式记录（默认方式）</td><td>3</td></tr><tr><td>SAPI</td><td>日志通过SAPI方式记录</td><td>4</td></tr></table>日志的记录格式：<b>记录时间  访问URL | 日志级别：日志信息</b><br />
+其中的时间显示可以动态配置，默认是采用 [ c ]，例如我们可以改成：<code class="prettyprint linenums lang-php">Log::$format&nbsp;=&nbsp;'[&nbsp;Y-m-d&nbsp;H:i:s&nbsp;]';</code>其格式定义和date函数的用法一致，默认情况下具体的日志信息类似于下面的内容：<code class="prettyprint linenums lang-php">[2012-01-15T18:09:22+08:00]&nbsp;/Index/index|NOTIC:&nbsp;[8]&nbsp;Undefined&nbsp;variable:&nbsp;verify&nbsp;PublicAction.class.php&nbsp;第&nbsp;162&nbsp;行.<br />
+[2012-01-15T18:09:22+08:00]&nbsp;/Index/index&nbsp;|&nbsp;SQL:&nbsp;&nbsp;RunTime:0.214238s&nbsp;SQL&nbsp;=&nbsp;SHOW&nbsp;COLUMNS&nbsp;FROM&nbsp;think_user<br />
+[2012-01-15T18:09:22+08:00]&nbsp;/Index/index&nbsp;|&nbsp;SQL:&nbsp;&nbsp;RunTime:0.039159s&nbsp;SQL&nbsp;=&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;`think_user`&nbsp;WHERE&nbsp;(&nbsp;`account`&nbsp;=&nbsp;'admin'&nbsp;)&nbsp;AND&nbsp;(&nbsp;`status`&nbsp;&gt;&nbsp;0&nbsp;)&nbsp;LIMIT&nbsp;1</code>默认采用文件方式记录日志信息，日志文件的命名格式是：年（简写）_月_日.log，例如：<br />
+09_10_01.log  表示2009年10月1日的日志文件<br />
+可以设置LOG_FILE_SIZE参数来限制日志文件的大小，超过大小的日志会形成备份文件。备份文件的格式是在当前文件名前面加上备份的时间戳，例如：<br />
+1189571417-07_09_12.log 备份的日志文件<br />
+<br />
+<br />
+如果需要使用其他方式记录日志，可以设置LOG_TYPE参数，例如下面设置了采用邮件方式发送日志记录：<code class="prettyprint linenums lang-php">'LOG_TYPE'&nbsp;=&gt;1,&nbsp;//&nbsp;&nbsp;采用邮件方式记录日志<br />
+'LOG_DEST'&nbsp;=&gt;'admin@domain.com',&nbsp;//&nbsp;要发送日志的邮箱<br />
+'LOG_EXTRA'&nbsp;=&gt;'From:&nbsp;webmaster@example.com',&nbsp;//&nbsp;邮件的发件人设置</code>其他的日志类型的详细资料可以参考PHP手册中关于error_log方法的使用。3.1版本开始，简化了日志记录的信息，减少日志文件的大小，包括：<br />
+1、去掉了每条日志记录的请求地址，改为放到每次访问日志保存的开头；<br />
+2、去掉重复的日志时间显示，改为记录到每次请求的开头；<br />
+3、在日志头部添加了请求的IP地址信息。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="123.html">上一页</a><a title="下一页" class="next" href="125.html">下一页</a></div>
+		</div>
+	</body>
+</html>

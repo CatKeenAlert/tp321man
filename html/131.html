@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>运行状态</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/131.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>运行状态</h1>
+			<div class="page"><a title="上一页" class="prev" href="130.html">上一页</a><a title="下一页" class="next" href="132.html">下一页</a></div>
+		</div>
+		<div class="book-content">我们可以配置SHOW_RUN_TIME参数开启当前页面的运行状态显示，这是一个包括了运行时间、内存开销、数据库读写次数和缓存读写次数的详细运行数据，显示结果信息类似于下面：<code class="prettyprint linenums lang-php">Process:0.2463s&nbsp;(Load:0.0003s&nbsp;Init:0.0010s&nbsp;Exec:0.1095s&nbsp;Template:0.1355s&nbsp;)|DB:13&nbsp;queries&nbsp;0&nbsp;writes|&nbsp;Cache:2&nbsp;gets,0&nbsp;writes|UseMem:415&nbsp;kb|LoadFile:20|CallFun:63,1370</code>表示的含义是：<code class="prettyprint linenums lang-php">运行信息:&nbsp;整体执行时间0.2463s&nbsp;(&nbsp;加载:0.0003s&nbsp;初始化:0.0010s&nbsp;执行:0.1095s&nbsp;模板:0.1355s&nbsp;)&nbsp;|&nbsp;数据库&nbsp;:13次读操作&nbsp;&nbsp;0次写操作&nbsp;|&nbsp;缓存：2次读取，0次写入&nbsp;|&nbsp;使用内存:415&nbsp;kb&nbsp;|&nbsp;加载文件:20&nbsp;|&nbsp;函数调用:63（自定义）,1370（内置）</code>如果当前页面没有任何数据库操作或者缓存操作的话，是不会显示相关信息的。内存开销的显示需要服务器开启memory_get_usage方法支持，否则也不会显示。<br />
+如果开启上面的运行状态显示，只需要在项目配置文件中开启相关的配置参数，如下：<br />
+ <code class="prettyprint linenums lang-php">&nbsp;'SHOW_RUN_TIME'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;true,&nbsp;//&nbsp;运行时间显示<br />
+&nbsp;'SHOW_ADV_TIME'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;true,&nbsp;//&nbsp;显示详细的运行时间<br />
+&nbsp;'SHOW_DB_TIMES'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;true,&nbsp;//&nbsp;显示数据库查询和写入次数<br />
+&nbsp;'SHOW_CACHE_TIMES'&nbsp;=&gt;&nbsp;true,&nbsp;//&nbsp;显示缓存操作次数<br />
+&nbsp;'SHOW_USE_MEM'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;true,&nbsp;//&nbsp;显示内存开销<br />
+&nbsp;'SHOW_LOAD_FILE'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;true,&nbsp;//&nbsp;显示加载文件数<br />
+&nbsp;'SHOW_FUN_TIMES'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;true,&nbsp;//&nbsp;显示函数调用次数</code>上面的每项参数都可以单独开启，例如，你只需要显示整体的运行时间，而不关心详细的阶段运行时间，可以关闭详细运行时间显示：<code class="prettyprint linenums lang-php">'SHOW_ADV_TIME'=&gt;&nbsp;false,&nbsp;//&nbsp;关闭详细的运行时间</code>默认的情况下，运行时间的显示是在Html页面的最后，如果需要在制定位置显示，只需要在Html模板文件中相关位置加上 { __RUNTIME__} 即可，系统在输出页面的时候会自动在该位置替换运行时间的信息显示。<br />
+注意：新版即使在调试模式下面，也不会自动开启运行时间显示，需要手动开启。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="130.html">上一页</a><a title="下一页" class="next" href="132.html">下一页</a></div>
+		</div>
+	</body>
+</html>

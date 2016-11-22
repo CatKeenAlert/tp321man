@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>合并字段缓存</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/165.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>合并字段缓存</h1>
+			<div class="page"><a title="上一页" class="prev" href="164.html">上一页</a><a title="下一页" class="next" href="166.html">下一页</a></div>
+		</div>
+		<div class="book-content">默认情况下，字段缓存是自动生成的，在开发完成之后，基本上数据库的变动变得比较少，因此可以考虑合并字段缓存到对应的模型类，这样能够减少每次读取字段缓存的IO开销。<br />
+合并的方法是在Runtime/Data/_fields下面找到对应的字段缓存文件，例如，User模型的字段缓存文件中的内容可能是：<code class="prettyprint linenums lang-php">return&nbsp;array&nbsp;(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;=&gt;&nbsp;'id',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;=&gt;&nbsp;'create_time',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;=&gt;&nbsp;'update_time',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;=&gt;&nbsp;'status',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;=&gt;&nbsp;'account',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;=&gt;&nbsp;'password',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;=&gt;&nbsp;'nickname',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;=&gt;&nbsp;'email',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;=&gt;&nbsp;'remark',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;9&nbsp;=&gt;&nbsp;'avatar',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'_autoinc'&nbsp;=&gt;&nbsp;true,&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'_pk'&nbsp;=&gt;&nbsp;'id',&nbsp;<br />
+);</code>把上面这段代码拷贝到UserModel类的开头，设置为fields属性即可：<br />
+ <code class="prettyprint linenums lang-php">protected&nbsp;$fields&nbsp;=&nbsp;&nbsp;array&nbsp;(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;=&gt;&nbsp;'id',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;=&gt;&nbsp;'create_time',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;=&gt;&nbsp;'update_time',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;=&gt;&nbsp;'status',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;=&gt;&nbsp;'account',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;=&gt;&nbsp;'password',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;=&gt;&nbsp;'nickname',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;=&gt;&nbsp;'email',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;=&gt;&nbsp;'remark',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;9&nbsp;=&gt;&nbsp;'avatar',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;=&gt;&nbsp;'max_login',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;11&nbsp;=&gt;&nbsp;'login_count',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;12&nbsp;=&gt;&nbsp;'last_login_time',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;13&nbsp;=&gt;&nbsp;'last_login_ip',&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'_autoinc'&nbsp;=&gt;&nbsp;true,&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'_pk'&nbsp;=&gt;&nbsp;'id',&nbsp;<br />
+);</code>3.1版本以后，字段缓存文件的格式采用JSON格式编码存在，所以不能直接拷贝，需要按照以上格式自己定义fields属性。<br />
+注意：如果在某个模型类中进行了多数据库切换操作，请不要合并。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="164.html">上一页</a><a title="下一页" class="next" href="166.html">下一页</a></div>
+		</div>
+	</body>
+</html>

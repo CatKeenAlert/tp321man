@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>CURD操作</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/67.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>CURD操作</h1>
+			<div class="page"><a title="上一页" class="prev" href="66.html">上一页</a><a title="下一页" class="next" href="68.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP提供了灵活和方便的数据操作方法，对数据库操作的四个基本操作（CURD）：创建、更新、读取和删除的实现是最基本的，也是必须掌握的，在这基础之上才能熟悉更多实用的数据操作方法。CURD操作通常是可以和连贯操作配合完成的。下面来分析下各自的用法：<br />
+（下面的CURD操作我们均以M方法创建模型实例来说明，因为不涉及到具体的业务逻辑）<h3>创建（Create）</h3>在ThinkPHP中使用add方法新增数据到数据库（而并不是create方法）。<table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">add 写入（新增）数据到数据库 </th>	</tr>	<tr>		<td>用法 </td>		<td>add($data='',$options=array(),$replace=false)</td>	</tr>	<tr>		<td>参数 </td>		<td><p>data（可选）：要新增的数据，支持数组和对象，如果留空取当前数据对象 </p><br />
+			<p>options（可选）：操作表达式，通常由连贯操作完成，默认为空数组 </p><br />
+			<p>replace（可选）：是否允许写入时更新，默认为false（个别数据库支持）</p> </td>	</tr>	<tr>		<td>回调接口 </td>		<td><p>写入前 _before_insert(&amp;$data,$options)</p><br />
+			<p>写入成功 _after_insert($data,$options)</p></td>	</tr>	<tr>		<td>返回值 </td>		<td><p>如果数据非法或者查询错误则返回false</p><br />
+			<p>如果是自增主键 则返回主键值，否则返回1</p></td>	</tr>	<tr>		<td>相关方法 </td>		<td>通常和data、create方法配合使用 </td>	</tr></table>使用示例如下：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$data['name']&nbsp;=&nbsp;'ThinkPHP';<br />
+$data['email']&nbsp;=&nbsp;'ThinkPHP@gmail.com';<br />
+$User-&gt;add($data);</code>或者使用data方法连贯操作<code class="prettyprint linenums lang-php">$User-&gt;data($data)-&gt;add();</code>如果在add之前已经创建数据对象的话（例如使用了create或者data方法），add方法就不需要再传入数据了。<br />
+使用create方法的例子：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;根据表单提交的POST数据创建数据对象<br />
+$User-&gt;create();<br />
+$User-&gt;add();&nbsp;//&nbsp;根据条件保存修改的数据</code>如果你的主键是自动增长类型，并且如果插入数据成功的话，Add方法的返回值就是最新插入的主键值，可以直接获取。 <br />
+从2.1版开始恢复了批量插入数据的addAll方法（仅针对Mysql数据库），如：<code class="prettyprint linenums lang-php">$User-&gt;addAll($data)</code>同时在数据插入时允许更新操作:<code class="prettyprint linenums lang-php">add($data='',$options=array(),$replace=false)</code>其中add方法增加$replace参数(是否添加数据时允许覆盖)，true表示覆盖，默认为false<h3>读取（Read）</h3>在ThinkPHP中读取数据的方式很多，通常分为读取数据和读取数据集。<br />
+读取数据集使用select方法（新版已经废除原来的findall方法）：<table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">select  查询数据集 </th>	</tr>  <tr>    <td>用法</td>    <td>select($options=array())</td>  </tr>  <tr>    <td>参数</td>    <td>options（可选）：为数组的时候表示操作表达式，通常由连贯操作完成；如果是数字或者字符串，表示主键值。默认为空数组。</td>  </tr>  <tr>    <td>回调接口</td>    <td>查询成功&nbsp;_after_select(&amp;$resultSet,$options)</td>  </tr>  <tr>    <td>返回值</td>    <td><p>查询错误返回false</p><br />
+      <p>查询结果为空返回null</p><br />
+    <p>查询成功返回查询的结果集（二维索引数组）</p></td>  </tr>  <tr>    <td>相关方法</td>    <td>通常配合连贯操作where、field、order、limit、join等一起使用</td>  </tr></table>使用示例：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;查找status值为1的用户数据&nbsp;以创建时间排序&nbsp;返回10条数据<br />
+$list&nbsp;=&nbsp;$User-&gt;where('status=1')-&gt;order('create_time')-&gt;limit(10)-&gt;select();</code>Select方法配合连贯操作方法可以完成复杂的数据查询。而最复杂的连贯方法应该是where方法的使用，因为这部分涉及的内容较多，我们会在查询语言部分就如何进行组装查询条件进行详细的使用说明。基本的查询暂时不涉及关联查询部分，而是统一采用关联模型来进行数据操作，这一部分请参考关联模型部分。读取数据使用find方法：<table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">find 查询数据 </th>	</tr>  <tr>    <td>用法</td>    <td>find($options=array())</td>  </tr>  <tr>    <td>参数</td>    <td>options（可选）：为数组的时候表示操作表达式，通常由连贯操作完成；为数字或者字符串的时候表示主键值。默认为空数组。</td>  </tr>  <tr>    <td>回调接口</td>    <td>查询后&nbsp;_after_find(&amp;$result,$options)</td>  </tr>  <tr>    <td>返回值</td>    <td><p>如果查询错误返回false</p><br />
+      <p>如果查询结果为空返回null</p><br />
+    <p>如果查询成功返回查询的结果（索引数组）</p></td>  </tr>  <tr>    <td>相关方法</td>    <td>通常配合连贯操作where、field、order、join等一起使用</td>  </tr></table>读取数据的操作其实和数据集的类似，select可用的所有连贯操作方法也都可以用于find方法，区别在于find方法最多只会返回一条记录，因此limit方法对于find查询操作是无效的。<br />
+下面是一些查询的例子：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;查找status值为1name值为think的用户数据&nbsp;<br />
+$User-&gt;where('status=1&nbsp;AND&nbsp;name="think"')-&gt;find();</code>即使满足条件的数据不止一条，find方法也只会返回第一条记录。如果要读取某个字段的值，可以使用getField方法<table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">getField 查询某个字段的值 </th>	</tr>  <tr>    <td>用法</td>    <td>getField($field,$sepa=null)</td>  </tr>  <tr>    <td>参数</td>    <td><p>field（必须）：要获取的字段字符串（多个用逗号分隔）</p><br />
+    <p>sepa（可选）：字段数据间隔符号，如果是&nbsp;NULL返回数组为数组。默认为null。</p></td>  </tr>  <tr>    <td>回调接口</td>    <td>查询后&nbsp;_after_find(&amp;$result,$options)</td>  </tr>  <tr>    <td>返回值</td>    <td><p>如果查询结果为空返回null</p><br />
+      <p>如果field是一个字段则返回该字段的值</p><br />
+    <p>如果field是多个字段，返回数组。数组的索引是第一个字段的值，sepa为null则返回二维数组。</p></td>  </tr>  <tr>    <td>相关方法</td>    <td>通常配合连贯操作where、limit、order等一起使用</td>  </tr></table>示例如下：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;获取ID为3的用户的昵称&nbsp;<br />
+$nickname&nbsp;=&nbsp;$User-&gt;where('id=3')-&gt;getField('nickname');</code>当只有一个字段的时候，默认返回一个值。<br />
+如果需要返回数组，可以用：<code class="prettyprint linenums lang-php">$this-&gt;getField('id',true);&nbsp;//&nbsp;获取id数组</code>如果传入多个字段的话，默认返回一个关联数组：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;获取所有用户的ID和昵称列表&nbsp;<br />
+$list&nbsp;=&nbsp;$User-&gt;getField('id,nickname');</code>返回的list是一个数组，键名是用户的id， 键值是用户的昵称nickname。<br />
+如果传入多个字段的名称，例如：<code class="prettyprint linenums lang-php">$list&nbsp;=&nbsp;$User-&gt;getField('id,nickname,email');</code>返回的是一个二维数组，类似select方法的返回结果，区别的是这个二维数组的键名是用户的id（准确的说是getField方法的第一个字段名）。<br />
+如果我们传入一个字符串分隔符：<code class="prettyprint linenums lang-php">$list&nbsp;=&nbsp;$User-&gt;getField('id,nickname,email',':');</code>那么返回的结果就是一个数组，键名是用户id，键值是 nickname:email的输出字符串。<br />
+<br />
+getField方法的sepa参数还可以支持限制数量，例如：<code class="prettyprint linenums lang-php">$this-&gt;getField('id,name',5);&nbsp;//&nbsp;限制返回5条记录<br />
+$this-&gt;getField('id',3);&nbsp;//&nbsp;获取id数组&nbsp;限制3条记录</code>可以配合使用order方法使用。<h3>更新（Update）</h3>在ThinkPHP中使用save方法更新数据库，并且也支持连贯操作的使用。<table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">save  更新数据到数据库 </th>	</tr>  <tr>    <td>用法</td>    <td width="450">save($data='',$options=array())</td>  </tr>  <tr>    <td>参数</td>    <td><p>data：要保存的数据，如果为空，则取当前的数据对象。</p><br />
+    <p>options：为数组的时候表示操作表达式，通常由连贯操作完成；为数字或者字符串的时候表示主键值。默认为空数组。</p></td>  </tr>  <tr>    <td>回调接口</td>    <td><p>更新前_before_update(&amp;$data,$options)</p><br />
+    <p>更新成功后&nbsp;_after_update($data,$options)</p></td>  </tr>  <tr>    <td>返回值</td>    <td><p>如果查询错误或者数据非法返回false</p><br />
+    <p>如果更新成功返回影响的记录数</p></td>  </tr>  <tr>    <td>相关方法</td>    <td>通常配合连贯操作where、field、order等一起使用</td>  </tr></table><code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;要修改的数据对象属性赋值<br />
+$data['name']&nbsp;=&nbsp;'ThinkPHP';<br />
+$data['email']&nbsp;=&nbsp;'ThinkPHP@gmail.com';<br />
+$User-&gt;where('id=5')-&gt;save($data);&nbsp;//&nbsp;根据条件保存修改的数据</code>为了保证数据库的安全，避免出错更新整个数据表，如果没有任何更新条件，数据对象本身也不包含主键字段的话，save方法不会更新任何数据库的记录。<br />
+因此下面的代码不会更改数据库的任何记录<code class="prettyprint linenums lang-php">$User-&gt;save($data);&nbsp;</code>除非使用下面的方式：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;要修改的数据对象属性赋值<br />
+$data['id']&nbsp;=&nbsp;5;<br />
+$data['name']&nbsp;=&nbsp;'ThinkPHP';<br />
+$data['email']&nbsp;=&nbsp;'ThinkPHP@gmail.com';<br />
+$User-&gt;save($data);&nbsp;//&nbsp;根据条件保存修改的数据</code>如果id是数据表的主键的话，系统自动会把主键的值作为更新条件来更新其他字段的值。<br />
+还有一种方法是通过create或者data方法创建要更新的数据对象，然后进行保存操作，这样save方法的参数可以不需要传入。<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;要修改的数据对象属性赋值<br />
+$data['name']&nbsp;=&nbsp;'ThinkPHP';<br />
+$data['email']&nbsp;=&nbsp;'ThinkPHP@gmail.com';<br />
+$User-&gt;where('id=5')-&gt;data($data)-&gt;save();&nbsp;//&nbsp;根据条件保存修改的数据</code>使用create方法的例子：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;根据表单提交的POST数据创建数据对象<br />
+$User-&gt;create();<br />
+$User-&gt;save();&nbsp;//&nbsp;根据条件保存修改的数据</code>上面的情况，表单中必须包含一个以主键为名称的隐藏域，才能完成保存操作。<br />
+如果只是更新个别字段的值，可以使用setField方法。<table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">setField  更新某个字段的值 </th>	</tr>  <tr>    <td>用法</td>    <td width="450">setField($field,$value='')</td>  </tr>  <tr>    <td>参数</td>    <td>options（可选）：为数组的时候表示操作表达式，通常由连贯操作完成；为数字或者字符串的时候表示主键值。默认为空数组。</td>  </tr>  <tr>    <td>返回值</td>    <td><p>如果查询错误返回false</p><br />
+    <p>如果更新成功返回影响的记录数</p></td>  </tr>  <tr>    <td>相关方法</td>    <td>必须配合连贯操作where一起使用</td>  </tr></table>使用示例：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;更改用户的name值<br />
+$User-&gt;&nbsp;where('id=5')-&gt;setField('name','ThinkPHP');</code>setField方法支持同时更新多个字段，只需要传入数组即可，例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;更改用户的name和email的值<br />
+$data&nbsp;=&nbsp;array('name'=&gt;'ThinkPHP','email'=&gt;'ThinkPHP@gmail.com');<br />
+$User-&gt;&nbsp;where('id=5')-&gt;setField($data);</code>而对于统计字段（通常指的是数字类型）的更新，系统还提供了setInc和setDec方法。<table border="0" cellspacing="1" cellpadding="0">	<tr>		<th colspan="2">setInc /setDec  字段增长/字段减少 </th>	</tr>  <tr>    <td>用法</td>    <td><p>setInc($field,$step=1)字段值增长</p><br />
+    <p>setDec($field,$step=1)字段值减少</p></td>  </tr>  <tr>    <td>参数</td>    <td><p>field：要更新的字段名。</p><br />
+    <p>step：增长或者减少的数值，默认为1。</p></td>  </tr>  <tr>    <td>回调接口</td>    <td><p>如果查询错误返回false</p><br />
+    <p>如果更新成功返回影响的记录数</p></td>  </tr>  <tr>    <td>返回值</td>    <td><p>如果查询错误返回false</p><br />
+    <p>如果更新成功返回影响的记录数</p></td>  </tr>  <tr>    <td>相关方法</td>    <td>必须配合连贯操作where一起使用</td>  </tr></table><code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$User-&gt;where('id=5')-&gt;setInc('score',3);&nbsp;//&nbsp;用户的积分加3<br />
+$User-&gt;where('id=5')-&gt;setInc('score');&nbsp;//&nbsp;用户的积分加1<br />
+$User-&gt;where('id=5')-&gt;setDec('score',5);&nbsp;//&nbsp;用户的积分减5<br />
+$User-&gt;where('id=5')-&gt;setDec('score');&nbsp;//&nbsp;用户的积分减1</code><h3>删除（Delete）</h3>在ThinkPHP中使用delete方法删除数据库中的记录。<table border="0" cellspacing="1" cellpadding="0">  <tr>    <td>用法</td>    <td width="450">delete($options=array())</td>  </tr>  <tr>    <td>参数</td>    <td>options：为数组的时候表示操作表达式，通常由连贯操作完成，如果没有传入任何删除条件，则取当前数据对象的主键作为条件；为数字或者字符串的时候表示主键值。默认为空数组。</td>  </tr>  <tr>    <td>回调接口</td>    <td>删除成功后&nbsp;_after_delete($data,$options)</td>  </tr>  <tr>    <td>返回值</td>    <td><p>如果查询错误返回false</p><br />
+    <p>如果删除成功返回影响的记录数</p></td>  </tr>  <tr>    <td>相关方法</td>    <td>通常配合连贯操作where、field、order等一起使用</td>  </tr></table>示例如下：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$User-&gt;where('id=5')-&gt;delete();&nbsp;//&nbsp;删除id为5的用户数据<br />
+$User-&gt;where('status=0')-&gt;delete();&nbsp;//&nbsp;删除所有状态为0的用户数据</code>delete方法可以用于删除单个或者多个数据，主要取决于删除条件，也就是where方法的参数，也可以用order和limit方法来限制要删除的个数，例如：<code class="prettyprint linenums lang-php">//&nbsp;删除所有状态为0的5&nbsp;个用户数据&nbsp;按照创建时间排序<br />
+$User-&gt;where('status=0')-&gt;order('create_time')-&gt;limit('5')-&gt;delete();&nbsp;</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="66.html">上一页</a><a title="下一页" class="next" href="68.html">下一页</a></div>
+		</div>
+	</body>
+</html>

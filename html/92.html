@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>变量输出</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/92.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>变量输出</h1>
+			<div class="page"><a title="上一页" class="prev" href="91.html">上一页</a><a title="下一页" class="next" href="93.html">下一页</a></div>
+		</div>
+		<div class="book-content">我们已经知道了在Action中使用assign方法可以给模板变量赋值，赋值后怎么在模板文件中输出变量的值呢？<br />
+如果我们在Action中赋值了一个name模板变量：<code class="prettyprint linenums lang-php">$name&nbsp;=&nbsp;'ThinkPHP';<br />
+$this-&gt;assign('name',$name);</code>使用内置的模板引擎输出变量，只需要在模版文件使用：<code class="prettyprint linenums lang-php">{$name}</code>模板编译后的结果就是<code class="prettyprint linenums lang-php">&lt;?php&nbsp;echo($name);?&gt;</code>最后运行的时候就可以在标签位置显示ThinkPHP的输出结果。<br />
+注意模板标签的{和$之间不能有任何的空格，否则标签无效。普通标签默认开始标记是 {，结束标记是 }。也可以通过设置TMPL_L_DELIM和TMPL_R_DELIM进行更改。例如，我们在项目配置文件中定义：<code class="prettyprint linenums lang-php">'TMPL_L_DELIM'=&gt;'&lt;{',<br />
+'TMPL_R_DELIM'=&gt;'}&gt;',</code>那么，上面的变量输出标签就应该改成：<code class="prettyprint linenums lang-php">&lt;{$name}&gt;</code>后面的内容我们都以默认的标签定义来说明。assign方法里面的第一个参数才是模板文件中使用的变量名称。如果改成下面的代码：<code class="prettyprint linenums lang-php">$name&nbsp;=&nbsp;'ThinkPHP';<br />
+$this-&gt;assign('name2',$name);</code>再使用{$name} 输出就无效了，必须使用 {$name2}才能输出模板变量的值了。<br />
+<br />
+如果我们需要把一个用户数据对象赋值给模板变量：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M('name');<br />
+$user&nbsp;=&nbsp;$User-&gt;find(1);<br />
+$this-&gt;assign('user',$user);</code>也就是说$user其实是一个数组变量，我们可以使用下面的方式来输出相关的值：<code class="prettyprint linenums lang-php">{$user['name']}//输出用户的名称<br />
+{$user['email']}&nbsp;//输出用户的email地址</code>如果$user是一个对象而不是数组的话，<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M('name');<br />
+$User-&gt;find(1);<br />
+$this-&gt;assign('user',$User);</code>可以使用下面的方式输出相关的属性值：<code class="prettyprint linenums lang-php">{$user:name}//&nbsp;输出用户的名称<br />
+{$user:email}&nbsp;//&nbsp;输出用户的email地址</code>3.1版本以后，类的属性输出方式有所调整，支持原生的PHP对象写法，所以上面的标签需要改成：<code class="prettyprint linenums lang-php">{$user-&gt;name}//&nbsp;输出用户的名称<br />
+{$user-&gt;email}&nbsp;//&nbsp;输出用户的email地址</code>为了方便模板定义，还可以支持点语法，例如，上面的<code class="prettyprint linenums lang-php">{$user['name']}//&nbsp;输出用户的名称<br />
+{$user['email']}&nbsp;//&nbsp;输出用户的email地址</code>可以改成<code class="prettyprint linenums lang-php">{$user.name}<br />
+{$user.email}</code>因为点语法默认的输出是数组方式，所以上面两种方式是在没有配置的情况下是等效的。我们可以通过配置TMPL_VAR_IDENTIFY参数来决定点语法的输出效果，以下面的输出为例：<code class="prettyprint linenums lang-php">{$user.name}</code>如果TMPL_VAR_IDENTIFY设置为array，那么<br />
+{$user.name}和{$user['name']}等效，也就是输出数组变量。<br />
+如果TMPL_VAR_IDENTIFY设置为obj，那么<br />
+{$user.name}和{$user:name}等效，也就是输出对象的属性。<br />
+如果TMPL_VAR_IDENTIFY留空的话，系统会自动判断要输出的变量是数组还是对象，这种方式会一定程度上影响效率，而且只支持二维数组和两级对象属性。<br />
+如果是多维数组或者多层对象属性的输出，可以使用下面的定义方式： <code class="prettyprint linenums lang-php">{$user.sub.name}//&nbsp;使用点语法输出</code>或者使用<code class="prettyprint linenums lang-php">{$user['sub']['name']}//&nbsp;输出三维数组的值<br />
+{$user:sub:name}//&nbsp;输出对象的多级属性</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="91.html">上一页</a><a title="下一页" class="next" href="93.html">下一页</a></div>
+		</div>
+	</body>
+</html>

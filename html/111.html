@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>Assign标签</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/111.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>Assign标签</h1>
+			<div class="page"><a title="上一页" class="prev" href="110.html">上一页</a><a title="下一页" class="next" href="112.html">下一页</a></div>
+		</div>
+		<div class="book-content">可以使用assign标签进行赋值：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">assign标签（在模板中给变量赋值）</th>  </tr>  <tr>    <td>闭合</td>    <td>闭合标签</td>  </tr>  <tr>    <td>属性</td>    <td>name（必须）：模板变量名<br />
+    value（必须）：变量值，支持变量</td>  </tr></table>用法示例：<code class="prettyprint linenums lang-php">&lt;assign&nbsp;name="var"&nbsp;value="123"&nbsp;/&gt;</code>在运行模板的时候 赋值了一个var的变量，值是123。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="110.html">上一页</a><a title="下一页" class="next" href="112.html">下一页</a></div>
+		</div>
+	</body>
+</html>

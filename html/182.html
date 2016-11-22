@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>REST配置</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/182.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>REST配置</h1>
+			<div class="page"><a title="上一页" class="prev" href="181.html">上一页</a><a title="下一页" class="next" href="183.html">下一页</a></div>
+		</div>
+		<div class="book-content">Rest模式增加的REST相关配置参数如下：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th>配置名</th>        <th>说明</th>        <th>默认值</th>    </tr>    <tr>        <td>REST_METHOD_LIST</td>        <td>REST允许的请求类型列表</td>        <td>get,post,put,delete</td>    </tr>    <tr>        <td>REST_DEFAULT_METHOD</td>        <td>REST默认请求类型</td>        <td>get</td>    </tr>    <tr>        <td>REST_CONTENT_TYPE_LIST</td>        <td>REST允许请求的资源类型列表</td>        <td>html,xml,json,rss</td>    </tr>    <tr>        <td>REST_DEFAULT_TYPE</td>        <td>REST默认的资源类型</td>        <td>html</td>    </tr>    <tr>        <td>REST_OUTPUT_TYPE</td>        <td>REST允许输出的资源类型列表</td>        <td>array( <br /><br />
+    'xml' =&gt; 'application/xml', <br /><br />
+    'json' =&gt; 'application/json',<br /><br />
+    'html' =&gt; 'text/html',<br /><br />
+),</td>    </tr></table>这些参数的设置只是rest模式的默认配置，可以在项目配置文件中进行改变。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="181.html">上一页</a><a title="下一页" class="next" href="183.html">下一页</a></div>
+		</div>
+	</body>
+</html>

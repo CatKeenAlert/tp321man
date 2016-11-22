@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>扩展配置</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/28.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>扩展配置</h1>
+			<div class="page"><a title="上一页" class="prev" href="27.html">上一页</a><a title="下一页" class="next" href="29.html">下一页</a></div>
+		</div>
+		<div class="book-content">项目配置文件在部署模式的时候会纳入编译缓存，也就是说编译后再修改项目配置文件就不会立刻生效，需要删除编译缓存后才能生效。扩展配置文件则不受此限制影响，即使在部署模式下面，修改配置后可以实时生效，并且配置格式和项目配置一样。<br />
+设置扩展配置的方式如下（多个文件用逗号分隔）：<code class="prettyprint linenums lang-php">'LOAD_EXT_CONFIG'&nbsp;=&gt;&nbsp;'user,db',&nbsp;//&nbsp;加载扩展配置文件</code>项目设置了加载扩展配置文件user.php 和db.php分别用于用户配置和数据库配置，那么会自动加载项目配置目录下面的配置文件Conf/user.php和Conf/db.php。<br />
+默认情况下，扩展配置文件中的设置参数会并入项目配置文件中。也就是默认都是一级配置参数，例如user.php中的配置参数如下：<code class="prettyprint linenums lang-php">&lt;?php<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//用户配置文件<br />
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'USER_TYPE'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;2,&nbsp;//用户类型<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'USER_AUTH_ID'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;10,&nbsp;//用户认证ID<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'USER_AUTH_TYPE'&nbsp;=&gt;&nbsp;2,&nbsp;//用户认证模式<br />
+&nbsp;&nbsp;&nbsp;&nbsp;);</code>那么，最终获取用户参数的方式是：<code class="prettyprint linenums lang-php">C('USER_AUTH_ID');</code>如果希望采用二级配置方式，可以设置如下：<code class="prettyprint linenums lang-php">'LOAD_EXT_CONFIG'&nbsp;=&gt;&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'USER'&nbsp;=&gt;&nbsp;'user',&nbsp;//用户配置<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'DB'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'db',&nbsp;//数据库配置<br />
+),&nbsp;//加载扩展配置文件</code>同样的user.php 配置文件内容，但最终获取用户参数的方式就变成了：<code class="prettyprint linenums lang-php">C('USER.USER_AUTH_ID');</code>这种方式可以避免大项目情况中的参数冲突问题。下面的一些配置文件已经被系统使用，请不要作为自定义的扩展配置重新定义：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>文件名</th>    <th>说明</th>  </tr>  <tr>    <td>config.php</td>    <td>项目配置文件</td>  </tr>  <tr>    <td>tags.php</td>    <td>项目行为配置文件</td>  </tr>  <tr>    <td>alias.php</td>    <td>项目别名定义文件</td>  </tr>  <tr>    <td>debug.php</td>    <td>项目调试模式配置文件（以及项目设置的APP_STATUS对应的配置文件）</td>  </tr>  <tr>    <td>core.php</td>    <td>项目追加的核心编译列表文件（不会覆盖核心编译列表）</td>  </tr></table></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="27.html">上一页</a><a title="下一页" class="next" href="29.html">下一页</a></div>
+		</div>
+	</body>
+</html>

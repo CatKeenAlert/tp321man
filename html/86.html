@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模板输出</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/86.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模板输出</h1>
+			<div class="page"><a title="上一页" class="prev" href="85.html">上一页</a><a title="下一页" class="next" href="87.html">下一页</a></div>
+		</div>
+		<div class="book-content">模板变量赋值后就需要调用模板文件来输出相关的变量，模板调用通过display方法来实现。我们在操作方法的最后使用：<code class="prettyprint linenums lang-php">$this-&gt;display();</code>就可以输出模板，根据前面的模板定义规则，因为系统会按照默认规则自动定位模板文件，所以通常display方法无需带任何参数即可输出对应的模板，这是模板输出的最简单的用法。<br />
+事情总有特例，或者根本不需要按模块进行分目录存放，不过display方法总是能够帮你解决问题。<br />
+Display方法提供了几种规则让你可以随心所欲的输出需要的模板，无论你的模板文件在什么位置。<br />
+下面来看具体的用法：<h4>一、调用当前模块的其他操作模板</h4>格式：display('操作名')<br />
+例如，假设当前操作是User模块下面的read操作，我们需要调用User模块的edit操作模版，使用：<code class="prettyprint linenums lang-php">$this-&gt;display('edit');&nbsp;</code>不需要写模板文件的路径和后缀。<h4>二、调用其他模块的操作模板</h4>格式：display('模块名:操作名')<br />
+例如，当前是User模块，我们需要调用Member模块的read操作模版，使用：<code class="prettyprint linenums lang-php">$this-&gt;display('Member:read');&nbsp;</code>这种方式也不需要写模板文件的路径和后缀，严格来说，这里面的模块名和操作名并不一定需要有对应的模块或者操作，只是一个目录名称和文件名称而已，例如，你的项目里面可能根本没有Public模块，更没有Public模块的menu操作，但是一样可以使用<code class="prettyprint linenums lang-php">$this-&gt;display('Public:menu');&nbsp;</code>输出这个模板文件。理解了这个，模板输出就清晰了。<h4>三、调用其他主题的操作模板</h4>格式：display('主题名:模块名:操作名')<br />
+例如我们需要调用Xp主题的User模块的edit操作模版，使用：<code class="prettyprint linenums lang-php">$this-&gt;display('Xp:User:edit');&nbsp;</code>这种方式需要指定模块和操作名<h4>四、直接全路径输出模板</h4>格式：display('模板文件名')<br />
+例如，我们直接输出当前的Public目录下面的menu.html模板文件，使用：<code class="prettyprint linenums lang-php">$this-&gt;display('./Public/menu.html');</code>这种方式需要指定模板路径和后缀，这里的Public目录是位于当前项目入口文件位置下面。如果是其他的后缀文件，也支持直接输出，例如：<code class="prettyprint linenums lang-php">$this-&gt;display('./Public/menu.tpl');</code>只要./Public/menu.tpl是一个实际存在的模板文件。如果使用的是相对路径的话，要注意当前位置是相对于项目的入口文件，而不是模板目录。<h4>五、直接解析内容</h4>Action类的display方法如果传入第四个参数，表示不读取模板文件而是直接解析内容。例如：<code class="prettyprint linenums lang-php">$this-&gt;assign('foo','ThinkPHP');&nbsp;<br />
+$this-&gt;show('Hello,&nbsp;{$foo}!');</code>会在页面输出： Hello,ThinkPHP! <br />
+直接输出的内容仍然支持模板布局功能。<br />
+show方法也可以支持指定编码和输出格式，例如：<code class="prettyprint linenums lang-php">$this-&gt;show($content,&nbsp;'utf-8',&nbsp;'text/xml');&nbsp;</code>事实上，display方法还有其他的参数和用法。<br />
+有时候某个模板页面我们需要输出指定的编码，而不是默认的编码，可以使用：<code class="prettyprint linenums lang-php">$this-&gt;display('Member:read',&nbsp;'gbk');&nbsp;</code>或者输出的模板文件不是text/html格式的，而是XML格式的，可以用：<code class="prettyprint linenums lang-php">$this-&gt;display('Member:read',&nbsp;'utf-8',&nbsp;'text/xml');&nbsp;</code>如果你的网站输出编码不是默认的编码，可以使用：<code class="prettyprint linenums lang-php">'DEFAULT_CHARSET'=&gt;&nbsp;'gbk'</code>如果要输出XML格式的，可以用：<code class="prettyprint linenums lang-php">'TMPL_CONTENT_TYPE'=&gt;&nbsp;'text/xml'&nbsp;</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="85.html">上一页</a><a title="下一页" class="next" href="87.html">下一页</a></div>
+		</div>
+	</body>
+</html>

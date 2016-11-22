@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>引擎扩展</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/151.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>引擎扩展</h1>
+			<div class="page"><a title="上一页" class="prev" href="150.html">上一页</a><a title="下一页" class="next" href="152.html">下一页</a></div>
+		</div>
+		<div class="book-content">引擎扩展是比模式扩展更高层次的扩展机制，顾名思义，引擎扩展是一个框架的引擎替换，当模式扩展无法满足运行环境的特殊要求的时候，就需要使用引擎扩展。引擎扩展的一个最大特点就是替换了原有的框架入口文件，是为了满足日益发展的App Engine平台而诞生的。<br />
+新版的第一个引擎扩展就是SAE扩展，由于新浪SAE环境的特殊要求，内置的标准模式中的文件写入操作无法在SAE环境中使用，因此导致系统的框架入口ThinkPHP.php中的编译缓存无法实现，必须通过引擎扩展替换框架入口才可以实现。<br />
+关于SAE的支持和使用，请参考17  SAE支持部分。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="150.html">上一页</a><a title="下一页" class="next" href="152.html">下一页</a></div>
+		</div>
+	</body>
+</html>

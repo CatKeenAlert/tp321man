@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>多语言</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/190.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>多语言</h1>
+			<div class="page"><a title="上一页" class="prev" href="189.html">上一页</a><a title="下一页" class="next" href="191.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP内置多语言支持，如果你的应用涉及到国际化的支持，那么可以定义相关的语言包文件。任何字符串形式的输出，都可以定义语言常量。要启用多语言功能，需要配置开启多语言行为（确保你下载的是完整版本，如果不是需要单独下载多语言检测行为扩展），在项目的配置目录下面的行为定义文件tags.php中，添加：<code class="prettyprint linenums lang-php">return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;添加下面一行定义即可<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'app_begin'&nbsp;=&gt;&nbsp;array('CheckLang')<br />
+);</code>表示在app_begin标签位置执行多语言检测行为。<br />
+要开启语言包功能，需要开启<code class="prettyprint linenums lang-php">'LANG_SWITCH_ON'&nbsp;=&gt;&nbsp;true,&nbsp;&nbsp;&nbsp;//&nbsp;开启语言包功能</code>其他的配置参数包括：<code class="prettyprint linenums lang-php">'LANG_AUTO_DETECT'&nbsp;=&gt;&nbsp;true,&nbsp;//&nbsp;自动侦测语言&nbsp;开启多语言功能后有效<br />
+'LANG_LIST'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'zh-cn',&nbsp;//&nbsp;允许切换的语言列表&nbsp;用逗号分隔<br />
+'VAR_LANGUAGE'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'l',&nbsp;//&nbsp;默认语言切换变量</code>可以为项目定义不同的语言文件，框架的系统语言包目录在系统框架的Lang目录下面，每个语言都对应一个语言包文件，系统默认只有简体中文语言包文件zh-cn.php ，如果要增加繁体中文zh-tw或者英文en，只要增加相应的文件。<br />
+语言包的使用由系统自动判断当前用户的浏览器支持语言来定位，如果找不到相关的语言包文件，会使用默认的语言。如果浏览器支持多种语言，那么取第一种支持语言。<br />
+ThinkPHP的多语言支持已经相当完善了，可以满足应用的多语言需求。这里是指的是模板多语言支持，数据的多语言转换（翻译）不在这个范畴之内。ThinkPHP具备语言包定义、自动识别、动态定义语言参数的功能。并且可以自动识别用户浏览器的语言，从而选择相应的语言包（如果有定义）。例如：<code class="prettyprint linenums lang-php">throw_exception（'新增用户失败！'）;</code>我们在语言包里面增加了ADD_USER_ERROR 语言配置变量的话，在程序中的写法就要改为：<code class="prettyprint linenums lang-php">throw_exception（L('ADD_USER_ERROR')）;</code>也就是说，字符串信息要改成L方法和语言定义来表示。<br />
+项目语言包文件位于项目的Lang目录下面，并且按照语言类别分子目录存放，在执行的时候系统会自动加载，无需手动加载。<br />
+具体的语言包文件命名规范如下：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <td>项目公共语言包</td>        <td>语言目录/common.php</td>    </tr>    <tr>        <td>项目分组语言包</td>        <td>语言目录/分组名.php</td>    </tr>    <tr>        <td rowspan="2">项目模块语言包</td>        <td>不存在分组情况：语言目录/模块名（小写）.php</td>    </tr>    <tr>        <td>存在分组的情况：语言目录/分组名/模块名（小写）.php </td>    </tr></table>语言包文件可以按照模块来定义，每个模块单独定义语言包文件，文件名和模块名称相同，例如：<br />
+Lang/zh-cn/user.php 表示给User模块定义简体中文语言包文件<br />
+Lang/zh-tw/user.php 表示给User模块定义繁体中文语言包文件<br />
+语言子目录采用浏览器的语言命名(全部小写)定义，例如English (United States)  可以使用en-us作为目录名。如果项目比较小，整个项目只有一个语言包文件，那可以定义common.php文件，而无需按照模块分开定义。<br />
+分组的模块语言包定义受TMPL_FILE_DEPR参数配置影响，如果你修改了TMPL_FILE_DEPR参数，例如：<code class="prettyprint linenums lang-php">'TMPL_FILE_DEPR'=&gt;'_',</code>那么，分组的模块语言包定义方式应该改为：<br />
+语言目录/分组名_模块名（小写）.php语言文件定义<br />
+ThinkPHP语言文件定义采用返回数组方式：<code class="prettyprint linenums lang-php">return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'lan_define'=&gt;'欢迎使用ThinkPHP',<br />
+);</code>要在程序里面设置语言定义的值，使用下面的方式：<code class="prettyprint linenums lang-php">L('define2','语言定义');<br />
+$value&nbsp;=&nbsp;L('define2');</code>上面的语言包是指项目的语言包，如果在提示信息的时候使用了框架底层的提示，那么还需要定义系统的语言包，系统语言包目录位于ThinkPHP目录下面的Lang目录。<br />
+通常多语言的使用是在Action控制器里面，但是模型类的自动验证功能里面会用到提示信息，这个部分也可以使用多语言的特性。例如：<br />
+原来的方式是把提示信息直接写在模型里面定义<code class="prettyprint linenums lang-php">array('title','require','标题必须！',1),</code>如果使用了多语言功能的话（假设，我们在当前语言包里面定义了' lang_var'=&gt;'标题必须！'）<br />
+还可以这样定义模型的自动验证<code class="prettyprint linenums lang-php">array('title','require','{%lang_var}',1),</code>如果要在模板中输出语言变量不需要在Action中赋值，可以直接使用模板引擎特殊标签来直接输出语言定义的值：<code class="prettyprint linenums lang-php">{$Think.lang.lang_var}</code>可以输出当前选择的语言包里面定义的 lang_var 语言定义</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="189.html">上一页</a><a title="下一页" class="next" href="191.html">下一页</a></div>
+		</div>
+	</body>
+</html>

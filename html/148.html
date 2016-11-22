@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>驱动扩展</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/148.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>驱动扩展</h1>
+			<div class="page"><a title="上一页" class="prev" href="147.html">上一页</a><a title="下一页" class="next" href="149.html">下一页</a></div>
+		</div>
+		<div class="book-content">这里说的驱动扩展是一种泛指，驱动扩展的目录位于扩展目录Extend/Driver，包括数据库驱动、缓存驱动、标签库驱动和模板引擎驱动。<h3>数据库驱动</h3>数据库抽象层的设计是由抽象数据库类（Db）和数据库驱动类组成的，内置的数据库驱动是MySQL和MySQLi驱动类，官方的扩展还提供了MsSQL、PgSQL、Sqlite、Oracle、Ibase、Mongo以及PDO驱动类，可以满足常用的数据库操作的需要。<br />
+数据库驱动扩展目录位于系统扩展目录Extend/Driver/Db，如果需要扩展其他的数据库驱动类，只需要继承Db类，驱动类的命名规范是：<br />
+Db+驱动类名称（首字母大写）<br />
+例如，假如你需要扩展一个ODBC的数据库驱动，应该命名为：DbOdbc.class.php，并放到系统扩展目录 Extend/Driver/Db目录下面。<code class="prettyprint linenums lang-php">Class&nbsp;DbOdbc&nbsp;&nbsp;extends&nbsp;Db{<br />
+}</code>每个数据库驱动必须要实现的方法包括（具体参数可以参考现有的数据库驱动类库）：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>驱动方法</th>    <th>方法说明</th>  </tr>  <tr>    <td>架构方法</td>    <td>__construct($config='')</td>  </tr>  <tr>    <td>数据库连接方法</td>    <td>connect($config='',$linkNum=0,$force=false)</td>  </tr>  <tr>    <td>释放查询方法</td>    <td>free()</td>  </tr>  <tr>    <td>查询操作方法</td>    <td>query($str)</td>  </tr>  <tr>    <td>执行操作方法</td>    <td>execute($str)</td>  </tr>  <tr>    <td>开启事务方法</td>    <td>startTrans()</td>  </tr>  <tr>    <td>事务提交方法</td>    <td>commit()</td>  </tr>  <tr>    <td>事务回滚方法</td>    <td>rollback()</td>  </tr>  <tr>    <td>获取查询数据方法</td>    <td>getAll()</td>  </tr>  <tr>    <td>获取字段信息方法</td>    <td>getFields($tableName)</td>  </tr>  <tr>    <td>获取数据库的表</td>    <td>getTables($dbName='')</td>  </tr>  <tr>    <td>关闭数据库方法</td>    <td>close()</td>  </tr>  <tr>    <td>获取错误信息方法</td>    <td>error()</td>  </tr>  <tr>    <td>SQL安全过滤方法</td>    <td>escapeString($str)</td>  </tr></table>数据库的CURD接口方法（通常这些方法无需重新定义）<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>方法</th>    <th>说明</th>  </tr>  <tr>    <td>写入</td>    <td>insert($data,$options=array(),$replace=false)</td>  </tr>  <tr>    <td>更新</td>    <td>update($data,$options)</td>  </tr>  <tr>    <td>删除</td>    <td>delete($options=array())</td>  </tr>  <tr>    <td>查询</td>    <td>select($options=array())</td>  </tr></table>介于不同数据库的查询方法存在区别，所以经常需要对查询的语句进行重新定义，这就需要修改针对查询的selectSql属性。该属性定义了当前数据库驱动的查询表达式，默认的定义是：<br />
+'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT% %UNION%'<br />
+驱动可以更改或者删除个别查询定义，或者更改某个替换字符串的解析方法，这些方法包括：<br />
+   <table border="0" cellspacing="1" cellpadding="0">    <tr>      <th>方法名</th>      <th>说明</th>      <th>对应</th>    </tr>    <tr>      <td>parseTable</td>      <td>数据库表名解析</td>      <td>%TABLE%</td>    </tr>    <tr>      <td>parseWhere</td>      <td>数据库查询条件解析</td>      <td>%WHERE%</td>    </tr>    <tr>      <td>parseLimit</td>      <td>数据库查询Limit解析</td>      <td>%LIMIT%</td>    </tr>    <tr>      <td>parseJoin</td>      <td>数据库JOIN查询解析</td>      <td>%JOIN%</td>    </tr>    <tr>      <td>parseOrder</td>      <td>数据库查询排序解析</td>      <td>%ORDER%</td>    </tr>    <tr>      <td>parseGroup</td>      <td>数据库group查询解析</td>      <td>%GROUP%</td>    </tr>    <tr>      <td>parseHaving</td>      <td>数据库having解析</td>      <td>%HAVING%</td>    </tr>    <tr>      <td>parseDistinct</td>      <td>数据库distinct解析</td>      <td>%DISTINCT%</td>    </tr>    <tr>      <td>parseUnion</td>      <td>数据库union解析</td>      <td>%UNION%</td>    </tr>    <tr>      <td>parseField</td>      <td>数据库字段解析</td>      <td>%FIELD%</td>    </tr>  </table>驱动的其他方法根据自身驱动需要和特性进行添加，例如，有些数据库的特殊性，需要覆盖父类Db类中的解析和过滤方法，包括：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <td>parseKey</td>    <td>数据库字段名解析</td>  </tr>  <tr>    <td>parseValue</td>    <td>数据库字段值解析</td>  </tr>  <tr>    <td>parseSet</td>    <td>数据库set分析</td>  </tr>  <tr>    <td>parseLock</td>    <td>数据库锁机制</td>  </tr></table>定义了驱动扩展后，需要使用的时候，设置相应的数据库类型即可：<code class="prettyprint linenums lang-php">'DB_TYPE'=&gt;'odbc',&nbsp;//&nbsp;数据库类型配置不区分大小写</code><h3>缓存驱动</h3>系统的缓存实现是由缓存类和缓存驱动组成，缓存驱动扩展位于Extend/Driver/Cache目录下面，目前已经提供了包括APC、Db、Memcache、Shmop、Sqlite、Redis、Eaccelerator和Xcache缓存方式的驱动扩展，缓存驱动必须继承Cache类，缓存驱动类的命名规范是：<br />
+Cache+驱动类名称（首字母大写）<br />
+并实现下面的驱动接口：<br />
+  <table border="0" cellspacing="1" cellpadding="0">    <tr>      <th>方法说明</th>      <th>接口方法</th>    </tr>    <tr>      <td>架构方法</td>      <td>__construct($options='')</td>    </tr>    <tr>      <td>读取缓存</td>      <td>get($name)</td>    </tr>    <tr>      <td>写入缓存</td>      <td>set($name,$value,$expire=null)</td>    </tr>    <tr>      <td>删除缓存</td>      <td>rm($name)</td>    </tr>    <tr>      <td>清空缓存</td>      <td>clear()</td>    </tr>  </table>注意：有些缓存方式并未提供清空缓存接口，可以无需定义。<br />
+所有缓存驱动的有效期参数约定，如果设置为0 则表示永久缓存。如果要让缓存驱动支持缓存队列功能，需要在缓存接口的set操作方法设置成功后添加如下代码：<code class="prettyprint linenums lang-php">if($this-&gt;options['length']&gt;0)&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;记录缓存队列<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;queue($name);<br />
+}</code><h3>Session驱动</h3>新版支持对session 的hander驱动，可以通过驱动更改session的管理机制。Session驱动扩展目录位于Extend/Driver/Session下面，命名规范是：<br />
+Session+驱动类名称（首字母大写）<br />
+并实现下面的驱动接口：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th>方法说明</th>        <th>接口方法</th>    </tr>    <tr>        <td>执行入口</td>        <td>execute()并且在方法中调用session_set_save_handler函数指定hander操作机制</td>    </tr>    <tr>        <td colspan="2">并建议添加下面的接口方法</td>    </tr>    <tr>        <td>打开Session</td>        <td>open($savePath,$sessionName)</td>    </tr>    <tr>        <td>关闭Session</td>        <td>close()</td>    </tr>    <tr>        <td>读取Session</td>        <td>read($id)</td>    </tr>    <tr>        <td>写入Session</td>        <td>write($id,$data)</td>    </tr>    <tr>        <td>删除Session</td>        <td>destory($id)</td>    </tr>    <tr>        <td>Session过期回收</td>        <td>gc($maxlifetime)</td>    </tr>  </table><h3>标签库驱动</h3>任何一个模板引擎的功能都不可能是为你量身定制的，具有一个良好的可扩展机制也是模板引擎的另外一个考量，Smarty采用的是插件方法来实现扩展，ThinkTemplate由于采用了标签库技术，比Smarty提供了更为强大的定制功能，和Java的TagLibs一样可以支持自定义标签库和标签，每个标签都有独立的解析方法，所以可以根据标签库的定义规则来增加和修改标签解析规则。在ThinkTemplate中标签库的体现是采用XML命名空间的方式。<br />
+每个标签库对应一个标签库驱动类，每个驱动类负责对标签库中的所有标签的解析。标签库驱动类的作用其实就是把某个标签定义解析成为有效的模版文件（可以包括PHP语句或者HTML标签）。<br />
+系统的标签库驱动扩展目录位于Extend/Driver/TagLib目录下面，命名规范是：<br />
+TagLib+标签库名称（首字母大写）<br />
+目前已经提供了Html标签库驱动支持，标签库驱动扩展必须继承TagLib类，例如我们扩展一个Test标签库：<code class="prettyprint linenums lang-php">Class&nbsp;TagLibTest&nbsp;extends&nbsp;TagLib{}</code>首先需要定义标签库的标签定义，标签定义包含了所有标签库中支持的所有标签，定义方式如下：<code class="prettyprint linenums lang-php">protected&nbsp;$tags&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;array(<br />
+&nbsp;&nbsp;//&nbsp;定义标签<br />
+'input'=&gt;array('attr'=&gt;'type,name,id,value','close'=&gt;0),&nbsp;//&nbsp;input标签<br />
+);</code>标签库的所有支持标签都在tags属性中进行定义，tags属性是一个二维数组，每个元素就是一个标签定义，索引名就是标签名，采用小写定义，调用的时候不区分大小写。<br />
+每个标签定义支持的属性包括：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th>属性名</th>        <th>说明</th>    </tr>    <tr>        <td>attr</td>        <td>标签支持的属性列表，用逗号分隔</td>    </tr>    <tr>        <td>close</td>        <td>标签是否为闭合方式&nbsp;（0闭合&nbsp;1不闭合），默认为不闭合</td>    </tr>    <tr>        <td>level</td>        <td>标签的嵌套层次（只有不闭合的标签才有嵌套层次）</td>    </tr>    <tr>        <td>alias</td>        <td>标签别名</td>    </tr></table>定义了标签属性后，就需要定义每个标签的解析方法了，每个标签的解析方法在定义的时候需要添加“_”前缀，可以传入两个参数，属性字符串和内容字符串（针对非闭合标签）。必须通过return 返回标签的字符串解析输出，在标签解析类中可以调用模板类的实例。下面是一个input解析方法的定义：<br />
+    <code class="prettyprint linenums lang-php">public&nbsp;function&nbsp;_input($attr,$content)&nbsp;&nbsp;&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$tag&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;$this-&gt;parseXmlAttr($attr,'input');<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$name&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;$tag['name'];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$id&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;$tag['id'];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$type&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;$tag['type'];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$value&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;$this-&gt;autoBuildVar($tag['value']);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$str&nbsp;=&nbsp;'';<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;$str;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}</code>在每个标签的解析方法中，首先需要调用<code class="prettyprint linenums lang-php">&nbsp;$this-&gt;parseXmlAttr($attr,'input');</code>表示分析input标签的标签定义，并返回input的所有标签属性。接下来就是根据具体的属性值来返回实际的解析内容了。由于是示例，我们没有对标签中的全部变量进行解析，只是支持了value属性的变量传入。<br />
+定义好标签库扩展之后，我们就可以在模板中使用了，首先我们必须要告诉模板申明Test标签库，用taglib标签，例如：<code class="prettyprint linenums lang-php">&lt;taglib&nbsp;name='Test'&nbsp;/&gt;</code>name属性支持申明多个标签库，用逗号分隔即可。申明Test标签库之后，就可以使用Test标签库中的所有标签库了，调用方式如下：<code class="prettyprint linenums lang-php">&lt;test:input&nbsp;type='radio'&nbsp;id='test'&nbsp;name='mail'value='value'&nbsp;/&gt;</code>注意：调用扩展标签库的标签的时候，必须加上标签库的XML命名空间前缀。<br />
+由于我们定义的input标签是闭合标签，如果是非闭合方式的话，应该是写成：<code class="prettyprint linenums lang-php">&lt;test:input&nbsp;type='radio'&nbsp;id='test'&nbsp;name='mail'&nbsp;value='value'&gt;&lt;/test:input&gt;</code>Input标签定义value属性可以支持变量传入，所以value被认为是一个变量名，如果在Action中已经给value模板变量赋值，例如：<code class="prettyprint linenums lang-php">$this-&gt;assign('value','my&nbsp;test&nbsp;value');</code>最后标签被模板引擎编译后，就会输出：<code class="prettyprint linenums lang-php">&lt;input&nbsp;type='radio'&nbsp;id='test'&nbsp;name='mail'&nbsp;value='my&nbsp;test&nbsp;value'/&gt;</code><h3>模板引擎驱动</h3>系统支持模板引擎的扩展机制，模板引擎驱动的扩展目录位于Extend/Driver/Template下面，并且命名规范为：<br />
+Template+模板引擎名（首字母大写）<br />
+模板引擎驱动不需要继承任何类库，并且只需要实现一个接口方法：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th>接口说明</th>        <th>使用说明</th>    </tr>    <tr>        <td>渲染模板输出</td>        <td>fecth($tempateFie,$var)<br />tempateFie表示要解析的模板文件名<br />var表示要传入的模板变量数组</td>    </tr></table>官方目前已经提供了包括Smarty、EaseTemplate、TemplateLite和Smart在内的第三方模板引擎扩展。<br />
+模板引擎扩展必须要配合第三方类库一起使用，我们以Smarty模板引擎为例，来说明下如何使用第三方模板引擎。首先，下载最新的Smarty模板引擎文件放到系统目录的Vendor第三方类库目录下面，建立Smarty子目录。<br />
+然后，修改项目配置文件，把模板引擎改为扩展的模板引擎名：<code class="prettyprint linenums lang-php">'TMPL_ENGINE_TYPE'&nbsp;=&gt;'Smarty'</code>就可以用smarty标签来定义你的模板文件了，改变模板引擎驱动并不会影响系统内部的模板变量输出和模板文件定位，例如我们在上面提到的用assign赋值模板变量、display和fetch方法的使用、模板文件的定位规则、模板替换功能仍然都可以使用。<br />
+对于某些第三方的模板引擎，还可以用TMPL_ENGINE_CONFIG参数进行自定义的配置。<br />
+例如对于Smarty模板引擎而言，我们可以进行下面的配置参数定义：<code class="prettyprint linenums lang-php">'TMPL_ENGINE_CONFIG'=&gt;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'caching'=&gt;true,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'template_dir'=&gt;TMPL_PATH,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'cache_dir'=&gt;TEMP_PATH,<br />
+)</code>一般情况下，无需设置TMPL_ENGINE_CONFIG参数，模板引擎驱动已经有最适合的默认值了。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="147.html">上一页</a><a title="下一页" class="next" href="149.html">下一页</a></div>
+		</div>
+	</body>
+</html>

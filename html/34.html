@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模块和操作</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/34.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模块和操作</h1>
+			<div class="page"><a title="上一页" class="prev" href="33.html">上一页</a><a title="下一页" class="next" href="35.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP采用模块和操作的方式来执行，首先，用户的请求会通过入口文件生成一个应用实例，应用控制器（我们称之为核心控制器）会管理整个用户执行的过程，并负责模块的调度和操作的执行，并且在最后销毁该应用实例。任何一个URL访问都可以认为是某个模块的某个操作，例如：<br />
+http://www.domain.com/App/index.php/User/read/id/8<br />
+http://www.domain.com/index.php/Home/User/read/id/8<br />
+系统会根据当前的URL来分析要执行的模块和操作。这个分析工作由URL调度器（Dispatcher）来实现，并且都分析成下面的规范：<br />
+http://域名/项目名/分组名/模块名/操作名/其他参数<br />
+Dispatcher会根据URL地址来获取当前需要执行的项目、分组（如果有定义的话）模块、操作以及其他参数，在某些情况下，项目名可能不会出现在URL地址中（通常情况下入口文件则代表了某个项目，而且入口文件可以被隐藏）。<br />
+每一个模块就是一个控制器类，通常位于项目的Lib\Action目录下面。类名就是模块名加上Action后缀，例如UserAction类就表示了User模块。控制器类必须继承系统的Action基础类，这样才能确保使用Action类内置的方法。而read操作其实就是IndexAction类的一个公共方法，所以我们在浏览器里面输入URL：<br />
+http://localhost/App/index.php/User/read/id/8<br />
+其实就是执行了UserAction类的read（公共）方法。<br />
+每个模块的操作并非一定需要有定义操作方法，如果我们只是希望输出一个模板，既没有变量也没有任何的业务逻辑，那么只需要按照规则定义好操作对应的模板文件即可，而不需要定义操作方法。例如，我们在UserAction中如果没有定义help方法，但是存在对应的User/help.html 模板文件，那么下面的URL访问依然可以正常运作：<br />
+http://localhost/myApp/index.php/User/help/<br />
+因为系统找不到UserAction类的help方法，会自动定位到User模块的模板目录中查找help.html模板文件，然后直接渲染输出。<br />
+例外的情况就是如果定义了路由，则有可能URL的解析规则会被改变，这个我们会在URL路由中详细描述。<br />
+如果访问的URL是 http://localhost/App/index.php<br />
+在URL里面没有带任何模块和操作的参数，系统就会寻找默认模块DEFAULT_MODULE和默认操作DEFAULT_ACTION，系统默认的默认模块设置是Index模块，默认操作设置是index操作。也就是说：<br />
+http://localhost/App/index.php和<br />
+http://localhost/App/index.php/Index以及<br />
+http://localhost/App/index.php/Index/index 等效。<br />
+可以在项目配置文件中修改默认模块和默认操作的名称。<br />
+<br />
+如果我们访问一个不存在的操作或者模块，并且也没有渲染到默认定位的模板文件的话，在调试模式下面会抛出异常错误，在部署模式下则会发送404错误，但是可以通过空模块或者空操作方法引导这些页面到你希望的页面，请参考后面的空模块和空操作。3.1版本开始，增加ACTION_SUFFIX配置参数，用于设置操作方法的后缀。<br />
+例如，如果设置：<code class="prettyprint linenums lang-php">'ACTION_SUFFIX'=&gt;'Act'</code>那么访问某个模块的add操作对应读取模块类的操作方法则由原来的add方法变成addAct方法。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="33.html">上一页</a><a title="下一页" class="next" href="35.html">下一页</a></div>
+		</div>
+	</body>
+</html>

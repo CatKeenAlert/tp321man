@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>事务支持</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/75.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>事务支持</h1>
+			<div class="page"><a title="上一页" class="prev" href="74.html">上一页</a><a title="下一页" class="next" href="76.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP提供了单数据库的事务支持，如果要在应用逻辑中使用事务，可以参考下面的方法：<br />
+启动事务：<code class="prettyprint linenums lang-php">$User-&gt;startTrans();&nbsp;</code>提交事务：<code class="prettyprint linenums lang-php">$User-&gt;commit();</code>事务回滚：<code class="prettyprint linenums lang-php">$User-&gt;rollback();</code>事务是针对数据库本身的，所以可以跨模型操作的 。<br />
+例如：<code class="prettyprint linenums lang-php">//&nbsp;&nbsp;在User模型中启动事务<br />
+$User-&gt;startTrans();<br />
+//&nbsp;进行相关的业务逻辑操作<br />
+$Info&nbsp;=&nbsp;M("Info");&nbsp;//&nbsp;实例化Info对象<br />
+$Info-&gt;save($User);&nbsp;//&nbsp;保存用户信息<br />
+if&nbsp;(操作成功){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;提交事务<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$User-&gt;commit();&nbsp;<br />
+}else{<br />
+&nbsp;&nbsp;&nbsp;//&nbsp;事务回滚<br />
+&nbsp;&nbsp;&nbsp;$User-&gt;rollback();&nbsp;<br />
+}</code>注意：系统提供的事务操作方法必须有数据库本身的支持，如果你的数据库或者数据表类型不支持事务，那么系统的事务操作是无效的。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="74.html">上一页</a><a title="下一页" class="next" href="76.html">下一页</a></div>
+		</div>
+	</body>
+</html>

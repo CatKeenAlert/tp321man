@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>URL大小写</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/43.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>URL大小写</h1>
+			<div class="page"><a title="上一页" class="prev" href="42.html">上一页</a><a title="下一页" class="next" href="44.html">下一页</a></div>
+		</div>
+		<div class="book-content">我们知道，系统默认的规范是根据URL里面的moduleName和actionName来定位到具体的模块类，从而执行模块类的操作方法，如果在Linux环境下面，就会发生URL里面使用小写模块名不能找到模块类的情况，例如在Linux环境下面，我们访问下面的URL是正常的：<code class="prettyprint linenums lang-php">http://serverName/index.php/User/add</code>但是，如果使用<code class="prettyprint linenums lang-php">http://serverName/index.php/user/add</code>就会出现user模块不存在的错误。因为，我们定义的模块类是UserAction而不是userAction，但是后者显然不符合ThinkPHP的命名规范，这样的问题会造成用户体验的下降。<br />
+其实，系统本身已经提供了一个良好的解决方案，可以通过配置简单实现。<br />
+只要在项目配置中，增加：<code class="prettyprint linenums lang-php">'URL_CASE_INSENSITIVE'&nbsp;=&gt;true</code>就可以实现URL访问不再区分大小写了。<code class="prettyprint linenums lang-php">http://serverName/index.php/User/add<br />
+//将等效于<br />
+http://serverName/index.php/user/add</code>这里需要注意一个地方，如果我们定义了一个UserTypeAction的模块类，那么URL的访问应该是：<code class="prettyprint linenums lang-php">http://serverName/index.php/user_type/list<br />
+//而不是<br />
+http://serverName/index.php/usertype/list</code>利用系统提供的U方法可以为你自动生成相关的URL地址。<br />
+如果设置<code class="prettyprint linenums lang-php">'URL_CASE_INSENSITIVE'&nbsp;=&gt;false</code>的话，URL就又变成：<code class="prettyprint linenums lang-php">http://serverName/index.php/UserType/list</code>注意：URL不区分大小写并不会改变系统的命名规范，并且只有按照系统的命名规范后才能正确的实现URL不区分大小写。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="42.html">上一页</a><a title="下一页" class="next" href="44.html">下一页</a></div>
+		</div>
+	</body>
+</html>

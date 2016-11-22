@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>前置和后置操作</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/44.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>前置和后置操作</h1>
+			<div class="page"><a title="上一页" class="prev" href="43.html">上一页</a><a title="下一页" class="next" href="45.html">下一页</a></div>
+		</div>
+		<div class="book-content">系统会检测当前操作是否具有前置和后置操作，如果存在就会按照顺序执行，前置和后置操作的方法名是在要执行的方法前面加 _before_和_after_，例如：<code class="prettyprint linenums lang-php">class&nbsp;CityAction&nbsp;extends&nbsp;Action{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//前置操作方法<br />
+&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;_before_index(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;'before&lt;br/&gt;';<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;index(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;'index&lt;br/&gt;';<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//后置操作方法<br />
+&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;_after_index(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;'after&lt;br/&gt;';<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+}</code>如果我们访问<code class="prettyprint linenums lang-php">http://serverName/index.php/City/index</code>结果会输出<br />
+<p class="cli">before<br />
+index<br />
+after</p><br />
+对于任何操作方法我们都可以按照这样的规则来定义前置和后置方法。如果当前的操作并没有定义操作方法，而是直接渲染模板文件，那么如果定义了前置 和后置方法的话，依然会生效。真正有模板输出的可能仅仅是当前的操作，前置和后置操作一般情况是没有任何输出的。<br />
+需要注意的是，在有些方法里面使用了exit或者错误输出之类的话 有可能不会再执行后置方法了。<br />
+例如，如果在当前操作里面调用了系统Action的error方法，那么将不会再执行后置操作，但是不影响success方法的后置方法执行。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="43.html">上一页</a><a title="下一页" class="next" href="45.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>类库</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/31.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>类库</h1>
+			<div class="page"><a title="上一页" class="prev" href="30.html">上一页</a><a title="下一页" class="next" href="32.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP的类库包括基类库和应用类库，系统的类库命名规则如下：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>类库</th>    <th>规则</th>    <th>示例</th>  </tr>  <tr>    <td>控制器类</td>    <td>模块名+Action</td>    <td>例如&nbsp;UserAction、InfoAction</td>  </tr>  <tr>    <td>模型类</td>    <td>模型名+Model</td>    <td>例如&nbsp;UserModel、InfoModel</td>  </tr>  <tr>    <td>行为类</td>    <td>行为名+Behavior</td>    <td>例如CheckRouteBehavior</td>  </tr>  <tr>    <td>Widget类</td>    <td>Widget名+Widget</td>    <td>例如BlogInfoWidget</td>  </tr>  <tr>    <td>驱动类</td>    <td>引擎名+驱动名</td>    <td>例如DbMysql表示mysql数据库驱动、CacheFile表示文件缓存驱动</td>  </tr></table>类名和文件名一致， 详细命名规范可以参考1.6 命名规范。<h3>基类库</h3>基类库是指符合ThinkPHP类库规范的系统类库，包括ThinkPHP的核心基类库和扩展基类库。核心基类库目录位于系统的Lib目录，核心基类库也就是Think类库，扩展基类库位于Extend/Library目录，可以扩展ORG 、Com扩展类库。核心基类库的作用是完成框架的通用性开发而必须的基础类和内置支持类等，包含有：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>目录</th>    <th>调用路径</th>    <th>说明</th>  </tr>  <tr>    <td>Lib/Core</td>    <td>Think.Core</td>    <td>核心类库包</td>  </tr>  <tr>    <td>Lib/Behavior</td>    <td>Think.Behavior</td>    <td>内置行为类库包</td>  </tr>  <tr>    <td>Lib/Driver</td>    <td>Think.Driver</td>    <td>内置驱动类库包</td>  </tr>  <tr>    <td>Lib/Template</td>    <td>Think.Template</td>    <td>内置模板引擎类库包</td>  </tr></table>核心类库包下面包含下面核心类库：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>类名</th>    <th>说明</th>  </tr>  <tr>    <td>Action</td>    <td>系统基础控制器类</td>  </tr>  <tr>    <td>App</td>    <td>系统应用类</td>  </tr>  <tr>    <td>Behavior</td>    <td>系统行为基础类</td>  </tr>  <tr>    <td>Cache</td>    <td>系统缓存类</td>  </tr>  <tr>    <td>Db</td>    <td>系统抽象数据库类</td>  </tr>  <tr>    <td>Dispatcher</td>    <td>URL调度类</td>  </tr>  <tr>    <td>Log</td>    <td>系统日志类</td>  </tr>  <tr>    <td>Model</td>    <td>系统基础模型类</td>  </tr>  <tr>    <td>Think</td>    <td>系统入口和静态类</td>  </tr>  <tr>    <td>ThinkException</td>    <td>系统基础异常类</td>  </tr>  <tr>    <td>View</td>    <td>视图类</td>  </tr>   <tr>    <td>Widget</td>    <td>系统Widget基础类</td>  </tr></table><h3>应用类库</h3>应用类库是指项目中自己定义或者使用的类库，这些类库也是遵循ThinkPHP的命名规范。应用类库目录位于项目目录下面的Lib目录。应用类库的范围很广，包括Action类库、Model类库或者其他的工具类库，通常包括：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>目录</th>    <th>调用路径</th>    <th>说明</th>  </tr>  <tr>    <td>Lib/Action</td>    <td>@.Action或自动加载</td>    <td>控制器类库包</td>  </tr>  <tr>    <td>Lib/Model</td>    <td>@.Model或自动加载</td>    <td>模型类库包</td>  </tr>  <tr>    <td>Lib/Behavior</td>    <td>用B方法调用或自动加载</td>    <td>应用行为类库包</td>  </tr>  <tr>    <td>Lib/Widget</td>    <td>用W方法在模板中调用</td>    <td>应用Widget类库包</td>  </tr></table>项目根据自己的需要可以在项目类库目录下面添加自己的类库包，例如Lib/Common、Lib/Tool等。<h3>类库导入</h3>ThinkPHP类库的导入区别于其他的框架并没有采用require或者require_once进行导入，所有类库导入都采用统一的机制，包含下面两种方式：<h4>一、Import显式导入</h4>ThinkPHP模拟了Java的类库导入机制，统一采用import方法进行类文件的加载。import方法是ThinkPHP内建的类库导入方法，提供了方便和灵活的文件导入机制，完全可以替代PHP的require和include方法。例如：<code class="prettyprint linenums lang-php">import("Think.Util.Session");<br />
+import("App.Model.UserModel");</code>import方法具有缓存和检测机制，相同的文件不会重复导入，如果导入了不同的位置下面的同名类库文件，系统也不会再次导入，例如：<code class="prettyprint linenums lang-php">import("Think.Util.Array");<br />
+import("ORG.Util.Array");</code>上面的情况导入会产生引入两个同名的Array.class.php 类，所以系统不会再次导入ORG.Util.Array类。<br />
+注意：在Unix或者Linux主机下面是区别大小写的，所以在使用import方法的时候要注意目录名和类库名称的大小写，否则会导入失败。<br />
+对于import方法，系统会自动识别导入类库文件的位置，ThinkPHP的约定是Think、ORG、Com包的导入作为基类库导入，否则就认为是项目应用类库导入。<code class="prettyprint linenums lang-php">import("Think.Util.Session");<br />
+import("ORG.Util.Page");</code>上面两个方法分别导入了Think基类库的Util/Session.class.php文件和ORG扩展类库包的Util/Page.class.php文件。<br />
+要导入项目的应用类库文件也很简单，使用下面的方式就可以了，和导入基类库的方式看起来差不多：<code class="prettyprint linenums lang-php">import("MyApp.Action.UserAction");<br />
+import("MyApp.Model.InfoModel");</code>上面的方式分别表示导入MyApp项目下面的Lib/Action/UserAction.class.php和Lib/Model/InfoModel.class.php类文件。通常我们都是在当前项目里面导入所需的类库文件，所以，我们可以使用下面的方式来简化代码<code class="prettyprint linenums lang-php">import("@.Action.UserAction");<br />
+import("@.Model.InfoModel");</code>除了看起来简单一些外，还可以方便项目类库的移植。<br />
+如果要在当前项目下面导入其他项目的类库，必须保证两个项目的目录是平级的，否则无法使用<code class="prettyprint linenums lang-php">import("OtherApp.Model.GroupModel");</code>的方式来加载其他项目的类库。<br />
+我们知道，按照系统的规则，import方法是无法导入具有点号的类库文件的，因为点号会直接转化成斜线，例如我们定义了一个名称为User.Info.class.php 的文件的话，采用：<code class="prettyprint linenums lang-php">import("ORG.User.Info");</code>方式加载的话就会出现错误，导致加载的文件不是ORG/User.Info.class.php 文件，而是ORG/User/Info.class.php 文件，这种情况下，我们可以使用：<code class="prettyprint linenums lang-php">import("ORG.User#Info");</code>来导入。<br />
+对于import方法，系统会自动识别导入类库文件的位置，如果是其它情况的导入，需要指定import方法的第二个参数。例如，要导入当前文件所在目录下面的<br />
+RBAC/AccessDecisionManager.class.php 文件，可以使用：<code class="prettyprint linenums lang-php">import("RBAC.AccessDecisionManager",dirname(__FILE__));</code>如果你要导入的类库文件名的后缀不是class.php而是php，那么可以使用import方法的第三个参数指定后缀：<code class="prettyprint linenums lang-php">import("RBAC.AccessDecisionManager",dirname(__FILE__),".php");</code>我们建议您使用ThinkPHP开发过程保持类库名称采用class.php的后缀规范。<h4>二，别名导入</h4>除了命名空间的导入方式外，import方法还可以支持别名导入，要使用别名导入，首先要定义别名，我们可以在项目配置目录下面增加alias.php 用以定义项目中需要用到的类库别名，例如：<code class="prettyprint linenums lang-php">return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'rbac'&nbsp;=&gt;LIB_PATH.'Common/Rbac.class.php',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'page'&nbsp;=&gt;LIB_PATH.'Common/Page.class.php',<br />
+);</code>那么，现在就可以直接使用：<code class="prettyprint linenums lang-php">import("rbac");<br />
+import("page");</code>导入Rbac和Page类，别名导入方式禁止使用import方法的第二和第三个参数，别名导入方式的效率比命名空间导入方式要高效，缺点是需要预先定义相关别名。<br />
+可以为某些需要的类库定义别名，那么无需定义自动加载路径也可以快速的自动加载。<h3>导入第三方类库</h3>我们知道 ThinkPHP 的基类库都是以.class.php 为后缀的，这是系统内置的一个约定，当然也可以通过 import 的参数来控制， 为了更加方便引入其他框架和系统的类库， 系统增加了导入第三方类库的功能， 第三方类库统一放置在系统扩展目录下的Vendor 目录，并且使用vendor 方法导入，其参数和 import 方法是 一致的，只是默认的值有针对变化。 <br />
+例如，我们把 Zend 的 Filter\Dir.php 放到 Vendor 目录下面，这个时候 Dir 文件的路径就是 <br />
+Vendor\Zend\Filter\Dir.php，我们使用vendor 方法导入只需要使用： <code class="prettyprint linenums lang-php">Vendor('Zend.Filter.Dir');</code>就可以导入Dir类库了。<br />
+Vendor方法也可以支持和import方法一样的基础路径和文件名后缀参数，例如：<code class="prettyprint linenums lang-php">Vendor('Zend.Filter.Dir',dirname(__FILE__),'.class.php');</code><h3>自动加载</h3>在大多数情况下，我们无需手动导入类库，而是通过配置采用自动加载机制即可，自动加载机制是真正的按需加载，可以很大程度的提高性能。自动加载有三种情况，按照加载优先级从高到低分别是：别名自动加载、系统规则自动加载和自定义路径自动加载。<h4>一、别名自动加载</h4>在前面我们提到了别名的定义方式，并且采用了import方法进行别名导入，其实所有定义别名的类库都无需再手动加载，系统会按需自动加载。<h4>二、	系统规则自动加载</h4>果你没有定义别名的话，系统会首先按照内置的规则来判断加载，系统规则仅针对行为类、模型类和控制器类，搜索规则如下：<table border="0" cellspacing="1" cellpadding="0">        <tr>               <th>类名</th>               <th>规则</th>               <th>说明</th>        </tr>	<tr>		<td rowspan="4">行为类 </td>		<td>规则1</td>		<td>搜索系统类库目录下面的Behavior目录 </td>	</tr>	<tr>		<td>规则2</td>		<td>搜索系统扩展目录下面的Behavior目录 </td>	</tr>	<tr>		<td>规则3</td>		<td>搜索应用类库目录下面的Behavior目录 </td>	</tr>	<tr>		<td>规则4</td>		<td>如果启用了模式扩展，则搜索模式扩展目录下面的Behavior目录 </td>	</tr>	<tr>		<td rowspan="3">模型类 </td>		<td>规则1</td>		<td>如果启用分组，则搜索应用类库目录的Model/当前分组 目录 </td>	</tr>	<tr>		<td>规则2</td>		<td>搜索应用类库下面的Model目录 </td>	</tr>	<tr>		<td>规则3</td>		<td>搜索系统扩展目录下面的Model目录 </td>	</tr>	<tr>		<td rowspan="3">控制器类 </td>		<td>规则1</td>		<td>如果启用分组，则搜索应用类库目录的Action/当前分组 目录 </td>	</tr>	<tr>		<td>规则2</td>		<td>搜索项目类库目录下面的Action目录 </td>	</tr>	<tr>		<td>规则3</td>		<td>搜索系统扩展目录下面的Action目录 </td>	</tr></table>注意：搜索的优先顺序从上至下 ，一旦找到则返回，后面规则不再检测。如果全部规则检测完成后依然没有找到类库，则开始进行第三个自定义路径自动加载检测。<h4>三、	自定义路径自动加载</h4>当你的类库比较集中在某个目录下面，而且不想定义太多的别名导入的话，可以使用自定义路径自动加载方式，这种方式需要在项目配置文件中添加自动加载的搜索路径，例如：<code class="prettyprint linenums lang-php">'APP_AUTOLOAD_PATH'&nbsp;=&gt;'@.Common,@.Tool',</code>表示，在当前项目类库目录下面的Common和Tool目录下面的类库可以自动加载。多个搜索路径之间用逗号分割，并且注意定义的顺序也就是自动搜索的顺序。<br />
+注意：自动搜索路径定义只能采用命名空间方式，也就是说这种方式只能自动加载项目类库目录和基类库目录下面的类库文件。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="30.html">上一页</a><a title="下一页" class="next" href="32.html">下一页</a></div>
+		</div>
+	</body>
+</html>

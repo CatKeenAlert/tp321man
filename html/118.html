@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模板注释</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/118.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模板注释</h1>
+			<div class="page"><a title="上一页" class="prev" href="117.html">上一页</a><a title="下一页" class="next" href="119.html">下一页</a></div>
+		</div>
+		<div class="book-content">模板支持注释功能，该注释文字在最终页面不会显示，仅供模板制作人员参考和识别。<br />
+格式：{/* 注释内容 */ } 或 {// 注释内容 } <br />
+说明：在显示页面的时候不会显示模板注释，仅供模板制作的时候参考。<br />
+注意{和注释标记之间不能有空格。<br />
+例如：<code class="prettyprint linenums lang-php">{//&nbsp;这是模板注释内容&nbsp;}<br />
+{/*&nbsp;这是模板<br />
+注释内容*/&nbsp;}</code>模板注释支持多行，模板注释在生成编译缓存文件后会自动删除，这一点和Html的注释不同。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="117.html">上一页</a><a title="下一页" class="next" href="119.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>安全</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/152.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>安全</h1>
+			<div class="page"><a title="上一页" class="prev" href="151.html">上一页</a><a title="下一页" class="next" href="153.html">下一页</a></div>
+		</div>
+		<div class="book-content">在项目开发完成准备部署之前，应该检查下是否存在安全隐患，这一部分内容帮助你一起来加强项目的安全问题，指导你如何使用表单令牌、字段类型验证、输入过滤、上传安全、防止XSS攻击和目录安全保护等功能。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="151.html">上一页</a><a title="下一页" class="next" href="153.html">下一页</a></div>
+		</div>
+	</body>
+</html>

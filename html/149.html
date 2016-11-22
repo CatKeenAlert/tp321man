@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>Widget扩展</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/149.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>Widget扩展</h1>
+			<div class="page"><a title="上一页" class="prev" href="148.html">上一页</a><a title="下一页" class="next" href="150.html">下一页</a></div>
+		</div>
+		<div class="book-content">Widget扩展用于在页面根据需要输出不同的内容，Widget扩展的定义是在项目的Lib/Widget目录下面定义Widget类库，例如下面定义了一个用于显示最近的评论的Widget，位于Lib/Widget/ShowCommentWidget.class.php。<br />
+Widget类库需要继承Widget类，并且必须定义render方法实现，例如：<code class="prettyprint linenums lang-php">classShowCommentWidgetextendsWidget{<br />
+publicfunctionrender($data){<br />
+return&nbsp;'这是最新的评论信息';<br />
+}&nbsp;<br />
+}</code>render方法必须使用return返回要输出的字符串信息，而不是直接输出。<br />
+Widget也可以调用Widget类的renderFile方法，渲染模板后进行输出。<code class="prettyprint linenums lang-php">classShowCommentWidgetextendsWidget{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;publicfunctionrender($data){&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$content&nbsp;=&nbsp;$this-&gt;renderFile('comment',$data);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;$content;<br />
+&nbsp;&nbsp;&nbsp;}&nbsp;<br />
+}</code>定义好Widget类库后，只需要做的是在模板文件里面使用W方法调用Widget，例如：<code class="prettyprint linenums lang-php">{:W('ShowComment')}</code>通常Widget都有自己的调用参数来决定不同的输出内容<code class="prettyprint linenums lang-php">{:W('ShowComment',array('count'=&gt;5))}</code>参数必须使用索引数组传入。<br />
+如果使用了renderFile方法调用了模板，那么在模板中就可以使用：<br />
+{$count} 来输出w方法传入的变量。<br />
+如果w方法传入的数据是<code class="prettyprint linenums lang-php">array('id'=&gt;5,'name'=&gt;'thinkphp');</code>那么widget模板中就可以输出id和name两个变量。<br />
+可以理解成W方法传入的参数是<br />
+array('模板变量1'=&gt;值1,'模板变量2'=&gt;'值2'…)<br />
+注意：模板中的变量由renderFile方法的var变量决定 ，并非取决于W方法传入的参数，render方法本身可以对W方法传入的参数进行处理后传给renderFile方法，尽管大多数情况下都是直接传入data变量到renderFile方法中去。<br />
+在控制器里面也可以调用Widget类进行输出，在Action里面获取动态的Widget内容，可以使用下面的方式：<code class="prettyprint linenums lang-php">$content&nbsp;=&nbsp;W('ShowComment',&nbsp;array('count'=&gt;5),true);</code>第三个参数表示是否返回字符串，如果是false就表示直接输出。返回值可以用于其他用途。<br />
+Widget的模板文件单独存放，放置到当前项目的Lib/Widget/ShowComment/目录下面，取决于rendFile方法如何调用，默认情况下，是调用和widget同名的模板文件，例如当前Widget是ShowCommentWidget，其中代码如下：<code class="prettyprint linenums lang-php">$this-&gt;renderFile();</code>则调用的widget模板位于 Lib/Widget/ShowComment/ShowComment.html，<br />
+如果调用<code class="prettyprint linenums lang-php">$this-&gt;renderFile('comment');</code>调用的widget模板则位于 Lib/Widget/ShowComment/comment.html，<br />
+如果需要调用子目录下面的模板，则采用<code class="prettyprint linenums lang-php">$this-&gt;renderFile('article/comment');</code>调用的widget模板则位于 Lib/Widget/ShowComment/article/comment.html。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="148.html">上一页</a><a title="下一页" class="next" href="150.html">下一页</a></div>
+		</div>
+	</body>
+</html>

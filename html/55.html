@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模型定义</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/55.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模型定义</h1>
+			<div class="page"><a title="上一页" class="prev" href="54.html">上一页</a><a title="下一页" class="next" href="56.html">下一页</a></div>
+		</div>
+		<div class="book-content">模型类一般位于项目的Lib/Model 目录下面，当我们创建一个UserModel类的时候，其实已经遵循了系统的约定。模型类的命名规则是除去表前缀的数据表名称，采用驼峰法命名，并且首字母大写，然后加上模型类的后缀定义Model，例如：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>模型名（类名）</th>    <th>约定对应数据表（假设数据库的前缀定义是&nbsp;think_）</th>  </tr>  <tr>    <td>UserModel</td>    <td>think_user</td>  </tr>  <tr>    <td>UserTypeModel</td>    <td>think_user_type</td>  </tr></table>如果你的规则和上面的系统约定不符合，那么需要设置Model类的数据表名称属性。<br />
+在ThinkPHP的模型里面，有几个关于数据表名称的属性定义：<table border="0" cellspacing="1" cellpadding="0"> <br />
+  <tr>    <th>属性</th>    <th>说明</th>  </tr>  <tr>    <td>tableName</td>    <td>不包含表前缀的数据表名称，一般情况下默认和模型名称相同，只有当你的表名和当前的模型类的名称不同的时候才需要定义。</td>  </tr>  <tr>    <td>trueTableName</td>    <td>包含前缀的数据表名称，也就是数据库中的实际表名，该名称无需设置，只有当上面的规则都不适用的情况或者特殊情况下才需要设置。</td>  </tr>  <tr>    <td>dbName</td>    <td>定义模型当前对应的数据库名称，只有当你当前的模型类对应的数据库名称和配置文件不同的时候才需要定义。</td>  </tr></table>下面举个例子来加深理解，例如，在数据库里面有一个think_categories表，而我们定义的模型类名称是CategoryModel，按照系统的约定，这个模型的名称是Category，对应的数据表名称应该是think_category（全部小写），但是现在的数据表名称是think_categories，因此我们就需要设置tableName属性来改变默认的规则（假设我们已经在配置文件里面定义了DB_PREFIX 为 think_）。<code class="prettyprint linenums lang-php">protected&nbsp;$tableName&nbsp;=&nbsp;'categories';&nbsp;</code>注意这个属性的定义不需要加表的前缀think_<br />
+而对于另外一种特殊情况，数据库中有一个表（top_depts）的前缀和其它表前缀不同，不是think_ 而是 top_，这个时候我们就需要定义 trueTableName 属性了<code class="prettyprint linenums lang-php">protected&nbsp;$trueTableName&nbsp;=&nbsp;'top_depts';&nbsp;</code>注意trueTableName需要完整的表名定义<br />
+除了数据表的定义外，还可以对数据库进行定义，例如：<code class="prettyprint linenums lang-php">protected&nbsp;$dbName&nbsp;=&nbsp;'top';</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="54.html">上一页</a><a title="下一页" class="next" href="56.html">下一页</a></div>
+		</div>
+	</body>
+</html>

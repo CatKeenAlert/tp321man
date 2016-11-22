@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>缓存队列</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/137.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>缓存队列</h1>
+			<div class="page"><a title="上一页" class="prev" href="136.html">上一页</a><a title="下一页" class="next" href="138.html">下一页</a></div>
+		</div>
+		<div class="book-content">新版的缓存支持缓存队列功能，有时候我们可能不需要那么多缓存数据，而只是需要保留最近的一些缓存数据，或者因为缓存容量问题，我们需要限制缓存的队列数据长度，这就可以使用缓存队列功能来解决。<br />
+使用缓存队列很简单，只需要给当前缓存实例设置length参数即可，默认length参数为0，表示不启用缓存队列功能。下面的缓存队列的设置：<code class="prettyprint linenums lang-php">$Cache&nbsp;=&nbsp;Cache::getInstance('Xcache',array('expire'=&gt;'60','length'=&gt;10));</code>或者<code class="prettyprint linenums lang-php">$Cache&nbsp;=&nbsp;Cache::getInstance('Xcache',array('expire'=&gt;'60'));<br />
+$Cache-&gt;setOptions('length',10);&nbsp;//&nbsp;设置缓存队列长度为10<br />
+$Cache-&gt;setOptions('queue','xcache');&nbsp;//&nbsp;设置缓存队列方式为xcache</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="136.html">上一页</a><a title="下一页" class="next" href="138.html">下一页</a></div>
+		</div>
+	</body>
+</html>

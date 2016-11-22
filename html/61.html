@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>连接数据库</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/61.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>连接数据库</h1>
+			<div class="page"><a title="上一页" class="prev" href="60.html">上一页</a><a title="下一页" class="next" href="62.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP内置了抽象数据库访问层，把不同的数据库操作封装起来，我们只需要使用公共的Db类进行操作，而无需针对不同的数据库写不同的代码和底层实现，Db类会自动调用相应的数据库驱动来处理。目前的数据库包括Mysql、SqlServer、PgSQL、Sqlite、Oracle、Ibase、Mongo，也包括对PDO的支持，如果应用需要使用数据库，必须配置数据库连接信息，数据库的配置文件有多种定义方式。<br />
+常用的配置方式是在项目配置文件中添加下面的参数：<code class="prettyprint linenums lang-php">&lt;?php<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//项目配置文件<br />
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//数据库配置信息<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'DB_TYPE'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'mysql',&nbsp;//&nbsp;数据库类型<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'DB_HOST'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'localhost',&nbsp;//&nbsp;服务器地址<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'DB_NAME'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'thinkphp',&nbsp;//&nbsp;数据库名<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'DB_USER'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'root',&nbsp;//&nbsp;用户名<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'DB_PWD'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'',&nbsp;//&nbsp;密码<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'DB_PORT'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;3306,&nbsp;//&nbsp;端口<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'DB_PREFIX'&nbsp;=&gt;&nbsp;'think_',&nbsp;//&nbsp;数据库表前缀&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//其他项目配置参数<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;...<br />
+&nbsp;&nbsp;&nbsp;&nbsp;);</code>或者采用如下配置<code class="prettyprint linenums lang-php">'DB_DSN'&nbsp;=&gt;&nbsp;'mysql://username:password@localhost:3306/DbName'</code>使用DB_DSN方式定义可以简化配置参数，DSN参数格式为：<code class="prettyprint linenums lang-php"><b>数据库类型://用户名:密码@数据库地址:数据库端口/数据库名</b></code>如果两种配置参数同时存在的话，DB_DSN配置参数优先。<br />
+注意：如果要设置分布式数据库，暂时不支持DB_DSN方式配置。如果采用PDO驱动的话，则必须首先配置DB_TYPE 为pdo，然后还需要单独配置其他参数，例如：<code class="prettyprint linenums lang-php">//PDO连接方式<br />
+'DB_TYPE'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'pdo',&nbsp;//&nbsp;数据库类型<br />
+'DB_USER'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'root',&nbsp;//&nbsp;用户名<br />
+'DB_PWD'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'',&nbsp;//&nbsp;密码<br />
+'DB_PREFIX'&nbsp;=&gt;&nbsp;'think_',&nbsp;//&nbsp;数据库表前缀&nbsp;<br />
+'DB_DSN'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'mysql:host=localhost;dbname=thinkphp;charset=UTF-8'</code>注意：PDO方式的DB_DSN配置格式有所区别，根据不同的数据库类型设置有所不同。<br />
+配置文件定义的数据库连接信息一般是系统默认采用的，因为一般一个项目的数据库访问配置是相同的。该方法系统在连接数据库的时候会自动获取，无需手动连接。<br />
+可以对每个项目和不同的分组定义不同的数据库连接信息，如果开启了调试模式的话，还可以在不同的应用状态的配置文件里面定义独立的数据库配置信息。第二种 在模型类里面定义connection属性<br />
+如果在某个模型类里面定义了connection属性的话，则实例化该自定义模型的时候会采用定义的数据库连接信息，而不是配置文件中设置的默认连接信息，通常用于某些数据表位于当前数据库连接之外的其它数据库，例如：<code class="prettyprint linenums lang-php">//在模型里单独设置数据库连接信息<br />
+protected&nbsp;$connection&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_type'&nbsp;&nbsp;=&gt;&nbsp;'mysql',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_user'&nbsp;&nbsp;=&gt;&nbsp;'root',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_pwd'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'1234',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_host'&nbsp;&nbsp;=&gt;&nbsp;'localhost',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_port'&nbsp;&nbsp;=&gt;&nbsp;'3306',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_name'&nbsp;&nbsp;=&gt;&nbsp;'thinkphp'<br />
+);</code>也可以采用DSN方式定义，例如：<code class="prettyprint linenums lang-php">//或者使用DSN定义<br />
+protected&nbsp;$connection&nbsp;=&nbsp;'mysql://root:1234@localhost:3306/thinkphp';</code>如果我们已经在配置文件中配置了额外的数据库连接信息，例如：<code class="prettyprint linenums lang-php">//数据库配置1<br />
+'DB_CONFIG1'&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_type'&nbsp;&nbsp;=&gt;&nbsp;'mysql',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_user'&nbsp;&nbsp;=&gt;&nbsp;'root',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_pwd'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'1234',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_host'&nbsp;&nbsp;=&gt;&nbsp;'localhost',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_port'&nbsp;&nbsp;=&gt;&nbsp;'3306',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'db_name'&nbsp;&nbsp;=&gt;&nbsp;'thinkphp'<br />
+),<br />
+//数据库配置2<br />
+'DB_CONFIG2'&nbsp;=&gt;&nbsp;'mysql://root:1234@localhost:3306/thinkphp';</code>那么，我们可以把模型类的属性定义改为：<code class="prettyprint linenums lang-php">//调用配置文件中的数据库配置1<br />
+protected&nbsp;$connection&nbsp;=&nbsp;'DB_CONFIG1';<br />
+//调用配置文件中的数据库配置2<br />
+protected&nbsp;$connection&nbsp;=&nbsp;'DB_CONFIG2';</code>如果采用的是M方法实例化模型的话，也可以支持传入不同的数据库连接信息，例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M('User','other_','mysql://root:1234@localhost/demo');&nbsp;</code>表示实例化User模型，连接的是demo数据库的other_user表，采用的连接信息是第三个参数配置的。如果我们在项目配置文件中已经配置了DB_CONFIG2的话，也可以采用：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M('User','other_','DB_CONFIG2');&nbsp;</code>如果你的个别数据表没有定义任何前缀的话，可以在前缀参数中传入NULL，例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M('User',Null,'DB_CONFIG2');&nbsp;</code>表示实例化User模型，连接的是demo数据库的user表。<br />
+<br />
+需要注意的是，ThinkPHP的数据库连接的惰性的，所以并不是在实例化的时候就连接数据库，而是在有实际的数据操作的时候才会去连接数据库（额外的情况是，在系统第一次实例化模型的时候，会自动连接数据库获取相关模型类对应的数据表的字段信息）。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="60.html">上一页</a><a title="下一页" class="next" href="62.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>二级域名部署</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/172.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>二级域名部署</h1>
+			<div class="page"><a title="上一页" class="prev" href="171.html">上一页</a><a title="下一页" class="next" href="173.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP支持分组的二级域名部署，该功能可以使项目中的多个分组呈现为二级域名的形式，例如经过配置二级域名部署，可以把：<br />
+http://domain.com/index.php/Admin/或者http://domain.com/Admin/<br />
+变为 http://admin.domain.com/ 访问方式。<br />
+先配置域名， 以 apache为例 ， 配置如下：<br />
+  #主域名 <code class="prettyprint linenums lang-php">&nbsp;&nbsp;&nbsp;&nbsp;DocumentRoot&nbsp;&nbsp;D:\htdocs\www<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ServerName&nbsp;domain.com</code> #子域名 <code class="prettyprint linenums lang-php">&nbsp;&nbsp;&nbsp;&nbsp;DocumentRoot&nbsp;&nbsp;D:\htdocs\www<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ServerName&nbsp;admin.domain.com<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ServerAlias&nbsp;*.domain.com</code>然后配置host， 以windows为例编辑C:\WINDOWS\system32\drivers\etc\hosts 文件，增加下面两行：<code class="prettyprint linenums lang-php">127.0.0.1&nbsp;&nbsp;domain.com<br />
+127.0.0.1&nbsp;&nbsp;admin.domain.com</code>接下来修改程序的配置文件config.php如下<code class="prettyprint linenums lang-php">'APP_GROUP_LIST'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'Home,Test,Admin',&nbsp;<br />
+'DEFAULT_GROUP'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'Home',&nbsp;<br />
+'APP_SUB_DOMAIN_DEPLOY'=&gt;1,&nbsp;//&nbsp;开启子域名配置<br />
+&nbsp;&nbsp;&nbsp;&nbsp;/*子域名配置&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;*格式如:&nbsp;'子域名'=&gt;array('分组名/[模块名]','var1=a&var2=b');&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;*/&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'APP_SUB_DOMAIN_RULES'=&gt;array(&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'admin'=&gt;array('Admin/'),&nbsp;&nbsp;//&nbsp;admin域名指向Admin分组<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'test'=&gt;array('Test/'),&nbsp;&nbsp;//&nbsp;test域名指向Test分组<br />
+&nbsp;&nbsp;&nbsp;&nbsp;),</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="171.html">上一页</a><a title="下一页" class="next" href="173.html">下一页</a></div>
+		</div>
+	</body>
+</html>

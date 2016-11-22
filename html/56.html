@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模型实例化</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/56.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模型实例化</h1>
+			<div class="page"><a title="上一页" class="prev" href="55.html">上一页</a><a title="下一页" class="next" href="57.html">下一页</a></div>
+		</div>
+		<div class="book-content">在ThinkPHP中，可以无需进行任何模型定义。只有在需要封装单独的业务逻辑的时候，模型类才是必须被定义的，因此ThinkPHP在模型上有很多的灵活和方便性，让你无需因为表太多而烦恼。<br />
+根据不同的模型定义，我们有几种实例化模型的方法，下面来分析下什么情况下用什么方法：<b>1、实例化基础模型（Model） 类</b><br />
+在没有定义任何模型的时候，我们可以使用下面的方法实例化一个模型类来进行操作：<code class="prettyprint linenums lang-php">//实例化User模型<br />
+$User&nbsp;=&nbsp;new&nbsp;Model('User');<br />
+//或者使用M()快捷方法实例化，和上面的方法是等效的<br />
+$User&nbsp;=&nbsp;M('User');<br />
+//执行其他的数据操作<br />
+$User-&gt;select();</code>这种方法最简单高效，因为不需要定义任何的模型类，所以支持跨项目调用。缺点也是因为没有自定义的模型类，因此无法写入相关的业务逻辑，只能完成基本的CURD操作。<b>2、实例化其他公共模型类</b><br />
+第一种方式实例化因为没有模型类的定义，因此很难封装一些额外的逻辑方法，不过大多数情况下，也许只是需要扩展一些通用的逻辑，那么就可以尝试下面一种方法。<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;new&nbsp;CommonModel('User');</code>模型类的实例化方法有三个参数，第一个参数是模型名称，第二个参数用于设置数据表的前缀（留空则取当前项目配置的表前缀），第三个参数用于设置当前使用的数据库连接信息（留空则取当前项目配置的数据库连接信息），例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;new&nbsp;CommonModel('User','think_','db_config');</code>第三个连接信息参数可以使用DSN配置或者数组配置，甚至可以支持配置参数。关于这个参数的使用我们会在数据库连接部分详细描述。<br />
+用M方法实现的话，上面的方法可以写成：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M('CommonModel:User','think_','db_config');</code>M方法默认是实例化Model类，第二个参数用于指定表前缀，第三个参数就可以指定其他的数据库连接信息。<br />
+因为系统的模型类都能够自动加载，因此我们不需要在实例化之前手动进行类库导入操作。模型类CommonModel必须继承Model。我们可以在CommonModel类里面定义一些通用的逻辑方法，就可以省去为每个数据表定义具体的模型类，如果你的项目已经有超过100个数据表了，而大多数情况都是一些基本的CURD操作的话，只是个别模型有一些复杂的业务逻辑需要封装，那么第一种方式和第二种方式的结合是一个不错的选择。<b>3、实例化用户自定义模型（×××Model）类</b><br />
+这种情况是使用的最多的，一个项目不可避免的需要定义自身的业务逻辑实现，就需要针对每个数据表定义一个模型类，例如UserModel 、InfoModel等等。<br />
+定义的模型类通常都是放到项目的Lib\Model目录下面。例如，<code class="prettyprint linenums lang-php">&lt;?php<br />
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;UserModel&nbsp;extends&nbsp;Model{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;getTopUser(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//添加自己的业务逻辑<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;...<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}</code>其实模型类还可以继承一个用户自定义的公共模型类，而不是只能继承Model类。<br />
+要实例化自定义模型类，可以使用下面的方式：<code class="prettyprint linenums lang-php">&lt;?php<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//实例化自定义模型<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$User&nbsp;=&nbsp;new&nbsp;UserModel();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//或者使用D快捷方法<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$User&nbsp;=&nbsp;D('User');<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//执行具体的数据操作<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$User-&gt;select();</code>D方法可以自动检测模型类，如果存在自定义的模型类，则实例化自定义模型类，如果不存在，则会实例化Model基类，同时对于已实例化过的模型，不会重复去实例化。<br />
+D方法还可以支持跨项目和分组调用，需要使用：<code class="prettyprint linenums lang-php">//实例化Admin项目的User模型<br />
+D('Admin://User')<br />
+//实例化Admin分组的User模型<br />
+D('Admin/User')</code><b>4、实例化空模型类</b><br />
+如果你仅仅是使用原生SQL查询的话，不需要使用额外的模型类，实例化一个空模型类即可进行操作了，例如：<code class="prettyprint linenums lang-php">//实例化空模型<br />
+$Model&nbsp;=&nbsp;new&nbsp;Model();<br />
+//或者使用M快捷方法是等效的<br />
+$Model&nbsp;=&nbsp;M();<br />
+//进行原生的SQL查询<br />
+$Model-&gt;query('SELECT&nbsp;*&nbsp;FROM&nbsp;think_user&nbsp;WHERE&nbsp;status&nbsp;=&nbsp;1');</code>空模型类也支持跨项目调用。我们在实例化的过程中，经常使用D方法和M方法，这两个方法的区别在于M方法实例化模型无需用户为每个数据表定义模型类，如果D方法没有找到定义的模型类，则会自动调用M方法。<br />
+在后面的内容中，针对M方法或者D方法将不再具体说明，请自行分析。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="55.html">上一页</a><a title="下一页" class="next" href="57.html">下一页</a></div>
+		</div>
+	</body>
+</html>

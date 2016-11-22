@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>分布式数据库</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/63.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>分布式数据库</h1>
+			<div class="page"><a title="上一页" class="prev" href="62.html">上一页</a><a title="下一页" class="next" href="64.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP内置了分布式数据库的支持，包括主从式数据库的读写分离，但是分布式数据库必须是相同的数据库类型。配置DB_DEPLOY_TYPE 为1 可以采用分布式数据库支持。如果采用分布式数据库，定义数据库配置信息的方式如下： <code class="prettyprint linenums lang-php">//在项目配置文件里面定义<br />
+return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//分布式数据库配置定义<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'DB_TYPE'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'mysql',&nbsp;//分布式数据库类型必须相同<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'DB_HOST'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'192.168.0.1,192.168.0.2',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'DB_NAME'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'thinkphp',&nbsp;//如果相同可以不用定义多个<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'DB_USER'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'user1,user2',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'DB_PWD'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'pwd1,pwd2',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'DB_PORT'&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'3306',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'DB_PREFIX'&nbsp;=&gt;&nbsp;'think_',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//其他配置参数<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;...<br />
+);</code>连接的数据库个数取决于DB_HOST定义的数量，所以即使是两个相同的IP也需要重复定义，但是其他的参数如果存在相同的可以不用重复定义，例如： <code class="prettyprint linenums lang-php">'DB_PORT'=&gt;'3306,3306'</code> 和 <code class="prettyprint linenums lang-php">'DB_PORT'=&gt;'3306'</code> 等效。<code class="prettyprint linenums lang-php">'DB_USER'=&gt;'user1',&nbsp;<br />
+'DB_PWD'=&gt;'pwd1',&nbsp;</code>和<code class="prettyprint linenums lang-php">'DB_USER'=&gt;'user1,user1',&nbsp;<br />
+'DB_PWD'=&gt;'pwd1,pwd1',</code>等效。还可以设置分布式数据库的读写是否分离，默认的情况下读写不分离，也就是每台服务器都可以进行读写操作，对于主从式数据库而言，需要设置读写分离，通过下面的设置就可以： <code class="prettyprint linenums lang-php">'DB_RW_SEPARATE'=&gt;true,</code>在读写分离的情况下，默认<b><font color="red">第一个数据库配置是主服务器</font></b>的配置信息，负责写入数据，如果设置了<b>DB_MASTER_NUM</b>参数，则可以支持多个主服务器写入。其它的都是从数据库的配置信息，负责读取数据，数量不限制。每次连接从服务器并且进行读取操作的时候，系统会随机进行在从服务器中选择。<br />
+CURD操作系统会自动判断当前执行的方法的读操作还是写操作，如果你用的是原生SQL，那么需要注意系统的默认规则：<br />
+写操作必须用模型的execute方法，读操作必须用模型的query方法，否则会发生主从读写错乱的情况。<br />
+<br />
+<p class="tips">注意：主从数据库的数据同步工作不在框架实现，需要数据库考虑自身的同步或者复制机制。</p></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="62.html">上一页</a><a title="下一页" class="next" href="64.html">下一页</a></div>
+		</div>
+	</body>
+</html>

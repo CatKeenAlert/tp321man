@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>查询语言</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/72.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>查询语言</h1>
+			<div class="page"><a title="上一页" class="prev" href="71.html">上一页</a><a title="下一页" class="next" href="73.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP内置了非常灵活的查询方法，可以快速的进行数据查询操作，查询条件可以用于CURD等任何操作，作为where方法的参数传入即可，下面来一一讲解查询语言的内涵。<h3>查询方式</h3>ThinkPHP可以支持直接使用字符串作为查询条件，但是大多数情况推荐使用索引数组或者对象来作为查询条件，因为会更加安全。<br />
+<b>一、使用字符串作为查询条件</b><br />
+这是最传统的方式，但是安全性不高，例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$User-&gt;where('type=1&nbsp;AND&nbsp;status=1')-&gt;select();&nbsp;</code>最后生成的SQL语句是<br />
+SELECT * FROM think_user WHERE type=1 AND status=1<b>二、使用数组作为查询条件</b><code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$condition['name']&nbsp;=&nbsp;'thinkphp';<br />
+$condition['status']&nbsp;=&nbsp;1;<br />
+//&nbsp;把查询条件传入查询方法<br />
+$User-&gt;where($condition)-&gt;select();&nbsp;</code>最后生成的SQL语句是<br />
+SELECT * FROM think_user WHERE `name`='thinkphp' AND status=1<br />
+如果进行多字段查询，那么字段之间的默认逻辑关系是 逻辑与 AND，但是用下面的规则可以更改默认的逻辑判断，通过使用 _logic 定义查询逻辑：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$condition['name']&nbsp;=&nbsp;'thinkphp';<br />
+$condition['account']&nbsp;=&nbsp;'thinkphp';<br />
+$condition['_logic']&nbsp;=&nbsp;'OR';<br />
+//&nbsp;把查询条件传入查询方法<br />
+$User-&gt;where($condition)-&gt;select();&nbsp;</code>最后生成的SQL语句是<br />
+SELECT * FROM think_user WHERE `name`='thinkphp'  OR  `account`='thinkphp'<b>三、使用对象方式来查询</b> （这里以stdClass内置对象为例）<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;定义查询条件<br />
+$condition&nbsp;=&nbsp;new&nbsp;stdClass();&nbsp;<br />
+$condition-&gt;name&nbsp;=&nbsp;'thinkphp';&nbsp;<br />
+$condition-&gt;status=&nbsp;1;&nbsp;<br />
+$User-&gt;where($condition)-&gt;select();&nbsp;</code>最后生成的SQL语句和上面一样<br />
+SELECT * FROM think_user WHERE `name`='thinkphp' AND status=1<br />
+使用对象方式查询和使用数组查询的效果是相同的，并且是可以互换的，大多数情况下，我们建议采用数组方式更加高效，后面我们会以数组方式为例来讲解具体的查询语言用法。<h3>表达式查询</h3>上面的查询条件仅仅是一个简单的相等判断，可以使用查询表达式支持更多的SQL查询语法，并且可以用于数组或者对象方式的查询（下面仅以数组方式为例说明），查询表达式的使用格式：<br />
+$map['字段名']  = array('表达式','查询条件');<br />
+表达式不分大小写，支持的查询表达式有下面几种，分别表示的含义是：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>表达式</th>    <th>含义</th>  </tr>  <tr>    <td>EQ</td>    <td>等于（=）</td>  </tr>  <tr>    <td>NEQ</td>    <td>不等于（&lt;&gt;）</td>  </tr>  <tr>    <td>GT</td>    <td>大于（&gt;）</td>  </tr>  <tr>    <td>EGT</td>    <td>大于等于（&gt;=）</td>  </tr>  <tr>    <td>LT</td>    <td>小于（&lt;）</td>  </tr>  <tr>    <td>ELT</td>    <td>小于等于（&lt;=）</td>  </tr>  <tr>    <td>LIKE</td>    <td>模糊查询</td>  </tr>  <tr>    <td>[NOT]&nbsp;BETWEEN</td>    <td>（不在）区间查询</td>  </tr>  <tr>    <td>[NOT]&nbsp;IN</td>    <td>（不在）IN&nbsp;查询</td>  </tr>  <tr>    <td>EXP</td>    <td>表达式查询，支持SQL语法</td>  </tr></table>示例如下：<br />
+<b>EQ</b> ：等于（=）<br />
+例如：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('eq',100);</code>和下面的查询等效<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;100;</code>表示的查询条件就是 id = 100<br />
+<br />
+<b>NEQ</b>： 不等于（&lt;&gt;）<br />
+例如：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('neq',100);</code>表示的查询条件就是 id &lt;&gt; 100<br />
+<br />
+<b>GT</b>：大于（&gt;）<br />
+例如：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('gt',100);</code>表示的查询条件就是 id &gt; 100<br />
+<br />
+<b>EGT</b>：大于等于（&gt;=）<br />
+例如：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('egt',100);</code>表示的查询条件就是 id &gt;= 100<br />
+<br />
+<b>LT</b>：小于（&lt;）<br />
+例如：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('lt',100);</code>表示的查询条件就是 id &lt; 100<br />
+<br />
+<b>ELT</b>： 小于等于（&lt;=）<br />
+例如：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('elt',100);</code>表示的查询条件就是 id &lt;= 100<br />
+<br />
+<b>[NOT] LIKE</b>： 同sql的LIKE<br />
+例如：<code class="prettyprint linenums lang-php">$map['name']&nbsp;=&nbsp;array('like','thinkphp%');</code>查询条件就变成 name like 'thinkphp%'<br />
+如果配置了DB_LIKE_FIELDS参数的话，某些字段也会自动进行模糊查询。例如设置了：<code class="prettyprint linenums lang-php">'DB_LIKE_FIELDS'=&gt;'title|content'</code>的话，使用<code class="prettyprint linenums lang-php">$map['title']&nbsp;=&nbsp;'thinkphp';</code>查询条件就会变成 name like '%thinkphp%'<br />
+支持数组方式，例如<code class="prettyprint linenums lang-php">$map['a']&nbsp;=array('like',array('%thinkphp%','%tp'),'OR');<br />
+$map['b']&nbsp;=array('notlike',array('%thinkphp%','%tp'),'AND');</code>生成的查询条件就是：<br />
+(a like '%thinkphp%' OR a like '%tp') AND (b not like '%thinkphp%' AND b not like '%tp')<br />
+<br />
+<b>[NOT] BETWEEN</b> ：同sql的[not] between， 查询条件支持字符串或者数组，例如：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('between','1,8');</code>和下面的等效：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('between',array('1','8'));</code>查询条件就变成 id BETWEEN 1 AND 8<br />
+<br />
+<b>[NOT]  IN</b>： 同sql的[not] in ，查询条件支持字符串或者数组，例如：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('not&nbsp;in','1,5,8');</code>和下面的等效：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('not&nbsp;in',array('1','5','8'));</code>查询条件就变成 id NOT IN (1,5, 8)<br />
+<b>EXP</b>：表达式，支持更复杂的查询情况<br />
+例如：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('in','1,3,8');</code>可以改成：<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array('exp','&nbsp;IN&nbsp;(1,3,8)&nbsp;');</code>exp查询的条件不会被当成字符串，所以后面的查询条件可以使用任何SQL支持的语法，包括使用函数和字段名称。查询表达式不仅可用于查询条件，也可以用于数据更新，例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;要修改的数据对象属性赋值<br />
+$data['name']&nbsp;=&nbsp;'ThinkPHP';<br />
+$data['score']&nbsp;=&nbsp;array('exp','score+1');//&nbsp;用户的积分加1<br />
+$User-&gt;where('id=5')-&gt;save($data);&nbsp;//&nbsp;根据条件保存修改的数据</code><h3>快捷查询</h3>新版增加了快捷查询方式，可以进一步简化查询条件的写法，例如：<br />
+<b>一、实现不同字段相同的查询条件</b><code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$map['name|title']&nbsp;=&nbsp;'thinkphp';<br />
+//&nbsp;把查询条件传入查询方法<br />
+$User-&gt;where($map)-&gt;select();&nbsp;</code>查询条件就变成name='thinkphp' OR title = 'thinkphp'<br />
+<br />
+<b>二、实现不同字段不同的查询条件</b><code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$map['status&title']&nbsp;=array('1','thinkphp','_multi'=&gt;true);<br />
+//&nbsp;把查询条件传入查询方法<br />
+$User-&gt;where($map)-&gt;select();&nbsp;</code>'_multi'=&gt;true必须加在数组的最后，表示当前是多条件匹配，这样查询条件就变成status=1 AND title = 'thinkphp' ，查询字段支持更多的，例如：<br />
+$map['status&score&title']=array('1',array('gt','0'),'thinkphp','_multi'=&gt;true);<br />
+查询条件就变成status=1 AND score &gt;0 AND  title = 'thinkphp'<br />
+<br />
+注意：快捷查询方式中“|”和“&”不能同时使用。<h3>区间查询</h3>ThinkPHP支持对某个字段的区间查询，例如： <code class="prettyprint linenums lang-php">$map['id']&nbsp;=&nbsp;array(array('gt',1),array('lt',10))&nbsp;;</code>得到的查询条件是：(`id` &gt; 1) AND (`id` &lt; 10)<code class="prettyprint linenums lang-php">$map['id']&nbsp;=&nbsp;array(array('gt',3),array('lt',10),&nbsp;'or')&nbsp;;</code>得到的查询条件是： (`id` &gt; 3) OR (`id` &lt; 10)<code class="prettyprint linenums lang-php">$map['id']&nbsp;&nbsp;=&nbsp;array(array('neq',6),array('gt',3),'and');&nbsp;</code>得到的查询条件是：(`id` != 6) AND (`id` &gt; 3)<br />
+最后一个可以是AND、 OR或者 XOR运算符，如果不写，默认是AND运算。<br />
+区间查询的条件可以支持普通查询的所有表达式，也就是说类似LIKE、GT和EXP这样的表达式都可以支持。另外区间查询还可以支持更多的条件，只要是针对一个字段的条件都可以写到一起，例如：<code class="prettyprint linenums lang-php">$map['name']&nbsp;&nbsp;=&nbsp;array(array('like','%a%'),&nbsp;array('like','%b%'),&nbsp;array('like','%c%'),&nbsp;'ThinkPHP','or');&nbsp;</code>最后的查询条件是：<code class="prettyprint linenums lang-php">(`name`&nbsp;LIKE&nbsp;'%a%')&nbsp;OR&nbsp;(`name`&nbsp;LIKE&nbsp;'%b%')&nbsp;OR&nbsp;(`name`&nbsp;LIKE&nbsp;'%c%')&nbsp;OR&nbsp;(`name`&nbsp;=&nbsp;'ThinkPHP')</code><h3>组合查询</h3>如果你需要在查询的时候同时偶尔使用字符串却又不希望丢失数组方式的灵活的话，可以考虑使用组合查询。<br />
+组合查询的主体还是采用数组方式查询，只是加入了一些特殊的查询支持，包括字符串模式查询（_string）、复合查询（_complex）、请求字符串查询（_query），混合查询中的特殊查询每次查询只能定义一个，由于采用数组的索引方式，索引相同的特殊查询会被覆盖。<br />
+<b>一、字符串模式查询</b>（采用_string 作为查询条件）<br />
+数组条件还可以和字符串条件混合使用，例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$map['id']&nbsp;=&nbsp;array('neq',1);<br />
+$map['name']&nbsp;=&nbsp;'ok';<br />
+$map['_string']&nbsp;=&nbsp;'status=1&nbsp;AND&nbsp;score&gt;10';<br />
+$User-&gt;where($map)-&gt;select();&nbsp;</code>最后得到的查询条件就成了：<br />
+( `id` != 1 ) AND ( `name` = 'ok' ) AND ( status=1 AND score&gt;10 )<br />
+<br />
+<b>二、请求字符串查询方式</b><br />
+请求字符串查询是一种类似于URL传参的方式，可以支持简单的条件相等判断。<code class="prettyprint linenums lang-php">$map['id']&nbsp;=&nbsp;array('gt','100');<br />
+$map['_query']&nbsp;=&nbsp;'status=1&score=100&_logic=or';</code>得到的查询条件是：`id`&gt;100 AND (`status` = '1' OR `score` = '100')<br />
+<br />
+<b>三、复合查询</b><br />
+复合查询相当于封装了一个新的查询条件，然后并入原来的查询条件之中，所以可以完成比较复杂的查询条件组装。<br />
+例如： <code class="prettyprint linenums lang-php">$where['name']&nbsp;&nbsp;=&nbsp;array('like',&nbsp;'%thinkphp%');<br />
+$where['title']&nbsp;&nbsp;=&nbsp;array('like','%thinkphp%');<br />
+$where['_logic']&nbsp;=&nbsp;'or';<br />
+$map['_complex']&nbsp;=&nbsp;$where;<br />
+$map['id']&nbsp;&nbsp;=&nbsp;array('gt',1);</code>查询条件是 <br />
+(id&gt;1)AND( (namelike'%thinkphp%')OR(titlelike'%thinkphp%') )<br />
+复合查询使用了_complex作为子查询条件来定义，配合之前的查询方式，可以非常灵活的制定更加复杂的查询条件。<br />
+很多查询方式可以相互转换，例如上面的查询条件可以改成：<code class="prettyprint linenums lang-php">$where['id']&nbsp;=&nbsp;array('gt',1);<br />
+$where['_string']&nbsp;=&nbsp;'&nbsp;(name&nbsp;like&nbsp;"%thinkphp%")&nbsp;&nbsp;OR&nbsp;(&nbsp;title&nbsp;like&nbsp;"%thinkphp")&nbsp;';</code>最后生成的SQL语句是一致的。<h3>统计查询</h3>在应用中我们经常会用到一些统计数据，例如当前所有（或者满足某些条件）的用户数、所有用户的最大积分、用户的平均成绩等等，ThinkPHP为这些统计操作提供了一系列的内置方法，包括：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>方法</th>    <th>说明</th>  </tr>  <tr>    <td>Count</td>    <td>统计数量，参数是要统计的字段名（可选）</td>  </tr>  <tr>    <td>Max</td>    <td>获取最大值，参数是要统计的字段名（必须）</td>  </tr>  <tr>    <td>Min</td>    <td>获取最小值，参数是要统计的字段名（必须）</td>  </tr>  <tr>    <td>Avg</td>    <td>获取平均值，参数是要统计的字段名（必须）</td>  </tr>  <tr>    <td>Sum</td>    <td>获取总分，参数是要统计的字段名（必须）</td>  </tr></table>用法示例：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象</code>获取用户数：<code class="prettyprint linenums lang-php">$userCount&nbsp;=&nbsp;$User-&gt;count();</code>或者根据字段统计：<code class="prettyprint linenums lang-php">$userCount&nbsp;=&nbsp;$User-&gt;count("id");</code>获取用户的最大积分：<code class="prettyprint linenums lang-php">$maxScore&nbsp;=&nbsp;$User-&gt;max('score');</code>获取积分大于0的用户的最小积分：<code class="prettyprint linenums lang-php">$minScore&nbsp;=&nbsp;$User-&gt;where('score&gt;0')-&gt;min('score');</code>获取用户的平均积分：<code class="prettyprint linenums lang-php">$avgScore&nbsp;=&nbsp;$User-&gt;avg('score');</code>统计用户的总成绩：<code class="prettyprint linenums lang-php">$sumScore&nbsp;=&nbsp;$User-&gt;sum('score');</code>并且所有的统计查询均支持连贯操作的使用。<h3>定位查询</h3>ThinkPHP支持定位查询，但是要求当前模型必须继承高级模型类才能使用，可以使用getN方法直接返回查询结果中的某个位置的记录。例如： <br />
+获取符合条件的第3条记录：<code class="prettyprint linenums lang-php">$User-&gt;where('score&gt;0')-&gt;order('score&nbsp;desc')-&gt;getN(2);</code>获取符合条件的最后第二条记录：<code class="prettyprint linenums lang-php">$User-&gt;&nbsp;where('score&gt;80')-&gt;order('score&nbsp;desc')-&gt;getN(-2);</code>获取第一条记录：<code class="prettyprint linenums lang-php">$User-&gt;where('score&gt;80')-&gt;order('score&nbsp;desc')-&gt;first();</code>获取最后一条记录：<code class="prettyprint linenums lang-php">$User-&gt;where('score&gt;80')-&gt;order('score&nbsp;desc')-&gt;last();</code><h3>SQL查询</h3>ThinkPHP内置的ORM和ActiveRecord模式实现了方便的数据存取操作，而且新版增加的连贯操作功能更是让这个数据操作更加清晰，但是ThinkPHP仍然保留了原生的SQL查询和执行操作支持，为了满足复杂查询的需要和一些特殊的数据操作，SQL查询的返回值因为是直接返回的Db类的查询结果，没有做任何的处理。主要包括下面两个方法：<br />
+<b>1、query方法</b><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">query&nbsp;&nbsp;执行SQL查询操作</th>  </tr>  <tr>    <td>用法</td>    <td>query($sql,$parse=false)</td>  </tr>  <tr>    <td>参数</td>    <td>query（必须）：要查询的SQL语句<br />
+    parse（可选）：是否需要解析SQL</td>  </tr>  <tr>    <td>返回值</td>    <td><p>如果数据非法或者查询错误则返回false</p><br />
+    <p>否则返回查询结果数据集（同select方法）</p></td>  </tr></table>使用示例： <code class="prettyprint linenums lang-php">$Model&nbsp;=&nbsp;new&nbsp;Model()&nbsp;//&nbsp;实例化一个model对象&nbsp;没有对应任何数据表<br />
+$Model-&gt;query("select&nbsp;*&nbsp;from&nbsp;think_user&nbsp;where&nbsp;status=1");</code>如果你当前采用了分布式数据库，并且设置了读写分离的话，query方法始终是在读服务器执行，因此query方法对应的都是读操作，而不管你的SQL语句是什么。<b>2、execute方法</b><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">execute用于更新和写入数据的sql操作</th>  </tr>  <tr>    <td>用法</td>    <td>execute($sql,$parse=false)</td>  </tr>  <tr>    <td>参数</td>    <td>query（必须）：要执行的SQL语句<br />
+    parse（可选）：是否需要解析SQL</td>  </tr>  <tr>    <td>返回值</td>    <td>如果数据非法或者查询错误则返回false <br />
+    否则返回影响的记录数</td>  </tr></table>使用示例： <code class="prettyprint linenums lang-php">$Model&nbsp;=&nbsp;new&nbsp;Model()&nbsp;//&nbsp;实例化一个model对象&nbsp;没有对应任何数据表<br />
+$Model-&gt;execute("update&nbsp;think_user&nbsp;set&nbsp;name='thinkPHP'&nbsp;where&nbsp;status=1");</code>如果你当前采用了分布式数据库，并且设置了读写分离的话，execute方法始终是在写服务器执行，因此execute方法对应的都是写操作，而不管你的SQL语句是什么。<b>3、其他技巧</b><br />
+自动获取当前表名<br />
+通常使用原生SQL需要手动加上当前要查询的表名，如果你的表名以后会变化的话，那么就需要修改每个原生SQL查询的sql语句了，针对这个情况，系统还提供了一个小的技巧来帮助解决这个问题。<br />
+例如：<code class="prettyprint linenums lang-php">$model&nbsp;=&nbsp;M("User");<br />
+$model-&gt;query('select&nbsp;*&nbsp;from&nbsp;__TABLE__&nbsp;where&nbsp;status&gt;1');</code>我们这里使用了__TABLE__ 这样一个字符串，系统在解析的时候会自动替换成当前模型对应的表名，这样就可以做到即使模型对应的表名有所变化，仍然不用修改原生的sql语句。<br />
+<br />
+支持连贯操作和SQL解析<br />
+新版对query和execute两个原生SQL操作方法增加第二个参数支持， 表示是否需要解析SQL （默认为false 表示直接执行sql ），如果设为true 则会解析SQL中的特殊字符串 （需要配合连贯操作）。<br />
+例如，支持 如下写法：<code class="prettyprint linenums lang-php">$model-&gt;table("think_user")<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;where(array("name"=&gt;"thinkphp"))<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;field("id,name,email")<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;query('select&nbsp;%FIELD%&nbsp;from&nbsp;%TABLE%&nbsp;%WHERE%',true);</code>其中query方法中的%FIELD%、%TABLE%和%WHERE%字符串会自动替换为同名的连贯操作方法的解析结果SQL，支持的替换字符串包括：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>替换字符串</th>    <th>对应连贯操作方法</th>  </tr>  <tr>    <td>%FIELD%</td>    <td>field</td>  </tr>  <tr>    <td>%TABLE%</td>    <td>table</td>  </tr>  <tr>    <td>%DISTINCT%</td>    <td>distinct</td>  </tr>  <tr>    <td>%WHERE%</td>    <td>where</td>  </tr>  <tr>    <td>%JOIN%</td>    <td>join</td>  </tr>  <tr>    <td>%GROUP%</td>    <td>group</td>  </tr>  <tr>    <td>%HAVING%</td>    <td>having</td>  </tr>  <tr>    <td>%ORDER%</td>    <td>order</td>  </tr>  <tr>    <td>%LIMIT%</td>    <td>limit</td>  </tr>  <tr>    <td>%UNION%</td>    <td>union</td>  </tr></table><h3>动态查询</h3>借助PHP5语言的特性，ThinkPHP实现了动态查询，包括下面几种：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>方法名</th>    <th>说明</th>    <th>举例</th>  </tr>  <tr>    <td>getBy</td>    <td>根据某个字段的值查询数据</td>    <td>例如，getByName,getByEmail</td>  </tr>  <tr>    <td>getFieldBy</td>    <td>根据某个字段查询并返回某个字段的值</td>    <td>例如，getFieldByName</td>  </tr>  <tr>    <td>top</td>    <td>获取前多少条记录（需要高级模型支持）</td>    <td>例如，top8，top12</td>  </tr></table><b>一、getBy动态查询</b><br />
+该查询方式针对数据表的字段进行查询。例如，User对象拥有id,name,email,address 等属性，那么我们就可以使用下面的查询方法来直接根据某个属性来查询符合条件的记录。 <code class="prettyprint linenums lang-php">$user&nbsp;=&nbsp;$User-&gt;getByName('liu21st');<br />
+$user&nbsp;=&nbsp;$User-&gt;getByEmail('liu21st@gmail.com');<br />
+$user&nbsp;=&nbsp;$User-&gt;getByAddress('中国深圳');</code>暂时不支持多数据字段的动态查询方法，请使用find方法和select方法进行查询。<b>二、getFieldBy动态查询</b><br />
+针对某个字段查询并返回某个字段的值，例如<code class="prettyprint linenums lang-php">$user&nbsp;=&nbsp;$User-&gt;getFieldByName('liu21st','id');</code>表示根据用户的name获取用户的id值。<b>三、top动态查询</b><br />
+ThinkPHP还提供了另外一种动态查询方式，就是获取符合条件的前N条记录（和定位查询一样，也要求当前模型类必须继承高级模型类后才能使用）。例如，我们需要获取当前用户中积分大于0，积分最高的前5位用户 ：<code class="prettyprint linenums lang-php">$User-&gt;&nbsp;where('score&gt;80')-&gt;order('score&nbsp;desc')-&gt;top5();</code>要获取积分的前8位可以改成：<code class="prettyprint linenums lang-php">$User-&gt;&nbsp;where('score&gt;80')-&gt;order('score&nbsp;desc')-&gt;top8();</code><h3>子查询</h3>新版新增了子查询支持，有两种使用方式：<br />
+<b>1、使用select方法</b><br />
+当select方法的参数为false的时候，表示不进行查询只是返回构建SQL，例如： <code class="prettyprint linenums lang-php">//&nbsp;首先构造子查询SQL&nbsp;<br />
+$subQuery&nbsp;=&nbsp;$model-&gt;field('id,name')-&gt;table('tablename')-&gt;group('field')-&gt;where($where)-&gt;order('status')-&gt;select(false);&nbsp;</code><b>2、使用buildSql方法</b><code class="prettyprint linenums lang-php">$subQuery&nbsp;=&nbsp;$model-&gt;field('id,name')-&gt;table('tablename')-&gt;group('field')-&gt;where($where)-&gt;order('status')-&gt;buildSql();&nbsp;</code>调用buildSql方法后不会进行实际的查询操作，而只是生成该次查询的SQL语句（为了避免混淆，会在SQL两边加上括号），然后我们直接在后续的查询中直接调用。<code class="prettyprint linenums lang-php">//&nbsp;利用子查询进行查询&nbsp;<br />
+$model-&gt;table($subQuery.'&nbsp;a')-&gt;where()-&gt;order()-&gt;select()&nbsp;</code>构造的子查询SQL可用于TP的连贯操作方法，例如table where等。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="71.html">上一页</a><a title="下一页" class="next" href="73.html">下一页</a></div>
+		</div>
+	</body>
+</html>

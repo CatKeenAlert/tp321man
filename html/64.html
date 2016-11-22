@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>创建数据</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/64.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>创建数据</h1>
+			<div class="page"><a title="上一页" class="prev" href="63.html">上一页</a><a title="下一页" class="next" href="65.html">下一页</a></div>
+		</div>
+		<div class="book-content">在进行数据操作之前，我们往往需要手动创建需要的数据，例如对于提交的表单数据：<code class="prettyprint linenums lang-php">//&nbsp;获取表单的POST数据<br />
+$data['name']&nbsp;=&nbsp;$_POST['name'];<br />
+$data['email']&nbsp;=&nbsp;$_POST['email'];<br />
+//&nbsp;更多的表单数据值获取<br />
+//……</code>然而ThinkPHP可以帮助你快速地创建数据对象，最典型的应用就是自动根据表单数据创建数据对象，这个优势在一个数据表的字段非常之多的情况下尤其明显。<br />
+很简单的例子：<code class="prettyprint linenums lang-php">//&nbsp;实例化User模型<br />
+$User&nbsp;=&nbsp;M('User');<br />
+//&nbsp;根据表单提交的POST数据创建数据对象<br />
+$User-&gt;create();<br />
+//&nbsp;把创建的数据对象写入数据库<br />
+$User-&gt;add();</code>Create方法支持从其它方式创建数据对象，例如，从其它的数据对象，或者数组等 <code class="prettyprint linenums lang-php">$data['name']&nbsp;=&nbsp;'ThinkPHP';<br />
+$data['email']&nbsp;=&nbsp;'ThinkPHP@gmail.com';<br />
+$User-&gt;create($data);</code>甚至还可以支持从对象创建新的数据对象<code class="prettyprint linenums lang-php">//&nbsp;从User数据对象创建新的Member数据对象<br />
+$User&nbsp;=&nbsp;M("User");<br />
+$User-&gt;find(1);<br />
+$Member&nbsp;=&nbsp;M("Member");<br />
+$Member-&gt;create($User);</code>而事实上，create方法所做的工作远非这么简单，在创建数据对象的同时，完成了一系列的工作，我们来看下create方法的工作流程就能明白：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>步骤</th>    <th>说明</th>    <th>返回</th>  </tr>  <tr>    <td>1</td>    <td>获取数据源（默认是POST数组）</td>    <td>&nbsp;</td>  </tr>  <tr>    <td>2</td>    <td>验证数据源合法性（非数组或者对象会过滤）</td>    <td>失败则返回false</td>  </tr>  <tr>    <td>3</td>    <td>检查字段映射</td>    <td>&nbsp;</td>  </tr>  <tr>    <td>4</td>    <td>判断提交状态（新增或者编辑&nbsp;&nbsp;根据主键自动判断）</td>    <td>&nbsp;</td>  </tr>  <tr>    <td>5</td>    <td>数据自动验证</td>    <td>失败则返回false</td>  </tr>  <tr>    <td>6</td>    <td>表单令牌验证</td>    <td>失败则返回false</td>  </tr>  <tr>    <td>7</td>    <td>表单数据赋值（过滤非法字段和字符串处理）</td>    <td>&nbsp;</td>  </tr>  <tr>    <td>8</td>    <td>数据自动完成</td>    <td>&nbsp;</td>  </tr>  <tr>    <td>9</td>    <td>生成数据对象（保存在内存）</td>    <td>&nbsp;</td>  </tr></table>因此，我们熟悉的令牌验证、自动验证和自动完成（我们会在后面看到相关的用法）功能，其实都必须通过create方法才能生效。Create方法创建的数据对象是保存在内存中，并没有实际写入到数据库中，直到使用add或者save方法才会真正写入数据库。<br />
+因此在没有调用add或者save方法之前，我们都可以改变create方法创建的数据对象，例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M('User');<br />
+$User-&gt;create();&nbsp;//创建User数据对象<br />
+$User-&gt;status&nbsp;=&nbsp;1;&nbsp;//&nbsp;设置默认的用户状态<br />
+$User-&gt;create_time&nbsp;=&nbsp;time();&nbsp;//&nbsp;设置用户的创建时间<br />
+$User-&gt;add();&nbsp;//&nbsp;把用户对象写入数据库</code>如果只是想简单创建一个数据对象，并不需要完成一些额外的功能的话，可以使用data方法简单的创建数据对象。<br />
+使用如下：<code class="prettyprint linenums lang-php">//&nbsp;实例化User模型<br />
+$User&nbsp;=&nbsp;M('User');<br />
+//&nbsp;创建数据后写入到数据库<br />
+$data['name']&nbsp;=&nbsp;'ThinkPHP';<br />
+$data['email']&nbsp;=&nbsp;'ThinkPHP@gmail.com';<br />
+$User-&gt;data($data)-&gt;add();</code>Data方法也支持传入数组和对象，使用data方法创建的数据对象不会进行自动验证和过滤操作，请自行处理。但在进行add或者save操作的时候，数据表中不存在的字段以及非法的数据类型（例如对象、数组等非标量数据）是会自动过滤的，不用担心非数据表字段的写入导致SQL错误的问题。<b>安全提示：</b><br />
+create方法如果没有传值，默认取$_POST数据，如果用户提交的变量内容，含有可执行的html代码，请进行手工过滤。<code class="prettyprint linenums lang-php">$_POST['title']&nbsp;=&nbsp;"&lt;script&gt;alert(1);&lt;/script&gt;";</code>非法html代码可以使用htmlspecialchars进行编码，以防止用户提交的html代码在展示时被执行，以下是两种安全处理方法。<code class="prettyprint linenums lang-php">$_POST['title']&nbsp;=&nbsp;htmlspecialchars($_POST['title']);<br />
+M('User')-&gt;create();</code><code class="prettyprint linenums lang-php">$data['title']&nbsp;=&nbsp;$this-&gt;_post('title',&nbsp;'htmlspecialchars');<br />
+M('User')-&gt;create($data);</code>如果要对全局变量进行修改，请参考本手册14.4 输入过滤(VAR_FILTERS参数)和 <a href="http://www.thinkphp.cn/info/184.html" target="_blank">TP入门系列之安全设置</a></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="63.html">上一页</a><a title="下一页" class="next" href="65.html">下一页</a></div>
+		</div>
+	</body>
+</html>

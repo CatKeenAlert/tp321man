@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>获取内容</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/88.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>获取内容</h1>
+			<div class="page"><a title="上一页" class="prev" href="87.html">上一页</a><a title="下一页" class="next" href="89.html">下一页</a></div>
+		</div>
+		<div class="book-content">有些时候我们不想直接输出模板内容，而是希望对内容再进行一些处理后输出，就可以使用fetch方法来获取解析后的模板内容，在Action类里面使用：<code class="prettyprint linenums lang-php">$content&nbsp;=&nbsp;$this-&gt;fetch();</code>fetch的参数用法和Display方法基本一致，也可以使用：<code class="prettyprint linenums lang-php">$content&nbsp;=&nbsp;$this-&gt;fetch('Member:read');&nbsp;</code>区别就在于display方法直接输出模板文件渲染后的内容，而fetch方法是返回模板文件渲染后的内容。如何对返回的结果content进行处理，完全由开发人员自行决定了。这是模板替换的另外一种高级方式，比较灵活，而且不需要通过配置的方式。<br />
+注意，fetch方法仍然会执行上面的模板替换操作。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="87.html">上一页</a><a title="下一页" class="next" href="89.html">下一页</a></div>
+		</div>
+	</body>
+</html>

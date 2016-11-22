@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模板替换</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/87.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模板替换</h1>
+			<div class="page"><a title="上一页" class="prev" href="86.html">上一页</a><a title="下一页" class="next" href="88.html">下一页</a></div>
+		</div>
+		<div class="book-content">在进行模板输出之前，系统还会对渲染的模板结果进行一些模板的特殊字符串替换操作，也就是实现了模板输出的替换和过滤。模板替换适用于所有的模板引擎，包括原生的PHP模板。这个机制可以使得模板文件的定义更加方便，默认的替换规则有：<br />
+<b>../Public</b>： 会被替换成当前项目的公共模板目录 通常是 /项目目录/Tpl/当前主题/Public/ <br />
+<b>__TMPL__</b>： 会替换成项目的模板目录 通常是 /项目目录/Tpl/当前主题/<br />
+（注：为了部署安全考虑，../Public和__TMPL__不再建议使用）<br />
+<b>__PUBLIC__</b>：会被替换成当前网站的公共目录 通常是 /Public/<br />
+<b>__ROOT__</b>： 会替换成当前网站的地址（不含域名） <br />
+<b>__APP__</b>： 会替换成当前项目的URL地址 （不含域名）<br />
+<b>__GROUP__</b>：会替换成当前分组的URL地址 （不含域名）<br />
+<b>__URL__</b>： 会替换成当前模块的URL地址（不含域名）<br />
+<b>__ACTION__</b>：会替换成当前操作的URL地址 （不含域名）<br />
+<b>__SELF__</b>： 会替换成当前的页面URL<br />
+<br />
+注意这些特殊的字符串是严格区别大小写的，并且这些特殊字符串的替换规则是可以更改或者增加的，我们只需要在项目配置文件中配置TMPL_PARSE_STRING就可以完成。如果有相同的数组索引，就会更改系统的默认规则。例如：<code class="prettyprint linenums lang-php">'TMPL_PARSE_STRING'&nbsp;&nbsp;=&gt;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'__PUBLIC__'&nbsp;=&gt;&nbsp;'/Common',&nbsp;//&nbsp;更改默认的__PUBLIC__&nbsp;替换规则<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'__JS__'&nbsp;=&gt;&nbsp;'/Public/JS/',&nbsp;//&nbsp;增加新的JS类库路径替换规则<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'__UPLOAD__'&nbsp;=&gt;&nbsp;'/Uploads',&nbsp;//&nbsp;增加新的上传路径替换规则<br />
+)</code>有了模板替换规则后，页面上所有的__PUBLIC__ 字符串都会被替换，那如果确实需要输出__PUBLIC__ 字符串到模板呢，我们可以通过增加替换规则的方式，例如：<code class="prettyprint linenums lang-php">'TMPL_PARSE_STRING'&nbsp;&nbsp;=&gt;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'--PUBLIC--'&nbsp;=&gt;&nbsp;'__PUBLIC__',&nbsp;//&nbsp;采用新规则输出__PUBLIC__字符串<br />
+)</code>这样增加替换规则后，如果我们要输出__PUBLIC__ 字符串，只需要在模板中添加--PUBLIC--，其他替换字符串的输出方式类似。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="86.html">上一页</a><a title="下一页" class="next" href="88.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>包含文件</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/98.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>包含文件</h1>
+			<div class="page"><a title="上一页" class="prev" href="97.html">上一页</a><a title="下一页" class="next" href="99.html">下一页</a></div>
+		</div>
+		<div class="book-content">可以使用Include标签来包含外部的模板文件，使用方法如下： <table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">include标签（包含外部模板文件）</th>  </tr>  <tr>    <td>闭合</td>    <td>闭合标签</td>  </tr>  <tr>    <td>属性</td>    <td>file（必须）：要包含的模板文件，支持变量</td>  </tr></table>示例：<br />
+1、 使用完整文件名包含<br />
+格式：&lt;include file="完整模板文件名" /&gt;<br />
+例如：<code class="prettyprint linenums lang-php">&lt;include&nbsp;file="./Tpl/default/Public/header.html"&nbsp;/&gt;</code>这种情况下，模板文件名必须包含后缀。使用完整文件名包含的时候，特别要注意文件包含指的是服务器端包含，而不是包含一个URL地址，也就是说file参数的写法是服务器端的路径，如果使用相对路径的话，是基于项目的入口文件位置。2、包含当前模块的其他操作模板文件<br />
+格式：&lt;include file="操作名" /&gt;<br />
+例如 导入当前模块下面的read操作模版：<code class="prettyprint linenums lang-php">&lt;include&nbsp;file="read"&nbsp;/&gt;</code>操作模板无需带后缀。3、 包含其他模块的操作模板<br />
+格式：&lt;include file="模块名:操作名" /&gt;<br />
+例如，包含Public模块的header操作模版：<code class="prettyprint linenums lang-php">&lt;include&nbsp;file="Public:header"&nbsp;/&gt;</code>4、包含其他模板主题的模块操作模板<br />
+格式：&lt;include file="主题名:模块名:操作名" /&gt;<br />
+例如，包含blue主题的User模块的read操作模版：<code class="prettyprint linenums lang-php">&lt;include&nbsp;file="blue:User:read"&nbsp;/&gt;</code>5、 用变量控制要导入的模版<br />
+格式：&lt;include file="$变量名" /&gt;<br />
+例如 <code class="prettyprint linenums lang-php">&lt;include&nbsp;file="$tplName"&nbsp;/&gt;</code>给$tplName赋不同的值就可以包含不同的模板文件，变量的值的用法和上面的用法相同。无论你使用什么方式包含外部模板，Include标签支持在包含文件的同时传入参数，例如，下面的例子我们在包含header模板的时候传入了title和keywords变量：<br />
+&lt;include file="header" title="ThinkPHP框架"keywords="开源WEB开发框架"/&gt;<br />
+就可以在包含的header.html文件里面使用var1和var2变量，方法<code class="prettyprint linenums lang-php">&lt;html&nbsp;xmlns="http://www.w3.org/1999/xhtml"&gt;<br />
+&lt;head&gt;<br />
+&lt;title&gt;[title]&lt;/title&gt;<br />
+&lt;meta&nbsp;name="keywords"&nbsp;content="[keywords]"&nbsp;/&gt;<br />
+&lt;/head&gt;</code>注意：由于模板解析的特点，从入口模板开始解析，如果外部模板有所更改，模板引擎并不会重新编译模板，除非在调试模式下或者缓存已经过期。如果部署模式下修改了包含的外部模板文件后，需要把模块的缓存目录清空，否则无法生效。3.1版本开始，include标签支持导入多个模板，用逗号分割即可，例如：<code class="prettyprint linenums lang-php">&lt;include&nbsp;file='file1,file2'&nbsp;/&gt;</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="97.html">上一页</a><a title="下一页" class="next" href="99.html">下一页</a></div>
+		</div>
+	</body>
+</html>

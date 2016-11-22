@@ -1,0 +1,376 @@
+<html>
+ <head>
+  <title>thinkphp312officail.chm</title>
+  <LINK rel="Stylesheet" type="text/css" href="arch_css.css">
+</head>
+
+<body onload="setInterval('getLoc()', 500);">    
+<script>
+var lastDoc;
+var contents = 
+[
+ ["序言", "html/0.html", "11"], 
+ ["1. 入门", "html/1.html", "1", 
+   ["1.1 简介", "html/2.html", "11"], 
+   ["1.2 基础概念", "html/3.html", "11"], 
+   ["1.3 获取ThinkPHP", "html/4.html", "11"], 
+   ["1.4 环境要求", "html/5.html", "11"], 
+   ["1.5 许可协议", "html/6.html", "11"], 
+   ["1.6 目录结构", "html/7.html", "11"], 
+   ["1.7 命名规范", "html/8.html", "11"], 
+   ["1.8 MVC分层", "html/9.html", "11"], 
+   ["1.9 CBD架构", "html/10.html", "11"], 
+   ["1.10 特性概述", "html/11.html", "11"], 
+   ["1.11 系统流程", "html/12.html", "11"], 
+   ["1.12 开发流程", "html/13.html", "11"]], 
+ ["2. 入口", "html/14.html", "1", 
+   ["2.1 入口文件", "html/15.html", "11"], 
+   ["2.2 项目目录", "html/16.html", "11"], 
+   ["2.3 部署目录", "html/17.html", "11"], 
+   ["2.4 项目编译", "html/18.html", "11"], 
+   ["2.5 调试模式", "html/19.html", "11"]], 
+ ["3. 配置", "html/20.html", "1", 
+   ["3.1 配置格式", "html/21.html", "11"], 
+   ["3.2 惯例配置", "html/22.html", "11"], 
+   ["3.3 项目配置", "html/23.html", "11"], 
+   ["3.4 调试配置", "html/24.html", "11"], 
+   ["3.5 分组配置", "html/25.html", "11"], 
+   ["3.6 读取配置", "html/26.html", "11"], 
+   ["3.7 动态配置", "html/27.html", "11"], 
+   ["3.8 扩展配置", "html/28.html", "11"]], 
+ ["4. 函数和类库", "html/29.html", "1", 
+   ["4.1 函数库", "html/30.html", "11"], 
+   ["4.2 类库", "html/31.html", "11"]], 
+ ["5. 控制器", "html/32.html", "1", 
+   ["5.1 URL模式", "html/33.html", "11"], 
+   ["5.2 模块和操作", "html/34.html", "11"], 
+   ["5.3 定义控制器", "html/35.html", "11"], 
+   ["5.4 空操作", "html/36.html", "11"], 
+   ["5.5 空模块", "html/37.html", "11"], 
+   ["5.6 模块分组", "html/38.html", "11"], 
+   ["5.7 URL伪静态", "html/39.html", "11"], 
+   ["5.8 URL路由", "html/40.html", "11"], 
+   ["5.9 URL重写", "html/41.html", "11"], 
+   ["5.10 URL生成", "html/42.html", "11"], 
+   ["5.11 URL大小写", "html/43.html", "11"], 
+   ["5.12 前置和后置操作", "html/44.html", "11"], 
+   ["5.13 跨模块调用", "html/45.html", "11"], 
+   ["5.14 页面跳转", "html/46.html", "11"], 
+   ["5.15 重定向", "html/47.html", "11"], 
+   ["5.16 获取系统变量", "html/48.html", "11"], 
+   ["5.17 判断请求类型", "html/49.html", "11"], 
+   ["5.18 获取URL参数", "html/50.html", "11"], 
+   ["5.19 AJAX返回", "html/51.html", "11"], 
+   ["5.20 Action参数绑定", "html/52.html", "11"], 
+   ["5.21 多层控制器支持", "html/53.html", "11"]], 
+ ["6. 模型", "html/54.html", "1", 
+   ["6.1 模型定义", "html/55.html", "11"], 
+   ["6.2 模型实例化", "html/56.html", "11"], 
+   ["6.3 字段定义", "html/57.html", "11"], 
+   ["6.4 数据主键", "html/58.html", "11"], 
+   ["6.5 属性访问", "html/59.html", "11"], 
+   ["6.6 跨库操作", "html/60.html", "11"], 
+   ["6.7 连接数据库", "html/61.html", "11"], 
+   ["6.8 切换数据库", "html/62.html", "11"], 
+   ["6.9 分布式数据库", "html/63.html", "11"], 
+   ["6.10 创建数据", "html/64.html", "11"], 
+   ["6.11 字段映射", "html/65.html", "11"], 
+   ["6.12 连贯操作", "html/66.html", "11"], 
+   ["6.13 CURD操作", "html/67.html", "11"], 
+   ["6.14 ActiveRecord", "html/68.html", "11"], 
+   ["6.15 自动验证", "html/69.html", "11"], 
+   ["6.16 命名范围", "html/70.html", "11"], 
+   ["6.17 自动完成", "html/71.html", "11"], 
+   ["6.18 查询语言", "html/72.html", "11"], 
+   ["6.19 查询锁定", "html/73.html", "11"], 
+   ["6.20 字段排除", "html/74.html", "11"], 
+   ["6.21 事务支持", "html/75.html", "11"], 
+   ["6.22 高级模型", "html/76.html", "11"], 
+   ["6.23 视图模型", "html/77.html", "11"], 
+   ["6.24 关联模型", "html/78.html", "11"], 
+   ["6.25 Mongo模型", "html/79.html", "11"], 
+   ["6.26 动态模型", "html/80.html", "11"], 
+   ["6.27 虚拟模型", "html/81.html", "11"], 
+   ["6.28 多层模型支持", "html/82.html", "11"]], 
+ ["7. 视图", "html/83.html", "1", 
+   ["7.1 模板定义", "html/84.html", "11"], 
+   ["7.2 模板赋值", "html/85.html", "11"], 
+   ["7.3 模板输出", "html/86.html", "11"], 
+   ["7.4 模板替换", "html/87.html", "11"], 
+   ["7.5 获取内容", "html/88.html", "11"], 
+   ["7.6 模板引擎", "html/89.html", "11"], 
+   ["7.7 布局模板", "html/90.html", "11"]], 
+ ["8. 模板引擎", "html/91.html", "1", 
+   ["8.1 变量输出", "html/92.html", "11"], 
+   ["8.2 系统变量", "html/93.html", "11"], 
+   ["8.3 使用函数", "html/94.html", "11"], 
+   ["8.4 默认值输出", "html/95.html", "11"], 
+   ["8.5 使用运算符", "html/96.html", "11"], 
+   ["8.6 内置标签", "html/97.html", "11"], 
+   ["8.7 包含文件", "html/98.html", "11"], 
+   ["8.8 导入文件", "html/99.html", "11"], 
+   ["8.9 Volist标签", "html/100.html", "11"], 
+   ["8.10 Foreach标签", "html/101.html", "11"], 
+   ["8.11 For标签", "html/102.html", "11"], 
+   ["8.12 Switch标签", "html/103.html", "11"], 
+   ["8.13 比较标签", "html/104.html", "11"], 
+   ["8.14 三元运算", "html/105.html", "11"], 
+   ["8.15 范围判断标签", "html/106.html", "11"], 
+   ["8.16 Present标签", "html/107.html", "11"], 
+   ["8.17 Empty标签", "html/108.html", "11"], 
+   ["8.18 Defined标签", "html/109.html", "11"], 
+   ["8.19 Define标签", "html/110.html", "11"], 
+   ["8.20 Assign标签", "html/111.html", "11"], 
+   ["8.21 IF标签", "html/112.html", "11"], 
+   ["8.22 标签嵌套", "html/113.html", "11"], 
+   ["8.23 使用PHP代码", "html/114.html", "11"], 
+   ["8.24 模板布局", "html/115.html", "11"], 
+   ["8.25 模板继承", "html/116.html", "11"], 
+   ["8.26 原样输出", "html/117.html", "11"], 
+   ["8.27 模板注释", "html/118.html", "11"], 
+   ["8.28 引入标签库", "html/119.html", "11"], 
+   ["8.29 修改定界符", "html/120.html", "11"], 
+   ["8.30 避免JS混淆", "html/121.html", "11"]], 
+ ["9. 日志", "html/122.html", "1", 
+   ["9.1 日志级别", "html/123.html", "11"], 
+   ["9.2 记录方式", "html/124.html", "11"], 
+   ["9.3 手动记录", "html/125.html", "11"]], 
+ ["10. 错误", "html/126.html", "1", 
+   ["10.1 异常处理", "html/127.html", "11"], 
+   ["10.2 异常模板", "html/128.html", "11"], 
+   ["10.3 异常显示", "html/129.html", "11"]], 
+ ["11. 调试", "html/130.html", "1", 
+   ["11.1 运行状态", "html/131.html", "11"], 
+   ["11.2 页面Trace", "html/132.html", "11"], 
+   ["11.3 调试方法", "html/133.html", "11"]], 
+ ["12. 缓存", "html/134.html", "1", 
+   ["12.1 缓存方式", "html/135.html", "11"], 
+   ["12.2 动态缓存", "html/136.html", "11"], 
+   ["12.3 缓存队列", "html/137.html", "11"], 
+   ["12.4 快捷缓存", "html/138.html", "11"], 
+   ["12.5 快速缓存", "html/139.html", "11"], 
+   ["12.6 查询缓存", "html/140.html", "11"], 
+   ["12.7 SQL解析缓存", "html/141.html", "11"], 
+   ["12.8 静态缓存", "html/142.html", "11"]], 
+ ["13. 扩展", "html/143.html", "1", 
+   ["13.1 行为扩展", "html/144.html", "11"], 
+   ["13.2 类库扩展", "html/145.html", "11"], 
+   ["13.3 控制器扩展", "html/146.html", "11"], 
+   ["13.4 模型扩展", "html/147.html", "11"], 
+   ["13.5 驱动扩展", "html/148.html", "11"], 
+   ["13.6 Widget扩展", "html/149.html", "11"], 
+   ["13.7 模式扩展", "html/150.html", "11"], 
+   ["13.8 引擎扩展", "html/151.html", "11"]], 
+ ["14. 安全", "html/152.html", "1", 
+   ["14.1 表单令牌", "html/153.html", "11"], 
+   ["14.2 字段类型验证", "html/154.html", "11"], 
+   ["14.3 防止SQL注入", "html/155.html", "11"], 
+   ["14.4 输入过滤", "html/156.html", "11"], 
+   ["14.5 上传安全", "html/157.html", "11"], 
+   ["14.6 防止XSS攻击", "html/158.html", "11"], 
+   ["14.7 其他安全建议", "html/159.html", "11"], 
+   ["14.8 目录安全文件", "html/160.html", "11"], 
+   ["14.9 保护模板文件", "html/161.html", "11"]], 
+ ["15. 性能", "html/162.html", "1", 
+   ["15.1 关闭调试模式", "html/163.html", "11"], 
+   ["15.2 开启缓存", "html/164.html", "11"], 
+   ["15.3 合并字段缓存", "html/165.html", "11"], 
+   ["15.4 优化SQL", "html/166.html", "11"], 
+   ["15.5 替换入口", "html/167.html", "11"], 
+   ["15.6 前端优化", "html/168.html", "11"]], 
+ ["16. 部署", "html/169.html", "1", 
+   ["16.1 PATH_INFO支持", "html/170.html", "11"], 
+   ["16.2 隐藏index.php", "html/171.html", "11"], 
+   ["16.3 二级域名部署", "html/172.html", "11"], 
+   ["16.4 定制错误页面", "html/173.html", "11"], 
+   ["16.5 设置时区", "html/174.html", "11"]], 
+ ["17. SAE支持", "html/175.html", "1", 
+   ["17.1 SAE介绍", "html/176.html", "11"], 
+   ["17.2 获取SAE", "html/177.html", "11"], 
+   ["17.3 SAE开发", "html/178.html", "11"]], 
+ ["18. REST支持", "html/179.html", "1", 
+   ["18.1 REST介绍", "html/180.html", "11"], 
+   ["18.2 REST模式", "html/181.html", "11"], 
+   ["18.3 REST配置", "html/182.html", "11"], 
+   ["18.4 REST路由", "html/183.html", "11"], 
+   ["18.5 REST方法", "html/184.html", "11"]], 
+ ["19. 杂项", "html/185.html", "1", 
+   ["19.1 Session支持", "html/186.html", "11"], 
+   ["19.2 Cookie支持", "html/187.html", "11"], 
+   ["19.3 日期和时间", "html/188.html", "11"], 
+   ["19.4 WML开发", "html/189.html", "11"], 
+   ["19.5 多语言", "html/190.html", "11"], 
+   ["19.6 数据分页", "html/191.html", "11"], 
+   ["19.7 文件上传", "html/192.html", "11"], 
+   ["19.8 验证码", "html/193.html", "11"], 
+   ["19.9 图片添加水印", "html/194.html", "11"], 
+   ["19.10 IP获取和定位", "html/195.html", "11"]], 
+ ["20. 附录", "html/196.html", "1", 
+   ["20.1 常量参考", "html/197.html", "11"], 
+   ["20.2 配置参考", "html/198.html", "11"], 
+   ["20.3 关于升级", "html/199.html", "11"], 
+   ["20.4 大事记", "html/200.html", "11"]], 
+ ["鸣谢", "html/201.html", "11"], 
+ ["关于", "html/202.html", "11"]
+];
+
+var w=window,d=document
+var icons={'0'  : 'icons/0.gif','1'  : 'icons/90.gif',
+        '2'  : 'icons/91.gif', '3'  : 'icons/92.gif', '4'  : 'icons/99.gif',
+        '18' : 'icons/93.gif', '19' : 'icons/94.gif', '20' : 'icons/97.gif',
+        '26' : 'icons/95.gif', '27' : 'icons/96.gif', '28' : 'icons/98.gif'}
+
+var dhtml=true
+try{if(d.body.innerHTML.length<=0)dhtml=false}
+catch(e){dhtml=false;}
+var tree=[];
+
+get_element=d.all ? 
+     function(id){return d.all[id]}
+     : 
+     function(id){return d.getElementById(id)}
+
+function get_img1(){
+    return icons[((this.childs.length ? 16 : 0)+(this.childs.length && this.opened ? 8 : 0)+(this.is_last()? 1 : 0)+(this.is_first()? 2 : 0)+2)]
+}
+function get_img2(){
+    n=this.cnt[2]
+    if(n<9){    
+	n=(this.opened ? ( n%2 ? parseInt(n)+1 : n ) : ( n%2 ? n : parseInt(n)-1 ))
+    }
+    return 'icons/'+n+'.gif'
+}
+function node(tree,n){
+    this.ind=tree.ind+1
+    this.cnt=tree.cnt[n+(this.ind ? 3 : 0)]
+    if(!this.cnt)return
+    this.tree=tree.tree
+    this.parent=tree
+    this.opened=!dhtml
+    this.nind=this.tree.nodes.length
+    this.tree.nodes[this.nind]=this
+    tree.childs[n]=this
+    this.childs=[]
+    for(var i=0;i < this.cnt.length - 2;i++)
+	new node(this,i)
+    this.get_img1=get_img1
+    this.get_img2=get_img2
+    this.open=open
+    this.select=select
+    this.init=init
+    this.is_last=function(){
+	return n==this.parent.childs.length - 1
+    }
+    this.is_first=function(){
+	return(this.ind==0)&&(n==0)&&(!this.is_last())
+    }
+}
+
+function open(){
+    var childs=[]
+    var el=get_element('divCont'+this.nind)
+    if(!el)return
+    if(!dhtml){
+	d.write(childs.join(''))
+	    for(var i=0;i < this.childs.length;i++){
+	    d.write(this.childs[i].init())
+	    this.childs[i].open()
+	}
+    }
+    else{
+	if(!el.innerHTML){
+	    for(var i=0;i < this.childs.length;i++)
+		childs[i]=this.childs[i].init()
+	    el.innerHTML=childs.join('')
+	}
+	el.style.display=(this.opened ? 'none' : 'block')
+	this.opened=!this.opened
+	var img1=d.images['img1_'+this.nind],img2=d.images['img2_'+this.nind]
+	if(img1)img1.src=this.get_img1()
+	if(img2)img2.src=this.get_img2()
+    }
+}
+
+
+function select(nind){
+    if(!nind){
+	var sel=this.tree.sel
+	this.tree.sel=this
+	if(sel)sel.select(true)
+    }
+    var img2=d.images['img2_'+this.nind]
+    if(img2)img2.src=this.get_img2()
+    get_element('el'+this.nind).style.fontWeight=nind ? 'normal' : 'bold'
+    return Boolean(this.cnt[1])
+}
+
+function init(){
+    var temp=[],par=this.parent
+    for(var i=this.ind;i>0;i--){
+	temp[i]='<img src="'+icons[par.is_last()? 0 : 1]+'" border="0" align="absbottom">'
+	par=par.parent
+    }
+    r='<table cellpadding="0" cellspacing="0" border="0">'
+    r+='<tr><td nowrap>'
+    r+=temp.join('')
+    r+=(this.childs.length ?(!dhtml ? '' : '<a href="javascript: tree.toggle('+this.nind+')" >')+'<img src="'+this.get_img1()+'" border="0" align="absbottom" name="img1_'+this.nind+'">'+(!dhtml ? '' : '</a>'): '<img src="'+this.get_img1()+'" border="0" align="absbottom">')
+    r+='<a href="'+this.cnt[1]+'" target="'+'content'+'"'+' title="'+this.cnt[0]+'" onclick="return tree.select('+this.nind+')" '+(!dhtml ? '' : ' ondblclick="tree.toggle('+this.nind+')"')+' class="small" id="el'+this.nind+'"><img src="'+this.get_img2()+'" border="0" align="absbottom" name="img2_'+this.nind+'">&nbsp;'+this.cnt[0]+'</a>'
+    r+='</td></tr></table>'
+    r+=(this.childs.length ? '<div id="divCont'+this.nind+'" style="display:none"></div>' : '')
+    return r
+}
+
+function draw_contents(cnt){
+    tree=this;
+    tree.cnt=cnt;
+    tree.tree=this;
+    tree.nodes=[];
+    tree.sel=null;
+    tree.ind=-1;
+    
+    tree.select=function(i){
+	return tree.nodes[i].select();
+    };
+    tree.toggle=function(i){
+	tree.nodes[i].open()
+    };
+    tree.childs=[]
+    for(var i=0;i<cnt.length;i++){
+	new node(tree,i)
+    }
+    tree.nind=0;
+    
+    for(var i=0;i < tree.childs.length;i++){
+	d.write(tree.childs[i].init());
+	if(!dhtml)tree.childs[i].open();
+    }
+}
+
+
+function getLoc(){
+var doc = ""+parent.frames[1].location;
+if(doc != lastDoc){
+        var keyVals = new Array();
+        keyVals = doc.split("\/");
+        var targetPage = ""+keyVals[(keyVals.length-1)];
+
+        if(targetPage.indexOf("\#") > 0){
+                targetPage = targetPage.substr(0,targetPage.indexOf("\#"));
+        }
+
+        nodeCount = 0;
+        while( (""+tree.nodes[nodeCount].cnt[1]).lastIndexOf(targetPage) < 0){
+                nodeCount++;
+        }
+        parentNode = tree.nodes[nodeCount].parent;
+                if(parentNode != tree && parentNode.opened == false){
+                        parentNode.open();
+                }
+        tree.nodes[nodeCount].select();
+        lastDoc = doc;
+        }
+}
+new draw_contents(contents);
+</script>
+ </body>
+</html>

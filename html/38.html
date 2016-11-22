@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模块分组</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/38.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模块分组</h1>
+			<div class="page"><a title="上一页" class="prev" href="37.html">上一页</a><a title="下一页" class="next" href="39.html">下一页</a></div>
+		</div>
+		<div class="book-content">模块分组功能是为了更好的组织已有的模块，并且增加项目容量的一个有效机制。分组功能可以把以往的多项目合并到一个项目中去，这样一来，之前需要采用跨项目操作的地方，现在因为在一个项目中从而免去了不少麻烦，并且公共文件的重用也方便了，并且每个分组都可以有自己独立的配置文件、公共文件、语言包，在URL的访问上面也非常清晰。<br />
+模块分组相关的配置参数包括：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>配置参数</th>    <th>说明</th>  </tr>  <tr>    <td>APP_GROUP_LIST</td>    <td>项目分组列表（配置即表示开启分组）</td>  </tr>  <tr>    <td>DEFAULT_GROUP</td>    <td>默认分组（默认值为Home）</td>  </tr>  <tr>    <td>TMPL_FILE_DEPR</td>    <td>分组模板下面模块和操作的分隔符，默认值为&#8220;/&#8221;</td>  </tr>  <tr>    <td>VAR_GROUP</td>    <td>分组的URL参数名，默认为g（普通模式URL才需要）</td>  </tr></table>要启用分组模块非常简单，配置下APP_GROUP_LIST参数和DEFAULT_GROUP参数即可。<br />
+例如我们把当前的项目分成Home和Admin两个组，分别表示前台和后台功能，那么只需要在项目配置中添加下面的配置：<code class="prettyprint linenums lang-php">'APP_GROUP_LIST'&nbsp;=&gt;&nbsp;'Home,Admin',&nbsp;//项目分组设定<br />
+'DEFAULT_GROUP'&nbsp;&nbsp;=&gt;&nbsp;'Home',&nbsp;//默认分组</code>多个分组之间用逗号分隔即可，默认分组只允许设置一个。<br />
+在我们启用项目分组之前，由于使用的两个项目，所以URL地址分别是：<br />
+http://serverName/index.php/Index/index Home项目地址<br />
+http://serverName/Admin/index.php/Index/index Admin项目地址<br />
+采用了分组模式后，URL地址变成：<br />
+http://serverName/index.php/Home/Index/indexHome分组地址<br />
+如果Home是默认分组的话 还可以变成 http://serverName/index.php/Index/index<br />
+http://serverName/index.php/Admin/Index/indexAdmin分组地址如果设置了隐藏index.php的话，两者的URL表现效果基本上是一致的，但是从管理和公共调用的角度来看，确实方便了不少。当使用分组模式时，目录结构只是做了一点小小的扩展，分组和普通模块的项目目录区别如下：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>项目目录</th>    <th>分组(以Home和Admin分组为例)</th>    <th>不分组</th>  </tr>  <tr>    <td>公共目录<br />
+    （Common）</td>    <td><p>Home分组：Common/Home/function.php</p><br />
+      <p>Admin分组：Common/Admin/function.php</p><br />
+    <p>公共文件：Common/common.php</p></td>    <td>Common/common.php</td>  </tr>  <tr>    <td>配置目录<br />
+    （Conf）</td>    <td><p>Home分组：Conf/Home/config.php</p><br />
+      <p>Admin分组：Conf/Admin/config.php</p><br />
+    <p>公共配置：Conf/config.php</p></td>    <td>Conf/config.php</td>  </tr>  <tr>    <td>Action目录</td>    <td><p>Home分组：Lib/Action/Home/</p><br />
+      <p>Admin分组：Lib/Action/Admin/</p><br />
+    <p>公共Action：Lib/Action/</p></td>    <td>Lib/Action/</td>  </tr>  <tr>    <td>Model&nbsp;目录</td>    <td>Lib/Model/</td>    <td>Lib/Model/</td>  </tr>  <tr>    <td>语言包目录（Lang&nbsp;以zh-cn为例）</td>    <td><p>Home分组：Lang/zh-cn/Home/lang.php</p><br />
+      <p>Admin分组：Lang/zh-cn/Admin/lang.php</p><br />
+    <p>公共语言包：Lang/zh-cn/common.php</p></td>    <td>Lang/zh-cn/common.php</td>  </tr>  <tr>    <td>模板目录（Tpl以theme主题为例）</td>    <td><p>Home分组：Tpl/Home/theme/</p><br />
+    <p>Admin分组：Tpl/Admin/theme/</p></td>    <td>Tpl/theme/</td>  </tr>  <tr>    <td>运行时目录（Runtime）</td>    <td><p>Home分组：Runtime/Home/</p><br />
+    <p>Admin分组：Runtime/Admin/</p></td>    <td>Runtime/</td>  </tr></table>注意：分组目录的公共文件名称和语言包名称和公共的文件有一定的命名方式不同。对于分组模式下面的Model类库是否需要分组完全看项目的需要，由于通常不同的分组对应的数据表是相同的，因此，我们推荐Model类库不分组存放，仍然保留之前的方式，无论是什么分组都公共调用Model类库。如果确实需要分组的话，仍然可以按照Action的方式，在Model目录下面创建Home和Admin目录，然后放入对应的Model类库，采用这种方式的话，模型类的调用方法有所区别。<br />
+模板文件的分组和Action类库分组也基本类似，在原来的模板主题目录下面增加一个分组目录即可。<br />
+例如：<br />
+Tpl/Home/Index/index.html<br />
+Tpl/Admin/User/index.html<br />
+相比之前的模板文件位置就是多了一个分组目录Home和Admin，如果觉得目录结构太深了，可以配置 TMPL_FILE_DEPR参数 来减少目录层次，该参数默认是 “/”，如果改成<code class="prettyprint linenums lang-php">'TMPL_FILE_DEPR'=&gt;'_'</code>那么分组的模板文件就变成了<br />
+Tpl/Home/Index_index.html<br />
+Tpl/Admin/User_index.html<br />
+分组模块的概念，并不局限于将项目区分为前台和后台。你可以按自己所需类型，进行明确细致的区分，这样非常方便于项目管理和开发部署。<br />
+分组模块下面的具体模块和之前的模块功能没有任何区别，已有的URL和模块功能都可以很好的支持，例如空模块、空操作、伪静态等等。<br />
+更多的关于分组模式下面URL方面的区别可以查看URL生成部分的U方法的使用。<br />
+注意：模块分组不支持配置不同的URL模式。从3.1版本开始，每个分组可以定义自己的空模块类EmptyAction。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="37.html">上一页</a><a title="下一页" class="next" href="39.html">下一页</a></div>
+		</div>
+	</body>
+</html>

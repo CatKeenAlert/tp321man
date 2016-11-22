@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>URL伪静态</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/39.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>URL伪静态</h1>
+			<div class="page"><a title="上一页" class="prev" href="38.html">上一页</a><a title="下一页" class="next" href="40.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP支持伪静态URL设置，可以通过设置URL_HTML_SUFFIX参数随意在URL的最后增加你想要的静态后缀，而不会影响当前操作的正常执行。例如，我们设置<code class="prettyprint linenums lang-php">'URL_HTML_SUFFIX'=&gt;'shtml'</code> 的话，我们可以把下面的URL<code class="prettyprint linenums lang-php">http://serverName/Blog/read/id/1</code>变成<code class="prettyprint linenums lang-php">http://serverName/Blog/read/id/1.shtml</code>后者更具有静态页面的URL特征，但是具有和前面的URL相同的执行效果，并且不会影响原来参数的使用。<br />
+注意：伪静态后缀设置时可以不包含后缀中的“.”。所以，下面的配置其实是等效的：<code class="prettyprint linenums lang-php">'URL_HTML_SUFFIX'=&gt;'.shtml'</code>伪静态设置后，如果需要动态生成一致的URL，可以使用U方法在模板文件里面生成URL。<br />
+关于U方法的使用请参考后面的URL生成部分。<br />
+<br />
+3.1版本开始，默认情况下，可以支持所有的静态后缀，并且会记录当前的伪静态后缀到常量__EXT__，但不会影响正常的页面访问。<br />
+例如：<code class="prettyprint linenums lang-php">http://serverName/User/3.html<br />
+http://serverName/User/3.xhtml<br />
+http://serverName/User/3.xml<br />
+http://serverName/User/3.pdf</code>都可以正常访问，如果要获取当前的伪静态后缀，通过常量<b>__EXT__</b>获取即可。<br />
+<br />
+如果只是希望支持配置的伪静态后缀，可以直接设置成可以支持多个后缀，例如：<code class="prettyprint linenums lang-php">'URL_HTML_SUFFIX'=&gt;'html|shmtl|xml'&nbsp;//&nbsp;多个用&nbsp;|&nbsp;分割</code>那么，当访问http://serverName/User/3.pdf的时候会报系统错误。<br />
+<br />
+如果设置了多个伪静态后缀的话，使用U函数生成的URL地址中会默认使用第一个后缀，也支持指定后缀生成url地址。<b>关于多伪静态后缀的支持</b><br />
+如果你希望网站能够支持多个伪静态后缀设置，例如，希望<code class="prettyprint linenums lang-php">http://serverName/Blog/read/id/1.shtml<br />
+http://serverName/Blog/read/id/1.html<br />
+http://serverName/Blog/read/id/1.xml</code>同时有效，可以用下面的方式进行配置：<code class="prettyprint linenums lang-php">'URL_HTML_SUFFIX'=&gt;'(shtml|html|xml)'</code>配置多个伪静态后缀并不会导致自动判断后缀执行不同的方法，如果你有此类需求的话需要使用REST支持，可以参考第18张 REST支持部分。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="38.html">上一页</a><a title="下一页" class="next" href="40.html">下一页</a></div>
+		</div>
+	</body>
+</html>

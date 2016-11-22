@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>页面跳转</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/46.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>页面跳转</h1>
+			<div class="page"><a title="上一页" class="prev" href="45.html">上一页</a><a title="下一页" class="next" href="47.html">下一页</a></div>
+		</div>
+		<div class="book-content">在应用开发中，经常会遇到一些带有提示信息的跳转页面，例如操作成功或者操作错误页面，并且自动跳转到另外一个目标页面。系统的Action类内置了两个跳转方法success和error，用于页面跳转提示，而且可以支持ajax提交。使用方法很简单，举例如下：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M('User');&nbsp;//实例化User对象<br />
+$result&nbsp;=&nbsp;$User-&gt;add($data);&nbsp;<br />
+if($result){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//设置成功后跳转页面的地址，默认的返回页面是$_SERVER['HTTP_REFERER']<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;success('新增成功',&nbsp;'User/list');<br />
+}&nbsp;else&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//错误页面的默认跳转页面是返回前一页，通常不需要设置<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;error('新增失败');<br />
+}</code>Success和error方法都有对应的模板，并且是可以设置的，默认的设置是两个方法对应的模板都是：<code class="prettyprint linenums lang-php">//默认错误跳转对应的模板文件<br />
+'TMPL_ACTION_ERROR'&nbsp;=&gt;&nbsp;THINK_PATH&nbsp;.&nbsp;'Tpl/dispatch_jump.tpl';<br />
+//默认成功跳转对应的模板文件<br />
+'TMPL_ACTION_SUCCESS'&nbsp;=&gt;&nbsp;THINK_PATH&nbsp;.&nbsp;'Tpl/dispatch_jump.tpl';</code>也可以使用项目内部的模板文件<code class="prettyprint linenums lang-php">//默认错误跳转对应的模板文件<br />
+'TMPL_ACTION_ERROR'&nbsp;=&gt;&nbsp;'Public:error';<br />
+//默认成功跳转对应的模板文件<br />
+'TMPL_ACTION_SUCCESS'&nbsp;=&gt;&nbsp;'Public:success';</code>模板文件可以使用模板标签，并且可以使用下面的模板变量：<table border="0" cellspacing="1" cellpadding="0"><tr><td>$msgTitle</td><td>操作标题</td></tr><tr><td>$message</td><td>页面提示信息</td></tr><tr><td>$status</td><td>操作状态  1表示成功 0 表示失败 具体还可以由项目本身定义规则</td></tr><tr><td>$waitSecond</td><td>跳转等待时间 单位为秒</td></tr><tr><td>$jumpUrl</td><td>跳转页面地址</td></tr></table>success和error方法会自动判断当前请求是否属于Ajax请求，如果属于Ajax请求则会调用ajaxReturn方法返回信息，具体可以参考后面的AJAX返回部分。3.1版本开始，error和success方法支持传值，无论是跳转模板方式还是ajax方式 都可以使用assign方式传参。例如：<code class="prettyprint linenums lang-php">$this-&gt;assign('var1','value1');<br />
+$this-&gt;assign('var2','value2');<br />
+$this-&gt;error('错误的参数','要跳转的URL地址');</code>当正常方式提交的时候，var1和var2变量会赋值到错误模板的模板变量。<br />
+当采用AJAX方式提交的时候，会自动调用ajaxReturn方法传值过去（包括跳转的URL地址url和状态值status）</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="45.html">上一页</a><a title="下一页" class="next" href="47.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>定义控制器</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/35.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>定义控制器</h1>
+			<div class="page"><a title="上一页" class="prev" href="34.html">上一页</a><a title="下一页" class="next" href="36.html">下一页</a></div>
+		</div>
+		<div class="book-content">每个模块是一个Action文件，因此应用开发中的一个重要过程就是给不同的模块定义具体的操作。一个应用如果不需要和数据库交互的时候可以不需要定义模型类，但是必须定义Action控制器，一般位于项目的Lib/Action目录下面。<br />
+Action控制器的定义非常简单，只要继承Action基础类就可以了，例如： <br />
+每个模块是一个Action文件，因此应用开发中的一个重要过程就是给不同的模块定义具体的操作。一个应用如果不需要和数据库交互的时候可以不需要定义模型类，但是必须定义Action控制器，一般位于项目的Lib/Action目录下面。<br />
+Action控制器的定义非常简单，只要继承Action基础类就可以了，例如： <code class="prettyprint linenums lang-php">Class&nbsp;UserAction&nbsp;extends&nbsp;Action{}</code>控制器文件的名称是UserAction.class.php。<br />
+如果我们要执行下面的URL<br />
+http://localhost/App/index.php/User/add<br />
+则需要增加一个add操作方法就可以了，例如 <br />
+控制器文件的名称是UserAction.class.php。<br />
+如果我们要执行下面的URL<br />
+http://localhost/App/index.php/User/add<br />
+则需要增加一个add操作方法就可以了，例如<code class="prettyprint linenums lang-php">&lt;?php<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//用户模块<br />
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;UserAction&nbsp;extends&nbsp;Action{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//定义一个add操作方法<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;add(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//add操作方法逻辑的实现<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;...<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;display();//输出页面模板<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}</code>操作方法必须定义为Public类型，否则会报错。并注意操作方法的命名不要和内置的Action类的方法重复。系统会自动定位当前操作的模板文件，而默认的模板文件应该位于项目目录下面的<br />
+Tpl\User\add.html</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="34.html">上一页</a><a title="下一页" class="next" href="36.html">下一页</a></div>
+		</div>
+	</body>
+</html>

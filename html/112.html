@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>IF标签</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/112.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>IF标签</h1>
+			<div class="page"><a title="上一页" class="prev" href="111.html">上一页</a><a title="下一页" class="next" href="113.html">下一页</a></div>
+		</div>
+		<div class="book-content">如果觉得上面的标签都无法满足条件判断要求的话，我们还可以使用if标签来定义复杂的条件判断。<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">If标签（条件判断标签）</th>  </tr>  <tr>    <td>闭合</td>    <td>非闭合标签</td>  </tr>  <tr>    <td>属性</td>    <td>condition（必须）：要判断的条件</td>  </tr>  <tr>    <th colspan="2">elseif标签（条件判断标签）</th>  </tr>  <tr>    <td>闭合</td>    <td>闭合标签</td>  </tr>  <tr>    <td>属性</td>    <td>condition（必须）：要判断的条件</td>  </tr>  <tr>    <th colspan="2">else标签（条件判断标签）</th>  </tr>  <tr>    <td>闭合</td>    <td>闭合标签</td>  </tr>  <tr>    <td>属性</td>    <td>无</td>  </tr></table>用法示例：<code class="prettyprint linenums lang-php">&lt;if&nbsp;condition="($name&nbsp;eq&nbsp;1)&nbsp;OR&nbsp;($name&nbsp;gt&nbsp;100)&nbsp;"&gt;&nbsp;value1<br />
+&lt;elseif&nbsp;condition="$name&nbsp;eq&nbsp;2"/&gt;value2<br />
+&lt;else&nbsp;/&gt;&nbsp;value3<br />
+&lt;/if&gt;</code>在condition属性中可以支持eq等判断表达式，同上面的比较标签，但是不支持带有”&gt;”、”&lt;”等符号的用法，因为会混淆模板解析，所以下面的用法是错误的：<code class="prettyprint linenums lang-php">&lt;if&nbsp;condition="$id&nbsp;&lt;&nbsp;5&nbsp;"&gt;value1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;else&nbsp;/&gt;&nbsp;value2<br />
+&lt;/if&gt;</code>必须改成：<code class="prettyprint linenums lang-php">&lt;if&nbsp;condition="$id&nbsp;lt&nbsp;5&nbsp;"&gt;value1<br />
+&lt;else&nbsp;/&gt;&nbsp;value2<br />
+&lt;/if&gt;</code>除此之外，我们可以在condition属性里面使用php代码，例如：<code class="prettyprint linenums lang-php">&lt;if&nbsp;condition="strtoupper($user['name'])&nbsp;neq&nbsp;'THINKPHP'"&gt;ThinkPHP<br />
+&lt;else&nbsp;/&gt;&nbsp;other&nbsp;Framework<br />
+&lt;/if&gt;</code>condition属性可以支持点语法和对象语法，例如：<br />
+自动判断user变量是数组还是对象<code class="prettyprint linenums lang-php">&lt;if&nbsp;condition="$user.name&nbsp;neq&nbsp;'ThinkPHP'"&gt;ThinkPHP<br />
+&lt;else&nbsp;/&gt;&nbsp;other&nbsp;Framework<br />
+&lt;/if&gt;</code>或者知道user变量是对象<code class="prettyprint linenums lang-php">&lt;if&nbsp;condition="$user:name&nbsp;neq&nbsp;'ThinkPHP'"&gt;ThinkPHP<br />
+&lt;else&nbsp;/&gt;&nbsp;other&nbsp;Framework<br />
+&lt;/if&gt;</code>由于if标签的condition属性里面基本上使用的是php语法，尽可能使用判断标签和Switch标签会更加简洁，原则上来说，能够用switch和比较标签解决的尽量不用if标签完成。因为switch和比较标签可以使用变量调节器和系统变量。如果某些特殊的要求下面，IF标签仍然无法满足要求的话，可以使用原生php代码或者PHP标签来直接书写代码。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="111.html">上一页</a><a title="下一页" class="next" href="113.html">下一页</a></div>
+		</div>
+	</body>
+</html>

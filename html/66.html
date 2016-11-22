@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>连贯操作</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/66.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>连贯操作</h1>
+			<div class="page"><a title="上一页" class="prev" href="65.html">上一页</a><a title="下一页" class="next" href="67.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP模型基础类提供的连贯操作方法，可以有效的提高数据存取的代码清晰度和开发效率，并且支持所有的CURD操作。使用也比较简单， 假如我们现在要查询一个User表的满足状态为1的前10条记录，并希望按照用户的创建时间排序 ，代码如下： <code class="prettyprint linenums lang-php">$User-&gt;where('status=1')-&gt;order('create_time')-&gt;limit(10)-&gt;select();</code>这里的where、order和limit方法就被称之为连贯操作方法，T除了select方法必须放到最后一个外（因为select方法并不是连贯操作方法），连贯操作T的方法调用顺序没有先后，例如，下面的代码和上面的等效： <code class="prettyprint linenums lang-php">$User-&gt;order('create_time')-&gt;limit(10)-&gt;where('status=1')-&gt;select();</code>如果不习惯使用连贯操作的话，还支持直接使用参数进行查询的方式。例如上面的代码可以改写为：<code class="prettyprint linenums lang-php">$User-&gt;select(array('order'=&gt;'create_time','where'=&gt;'status=1','limit'=&gt;'10'));</code>使用数组参数方式的话，索引的名称就是连贯操作的方法名称。其实T不仅仅是查询方法可以使用连贯操作，包括所有的CURD方法都可以使用，例如： <code class="prettyprint linenums lang-php">$User-&gt;where('id=1')-&gt;field('id,name,email')-&gt;find();&nbsp;<br />
+$User-&gt;where('status=1&nbsp;and&nbsp;id=1')-&gt;delete();</code>连贯操作通常只有一个参数，并且仅在当此查询或者操作有效，完成后会自动清空连贯操作的所有传值（有个别特殊的连贯操作有多个参数，并且会记录当前的传值）。简而言之，连贯操作的结果不会带入以后的查询。<br />
+系统支持的连贯操作方法有：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>连贯操作</th>    <th>作用</th>    <th>支持的参数类型</th>  </tr>  <tr>    <td>where</td>    <td>用于查询或者更新条件的定义</td>    <td>字符串、数组和对象</td>  </tr>  <tr>    <td>table</td>    <td>用于定义要操作的数据表名称</td>    <td>字符串和数组</td>  </tr>  <tr>    <td>alias</td>    <td>用于给当前数据表定义别名</td>    <td>字符串</td>  </tr>  <tr>    <td>data</td>    <td>用于新增或者更新数据之前的数据对象赋值</td>    <td>数组和对象</td>  </tr>  <tr>    <td>field</td>    <td>用于定义要查询的字段（支持字段排除）</td>    <td>字符串和数组</td>  </tr>  <tr>    <td>order</td>    <td>用于对结果排序</td>    <td>字符串和数组</td>  </tr>  <tr>    <td>limit</td>    <td>用于限制查询结果数量</td>    <td>字符串和数字</td>  </tr>  <tr>    <td>page</td>    <td>用于查询分页（内部会转换成limit）</td>    <td>字符串和数字</td>  </tr>  <tr>    <td>group</td>    <td>用于对查询的group支持</td>    <td>字符串</td>  </tr>  <tr>    <td>having</td>    <td>用于对查询的having支持</td>    <td>字符串</td>  </tr>  <tr>    <td>join*</td>    <td>用于对查询的join支持</td>    <td>字符串和数组</td>  </tr>  <tr>    <td>union*</td>    <td>用于对查询的union支持</td>    <td>字符串、数组和对象</td>  </tr>  <tr>    <td>distinct</td>    <td>用于查询的distinct支持</td>    <td>布尔值</td>  </tr>  <tr>    <td>lock</td>    <td>用于数据库的锁机制</td>    <td>布尔值</td>  </tr>  <tr>    <td>cache</td>    <td>用于查询缓存</td>    <td>支持多个参数</td>  </tr>  <tr>    <td>relation</td>    <td>用于关联查询（需要关联模型支持）</td>    <td>字符串</td>  </tr></table>所有的连贯操作都返回当前的模型实例对象（this），其中带*标识的表示支持多次调用。<h3>WHERE</h3><table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">where  用于查询或者更新条件的定义</th></tr>		<tr>			<td>用法</td>			<td>where($where)</td>		</tr>		<tr>			<td>参数</td>			<td>where（必须）：查询或者操作条件，支持字符串、数组和对象</td>		</tr>		<tr>			<td>返回值</td>			<td>当前模型实例</td>		</tr>		<tr>			<td>备注</td>			<td>如果不调用where方法，默认不会执行更新和删除操作</td>		</tr>	</table>Where方法是使用最多的连贯操作方法，更详细的用法请参考后面的6.13 CURD操作和6.18查询语言部分。<h3>TABLE</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">table&nbsp;&nbsp;定义要操作的数据表名称，动态改变当前操作的数据表名称，需要写数据表的全名，包含前缀，可以使用别名和跨库操作</th>  </tr>  <tr>    <td>用法</td>    <td>table($table,$parse=null)</td>  </tr>  <tr>    <td>参数</td>    <td><p>table（必须）：数据表名称，支持操作多个表，支持字符串、数组和对象</p><p>parse（可选）预处理参数，详见14.3防止SQL注入 查询条件预处理</p></td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>如果不调用table方法，会自动获取模型对应或者定义的数据表</td>  </tr></table>用法示例：<code class="prettyprint linenums lang-php">$Model-&gt;Table('think_user&nbsp;user')-&gt;where('status&gt;1')-&gt;select();</code>也可以在table方法中跨库操作，例如：<code class="prettyprint linenums lang-php">$Model-&gt;Table('db_name.think_user&nbsp;user')-&gt;where('status&gt;1')-&gt;select();</code>Table方法的参数支持字符串和数组，数组方式的用法：<code class="prettyprint linenums lang-php">$Model-&gt;Table(array('think_user'=&gt;'user','think_group'=&gt;'group'))-&gt;where('status&gt;1')-&gt;select();</code>使用数组方式定义的优势是可以避免因为表名和关键字冲突而出错的情况。<br />
+一般情况下，无需调用table方法，默认会自动获取当前模型对应或者定义的数据表。<h3>DATA</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">data&nbsp;&nbsp;可以用于新增或者保存数据之前的数据对象赋值</th>  </tr>  <tr>    <td>用法</td>    <td>data($data)</td>  </tr>  <tr>    <td>参数</td>    <td>data（必须）：数据，支持数组和对象</td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>如果不调用data方法，则会取当前的数据对象或者传入add和save的数据</td>  </tr></table>使用示例：<code class="prettyprint linenums lang-php">$Model-&gt;data($data)-&gt;add();<br />
+$Model-&gt;data($data)-&gt;where('id=3')-&gt;save();</code>Data方法的参数支持对象和数组，如果是对象会自动转换成数组。如果不定义data方法赋值，也可以使用create方法或者手动给数据对象赋值的方式。<br />
+<br />
+模型的data方法除了创建数据对象之外，还可以读取当前的数据对象，<br />
+例如：<code class="prettyprint linenums lang-php">$this-&gt;find(3);<br />
+$data&nbsp;=&nbsp;$this-&gt;data();</code><h3>FIELD</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">field&nbsp;&nbsp;用于定义要查询的字段</th>  </tr>  <tr>    <td>用法</td>    <td>field($field,$except=false)</td>  </tr>  <tr>    <td>参数</td>    <td><p>field（必须）：字段名，支持字符串和数组，支持指定字段别名；如果为true则表示显式或者数据表的所有字段。</p><br />
+    <p>except（可选）：是否排除，默认为false，如果为true表示定义的字段为数据表中排除field参数定义之外的所有字段。</p></td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>如果不调用field方法，则默认返回所有字段，和field（'*'）等效</td>  </tr></table>使用示例：<code class="prettyprint linenums lang-php">$Model-&gt;field('id,nickname&nbsp;as&nbsp;name')-&gt;select();<br />
+$Model-&gt;field(array('id','nickname'=&gt;'name'))-&gt;select();</code>如果不调用field方法或者field方法传入参数为空的话，和使用field（'*'）是等效的。<br />
+如果需要显式的传入所有的字段，可以使用下面的方法：<code class="prettyprint linenums lang-php">$Model-&gt;field(true)-&gt;select();</code>但是我们更建议只获取需要显式的字段名，或者采用字段排除方式来定义，例如：<code class="prettyprint linenums lang-php">$Model-&gt;field('status',true)-&gt;select();</code>表示获取除了status之外的所有字段。<h3>ORDER</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">order&nbsp;&nbsp;用于对操作结果排序</th>  </tr>  <tr>    <td>用法</td>    <td>order($order)</td>  </tr>  <tr>    <td>参数</td>    <td>order（必须）：排序的字段名，支持字符串和数组，支持多个字段排序</td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>如果不调用order方法，按照数据库的默认规则</td>  </tr></table>使用示例：<code class="prettyprint linenums lang-php">order('id&nbsp;desc')&nbsp;</code>排序方法支持对多个字段的排序<code class="prettyprint linenums lang-php">order('status&nbsp;desc,id&nbsp;asc')</code>order方法的参数支持字符串和数组，数组的用法如下：<code class="prettyprint linenums lang-php">order(array('status'=&gt;'desc','id'))</code><h3>LIMIT</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">limit&nbsp;&nbsp;用于定义要查询的结果限制（支持所有的数据库类型）</th>  </tr>  <tr>    <td>用法</td>    <td>limit($limit)</td>  </tr>  <tr>    <td>参数</td>    <td>limit（必须）：限制数量，支持字符串</td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>如果不调用limit方法，则表示没有限制</td>  </tr></table>备注	如果不调用limit方法，则表示没有限制<br />
+我们知道不同的数据库类型的limit用法是不尽相同的，但是在ThinkPHP的用法里面始终是统一的方法，也就是limit('offset,length') ，无论是Mysql、SqlServer还是Oracle数据库，都是这样使用，系统的数据库驱动类会负责解决这个差异化。<br />
+使用示例：<code class="prettyprint linenums lang-php">limit('1,10')</code>如果使用limit('10') 等效于 limit('0,10')<br />
+<br />
+3.1版本以后，limit方法增加第二个参数支持，例如：<code class="prettyprint linenums lang-php">$this-&gt;limit(10,100)-&gt;select();</code>和之前的用法<code class="prettyprint linenums lang-php">$this-&gt;limit('10,100')-&gt;select();</code>等效。<h3>PAGE</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">page&nbsp;&nbsp;用于定义要查询的数据分页</th>  </tr>  <tr>    <td>用法</td>    <td>page($page)</td>  </tr>  <tr>    <td>参数</td>    <td>page（必须）：分页，支持字符串</td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>无</td>  </tr></table>Page操作方法是新增的特性，可以更加快速的进行分页查询。<br />
+Page方法的用法和limit方法类似，格式为：<code class="prettyprint linenums lang-php">Page('page[,listRows]')</code>Page表示当前的页数，listRows表示每页显示的记录数。例如：<code class="prettyprint linenums lang-php">Page('2,10')</code>表示每页显示10条记录的情况下面，获取第2页的数据。<br />
+listRow如果不写的话，会读取limit('length') 的值，例如：<code class="prettyprint linenums lang-php">limit(25)-&gt;page(3);</code>表示每页显示25条记录的情况下面，获取第3页的数据。<br />
+如果limit也没有设置的话，则默认为每页显示20条记录。<br />
+3.1版本以后，page方法增加第二个参数支持，例如：<code class="prettyprint linenums lang-php">$this-&gt;page(5,25)-&gt;select();</code>和之前的用法<code class="prettyprint linenums lang-php">$this-&gt;page('5,25')-&gt;select();</code>等效。<h3>GROUP</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">group&nbsp;&nbsp;用于数据库的group查询支持</th>  </tr>  <tr>    <td>用法</td>    <td>group($group)</td>  </tr>  <tr>    <td>参数</td>    <td>group（必须）：group的字段名，支持字符串</td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>无</td>  </tr></table>使用示例：<code class="prettyprint linenums lang-php">group('user_id')</code>Group方法的参数只支持字符串<h3>HAVING</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">having&nbsp;&nbsp;用于数据库的having查询支持</th>  </tr>  <tr>    <td>用法</td>    <td>having($having)</td>  </tr>  <tr>    <td>参数</td>    <td>having（必须）：having，支持字符串</td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>无</td>  </tr></table>使用示例：<code class="prettyprint linenums lang-php">having('user_id&gt;0')</code>having方法的参数只支持字符串<h3>JOIN</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">join&nbsp;&nbsp;用于数据库的join查询支持</th>  </tr>  <tr>    <td>用法</td>    <td>join($join)</td>  </tr>  <tr>    <td>参数</td>    <td>join（必须）：join操作，支持字符串和数组</td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>join方法支持多次调用</td>  </tr></table>使用示例：<code class="prettyprint linenums lang-php">$Model-&gt;join('&nbsp;work&nbsp;ON&nbsp;artist.id&nbsp;=&nbsp;work.artist_id')-&gt;join('card&nbsp;ON&nbsp;artist.card_id&nbsp;=&nbsp;card.id')-&gt;select();</code>默认采用LEFT JOIN 方式，如果需要用其他的JOIN方式，可以改成<code class="prettyprint linenums lang-php">$Model-&gt;join('RIGHT&nbsp;JOIN&nbsp;work&nbsp;ON&nbsp;artist.id&nbsp;=&nbsp;work.artist_id')-&gt;select();</code>如果join方法的参数用数组的话，只能使用一次join方法，并且不能和字符串方式混合使用。<br />
+例如：<code class="prettyprint linenums lang-php">join(array('&nbsp;work&nbsp;ON&nbsp;artist.id&nbsp;=&nbsp;work.artist_id','card&nbsp;ON&nbsp;artist.card_id&nbsp;=&nbsp;card.id'))</code><h3>UNION</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">union&nbsp;&nbsp;用于数据库的union查询支持</th>  </tr>  <tr>    <td>用法</td>    <td>union($union,$all=false)</td>  </tr>  <tr>    <td>参数</td>    <td>union（必须）：union操作，支持字符串、数组和对象<br />
+    all（可选）：是否采用UNION&nbsp;ALL&nbsp;操作，默认为false</td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>Union方法支持多次调用</td>  </tr></table>使用示例：<code class="prettyprint linenums lang-php">$Model-&gt;field('name')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;table('think_user_0')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;union('SELECT&nbsp;name&nbsp;FROM&nbsp;think_user_1')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;union('SELECT&nbsp;name&nbsp;FROM&nbsp;think_user_2')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;select();</code>数组用法：<code class="prettyprint linenums lang-php">$Model-&gt;field('name')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;table('think_user_0')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;union(array('field'=&gt;'name','table'=&gt;'think_user_1'))<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;union(array('field'=&gt;'name','table'=&gt;'think_user_2'))<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;select();</code>或者<code class="prettyprint linenums lang-php">$Model-&gt;field('name')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;table('think_user_0')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;union(array('SELECT&nbsp;name&nbsp;FROM&nbsp;think_user_1','SELECT&nbsp;name&nbsp;FROM&nbsp;think_user_2'))<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;select();</code>支持UNION ALL 操作，例如：<code class="prettyprint linenums lang-php">$Model-&gt;field('name')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;table('think_user_0')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;union('SELECT&nbsp;name&nbsp;FROM&nbsp;think_user_1',true)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;union('SELECT&nbsp;name&nbsp;FROM&nbsp;think_user_2',true)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;select();</code>或者<code class="prettyprint linenums lang-php">$Model-&gt;field('name')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;table('think_user_0')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;union(array('SELECT&nbsp;name&nbsp;FROM&nbsp;think_user_1','SELECT&nbsp;name&nbsp;FROM&nbsp;think_user_2'),true)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;select();</code>每个union方法相当于一个独立的SELECT语句。<br />
+注意：UNION 内部的 SELECT 语句必须拥有相同数量的列。列也必须拥有相似的数据类型。同时，每条 SELECT 语句中的列的顺序必须相同。<h3>DISTINCT</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">distinct&nbsp;&nbsp;查询数据的时候进行唯一过滤</th>  </tr>  <tr>    <td>用法</td>    <td>distinct($distinct)</td>  </tr>  <tr>    <td>参数</td>    <td>distinct（必须）：是否采用distinct，支持布尔值</td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>无</td>  </tr></table>使用示例：<code class="prettyprint linenums lang-php">$Model-&gt;Distinct(true)-&gt;field('name')-&gt;select();</code><h3>RELATION</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">relation&nbsp;&nbsp;用于关联查询支持</th>  </tr>  <tr>    <td>用法</td>    <td>relation($relation)</td>  </tr>  <tr>    <td>参数</td>    <td>relation（必须）：关联操作</td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>使用关联模型才支持</td>  </tr></table>关联查询方法的详细用法请参考后面的6.23关联模型部分。<h3>LOCK</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">lock&nbsp;&nbsp;用于查询或者写入锁定</th>  </tr>  <tr>    <td>用法</td>    <td>lock($lock)</td>  </tr>  <tr>    <td>参数</td>    <td>lock（必须）：是否需要锁定，支持布尔值</td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>join方法支持多次调用</td>  </tr></table>Lock方法是用于数据库的锁机制，如果在查询或者执行操作的时候使用：<code class="prettyprint linenums lang-php">lock(true)</code>就会自动在生成的SQL语句最后加上 FOR UPDATE或者FOR UPDATE NOWAIT（Oracle数据库）。<h3>CACHE</h3><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">cache&nbsp;用于查询缓存操作</th>  </tr>  <tr>    <td>用法</td>    <td>cache($key=true,$expire='',$type='')</td>  </tr>  <tr>    <td>参数</td>    <td><p>key（可选）：是否启用查询缓存，支持布尔值和字符串，如果是字符串表示查询缓存的缓存名</p><br />
+      <p>expire（可选）：查询缓存的有效期，如果留空取系统默认的缓存有效期</p><br />
+    <p>type（可选）：查询缓存的缓存类型，如果留空取系统默认的缓存类型</p></td>  </tr>  <tr>    <td>返回值</td>    <td>当前模型实例</td>  </tr>  <tr>    <td>备注</td>    <td>如果不调用field方法，则默认返回所有字段，和field（'*'）等效</td>  </tr></table>查询缓存的详细用法会在后面的12.6查询缓存部分详细描述。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="65.html">上一页</a><a title="下一页" class="next" href="67.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>命名规范</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/8.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>命名规范</h1>
+			<div class="page"><a title="上一页" class="prev" href="7.html">上一页</a><a title="下一页" class="next" href="9.html">下一页</a></div>
+		</div>
+		<div class="book-content">使用ThinkPHP开发的过程中应该尽量遵循下列命名规范：<ul><li>类文件都是以.class.php为后缀（这里是指的ThinkPHP内部使用的类库文件，不代表外部加载的类库文件），使用驼峰法命名，并且首字母大写，例如DbMysql.class.php；</li><li>确保文件的命名和调用大小写一致，是由于在类Unix系统上面，对大小写是敏感的（而ThinkPHP在调试模式下面，即使在Windows平台也会严格检查大小写）；</li><li>类名和文件名一致（包括上面说的大小写一致），例如 UserAction类的文件命名是UserAction.class.php， InfoModel类的文件名是InfoModel.class.php， 并且不同的类库的类命名有一定的规范；</li><li>函数、配置文件等其他类库文件之外的一般是以.php为后缀（第三方引入的不做要求）；</li><li>函数的命名使用小写字母和下划线的方式，例如 get_client_ip；</li><li>方法的命名使用驼峰法，并且首字母小写或者使用下划线“_”，例如 getUserName，_parseType，通常下划线开头的方法属于私有方法；</li><li>属性的命名使用驼峰法，并且首字母小写或者使用下划线“_”，例如 tableName、_instance，通常下划线开头的属性属于私有属性；</li><li>以双下划线“__”打头的函数或方法作为魔法方法，例如 __call 和 __autoload；</li><li>常量以大写字母和下划线命名，例如 HAS_ONE和 MANY_TO_MANY；</li><li>配置参数以大写字母和下划线命名，例如HTML_CACHE_ON；</li><li>语言变量以大写字母和下划线命名，例如MY_LANG，以下划线打头的语言变量通常用于系统语言变量，例如 _CLASS_NOT_EXIST_；</li><li>对变量的命名没有强制的规范，可以根据团队规范来进行；</li><li>ThinkPHP的模板文件默认是以.html 为后缀（可以通过配置修改）；</li><li>数据表和字段采用小写加下划线方式命名，并注意字段名不要以下划线开头，例如 think_user 表和 user_name字段，类似 _username 这样的数据表字段可能会被过滤。</li></ul><b>特例：在ThinkPHP里面，有一个函数命名的特例，就是单字母大写函数，这类函数通常是某些操作的快捷定义，或者有特殊的作用。例如，ADSL方法等等，他们有着特殊的含义，后面会有所了解。</b><br />
+<p class="tips">另外有一点非常关键，ThinkPHP默认全部使用UTF-8编码，所以请确保你的程序文件采用UTF-8编码格式保存，并且去掉BOM信息头（去掉BOM头信息有很多方式，不同的编辑器都有设置方法，也可以用工具进行统一检测和处理），否则可能导致很多意想不到的问题。</p></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="7.html">上一页</a><a title="下一页" class="next" href="9.html">下一页</a></div>
+		</div>
+	</body>
+</html>

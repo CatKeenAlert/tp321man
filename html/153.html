@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>表单令牌</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/153.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>表单令牌</h1>
+			<div class="page"><a title="上一页" class="prev" href="152.html">上一页</a><a title="下一页" class="next" href="154.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP内置了表单令牌验证功能，可以有效防止表单的重复提交等安全防护。<br />
+表单令牌验证相关的配置参数有：<code class="prettyprint linenums lang-php">'TOKEN_ON'=&gt;true,&nbsp;&nbsp;//&nbsp;是否开启令牌验证<br />
+'TOKEN_NAME'=&gt;'__hash__',&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;令牌验证的表单隐藏字段名称<br />
+'TOKEN_TYPE'=&gt;'md5',&nbsp;&nbsp;//令牌哈希验证规则&nbsp;默认为MD5<br />
+'TOKEN_RESET'=&gt;true,&nbsp;&nbsp;//令牌验证出错后是否重置令牌&nbsp;默认为true</code>如果开启表单令牌验证功能，系统会自动在带有表单的模板文件里面自动生成以TOKEN_NAME为名称的隐藏域，其值则是TOKEN_TYPE方式生成的哈希字符串，用于实现表单的自动令牌验证。<br />
+自动生成的隐藏域位于表单Form结束标志之前，如果希望自己控制隐藏域的位置，可以手动在表单页面添加{__TOKEN__} 标识，系统会在输出模板的时候自动替换。<br />
+如果页面中存在多个表单，建议添加{__TOKEN__}标识，并确保只有一个表单需要令牌验证。<br />
+如果个别页面输出不希望进行表单令牌验证，可以在控制器中的输出方法之前动态关闭表单令牌验证，例如：<code class="prettyprint linenums lang-php">C('TOKEN_ON',false);<br />
+$this-&gt;display();</code>模型类在创建数据对象的同时会自动进行表单令牌验证操作，如果你没有使用create方法创建数据对象的话，则需要手动调用模型的autoCheckToken方法进行表单令牌验证。如果返回false，则表示表单令牌验证错误。例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+//&nbsp;手动进行令牌验证<br />
+if&nbsp;(!$User-&gt;autoCheckToken($_POST)){<br />
+//&nbsp;令牌验证错误<br />
+}</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="152.html">上一页</a><a title="下一页" class="next" href="154.html">下一页</a></div>
+		</div>
+	</body>
+</html>

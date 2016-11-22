@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模板布局</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/115.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模板布局</h1>
+			<div class="page"><a title="上一页" class="prev" href="114.html">上一页</a><a title="下一页" class="next" href="116.html">下一页</a></div>
+		</div>
+		<div class="book-content">新版模板引擎内置了布局模板功能支持，可以方便的实现模板布局以及布局嵌套功能。有两种布局模板的支持方式：<br />
+第一种方式是 以布局模板为入口的方式<br />
+该方式需要配置开启LAYOUT_ON 参数（默认不开启），并且设置布局入口文件名LAYOUT_NAME（默认为layout）。<br />
+开启LAYOUT_ON后，我们的模板渲染流程就有所变化，例如：<code class="prettyprint linenums lang-php">Class&nbsp;UserAction&nbsp;extends&nbsp;Action&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Public&nbsp;function&nbsp;add()&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;display('add');<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+}</code>在不开启LAYOUT_ON布局模板之前，会直接渲染Tpl/User/add.html 模板文件,开启之后，首先会渲染Tpl/layout.html 模板，布局模板的写法和其他模板的写法类似，本身也可以支持所有的模板标签以及包含文件，区别在于有一个特定的输出替换变量{__CONTENT__}，例如，下面是一个典型的layout.html模板的写法：<code class="prettyprint linenums lang-php">{__CONTENT__}</code>读取layout模板之后，会再解析User/add.html 模板文件，并把解析后的内容替换到layout布局模板文件的{__CONTENT__} 特定字符串。<br />
+采用这种布局方式的情况下，一旦User/add.html 模板文件或者layout.html布局模板文件发生修改，都会导致模板重新编译。<br />
+如果项目需要使用不同的布局模板，可以动态的配置LAYOUT_NAME参数实现。<br />
+如果某些页面不需要使用布局模板功能，可以在模板文件开头加上 {__NOLAYOUT__} 字符串。<br />
+如果上面的User/add.html 模板文件里面包含有{__NOLAYOUT__}，则即使当前开启布局模板，也不会进行布局模板解析。<br />
+<br /><br />
+第二种方式是以当前输出模板为入口的方式<br />
+以前面的输出模板为例，这种方式的入口还是在User/add.html 模板，但是我们可以修改下add模板文件的内容，在头部增加下面的布局标签：<code class="prettyprint linenums lang-php">&lt;layout&nbsp;name="layout"&nbsp;/&gt;</code>表示当前模板文件需要使用layout.html 布局模板文件，而布局模板文件的写法和上面第一种方式是一样的。当渲染User/add.html 模板文件的时候，如果读取到layout标签，则会把当前模板的解析内容替换到layout布局模板的{__CONTENT__} 特定字符串。<br />
+如果需要使用其他的布局模板，可以改变layout的name属性，例如：<code class="prettyprint linenums lang-php">&lt;layout&nbsp;name="new_layout"&nbsp;/&gt;</code>由于所有include标签引入的文件都支持layout标签，所以，我们可以借助layout标签和include标签相结合的方式实现布局模板的嵌套。例如，上面的例子<code class="prettyprint linenums lang-php">&lt;include&nbsp;file="Public:header"&nbsp;/&gt;<br />
+&lt;div&nbsp;id="main"&nbsp;class="main"&nbsp;&gt;<br />
+{__CONTENT__}<br />
+&lt;/div&gt;<br />
+&lt;include&nbsp;file="Public:bottom"&nbsp;/&gt;&nbsp;</code>在引入的header和footer模板文件中也可以添加layout标签，例如header模板文件的开头添加如下标签：<code class="prettyprint linenums lang-php">&lt;layout&nbsp;name="menu"&nbsp;/&gt;</code>这样就实现了在头部模板中引用了menu布局模板。<br />
+也可以采用两种布局方式的结合，可以实现更加复杂的模板布局以及嵌套功能。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="114.html">上一页</a><a title="下一页" class="next" href="116.html">下一页</a></div>
+		</div>
+	</body>
+</html>

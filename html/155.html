@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>防止SQL注入</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/155.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>防止SQL注入</h1>
+			<div class="page"><a title="上一页" class="prev" href="154.html">上一页</a><a title="下一页" class="next" href="156.html">下一页</a></div>
+		</div>
+		<div class="book-content">对于WEB应用来说，SQL注入攻击无疑是首要防范的安全问题，系统底层对于数据安全方面本身进行了很多的处理和相应的防范机制，例如：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象<br />
+$User-&gt;find($_GET["id"]);&nbsp;</code>即便用户输入了一些恶意的id参数，系统也会强制转换成整型，避免恶意注入。这是因为，系统会对数据进行强制的数据类型检测，并且对数据来源进行数据格式转换。而且，对于字符串类型的数据，ThinkPHP都会进行escape_string处理(real_escape_string,mysql_escape_string)。<br />
+通常的安全隐患在于你的查询条件使用了字符串参数，然后其中一些变量又依赖由客户端的用户输入，要有效的防止SQL注入问题，我们建议：<ul><li>查询条件尽量使用数组方式，这是更为安全的方式；</li><li>如果不得已必须使用字符串查询条件，使用预处理机制（3.1版本新增特性）；</li><li>开启数据字段类型验证，可以对数值数据类型做强制转换；（3.1版本开始已经强制进行字段类型验证了）</li><li>使用自动验证和自动完成机制进行针对应用的自定义过滤；</li><li>字段类型检查、自动验证和自动完成机制我们在相关部分已经有详细的描述。</li></ul><h3>查询条件预处理</h3>where方法使用字符串条件的时候，支持预处理（安全过滤），并支持两种方式传入预处理参数，例如：<code class="prettyprint linenums lang-php">$Model-&gt;where("id=%d&nbsp;and&nbsp;username='%s'&nbsp;and&nbsp;xx='%f'",array($id,$username,$xx))-&gt;select();</code>或者<code class="prettyprint linenums lang-php">$Model-&gt;where("id=%d&nbsp;and&nbsp;username='%s'&nbsp;and&nbsp;xx='%f'",$id,$username,$xx)-&gt;select();</code>模型的query和execute方法 同样支持预处理机制，例如：<code class="prettyprint linenums lang-php">$model-&gt;query('select&nbsp;*&nbsp;from&nbsp;user&nbsp;where&nbsp;id=%d&nbsp;and&nbsp;status=%d',$id,$status);</code>或者<code class="prettyprint linenums lang-php">$model-&gt;query('select&nbsp;*&nbsp;from&nbsp;user&nbsp;where&nbsp;id=%d&nbsp;and&nbsp;status=%d',array($id,$status));</code>execute方法用法同query方法。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="154.html">上一页</a><a title="下一页" class="next" href="156.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>REST方法</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/184.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>REST方法</h1>
+			<div class="page"><a title="上一页" class="prev" href="183.html">上一页</a><a title="下一页" class="next" href="185.html">下一页</a></div>
+		</div>
+		<div class="book-content">RESTFul方法和标准模式的操作方法定义主要区别在于，需要对请求类型和资源类型进行判断，大多数情况下，通过路由定义可以把操作方法绑定到某个请求类型和资源类型。如果你没有定义路由的话，需要自己在操作方法里面添加判断代码，示例：<code class="prettyprint linenums lang-php">Class&nbsp;InfoAction&nbsp;extends&nbsp;Action&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;Public&nbsp;function&nbsp;rest()&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch&nbsp;($this-&gt;_method){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;'get':&nbsp;//&nbsp;get请求处理代码<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;($this-&gt;_type&nbsp;==&nbsp;'html'){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}elseif($this-&gt;_type&nbsp;==&nbsp;'xml'){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;'put':&nbsp;//&nbsp;put请求处理代码<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;'post':&nbsp;//&nbsp;put请求处理代码<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;}<br />
+}</code>在Rest操作方法中，可以使用<b>$this-&gt;_type</b>获取当前访问的资源类型，用<b>$this-&gt;_method</b>获取当前的请求类型。<br />
+REST模式的Action类还提供了response方法用于REST输出：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th colspan="2">response输出数据</th>    </tr>    <tr>        <td width="50">用法</td>        <td>response($data,$type='',$code=200)</td>    </tr>    <tr>        <td>参数</td>        <td>data（必须）：要输出的数据<br /><br />
+            type（可选）：要输出的类型，支持REST_OUTPUT_TYPE参数允许的类型，如果为空则取REST_DEFAULT_TYPE参数设置值<br /><br />
+            code （可选）：HTTP状态</td>    </tr>    <tr>        <td>返回值</td>        <td>无</td>    </tr></table>Response方法会自动对data数据进行输出类型编码，目前支持的包括xml json html。<br />
+除了普通方式定义Restful操作方法外，系统还支持另外一种自动调用方式，就是根据当前请求类型和资源类型自动调用相关操作方法。系统的自动调用规则是：<table border="0" cellspacing="1" cellpadding="0">    <tr>        <th>定义规范</th>        <th>说明</th>    </tr>    <tr>        <td>操作名_提交类型_资源后缀</td>        <td>标准的Restful方法定义，例如 read_get_pdf</td>    </tr>    <tr>        <td>操作名_资源后缀</td>        <td>当前提交类型和REST_DEFAULT_METHOD相同的时候，例如read_pdf</td>    </tr>    <tr>        <td>操作名_提交类型</td>        <td>当前资源后缀和REST_DEFAULT_TYPE相同的时候，例如read_post</td>    </tr></table>要使用这种方式的前提就是不能为当前操作定义方法，这样在空操作的检查之前系统会首先按照上面的定义规范顺序检查是否存在方法定义，如果检测到相关的restful方法则不再检查后面的方法规范，例如我们定义了InfoAction如下：<code class="prettyprint linenums lang-php">Class&nbsp;InfoAction&nbsp;extends&nbsp;Action&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;Public&nbsp;function&nbsp;read_get_xml(){<br />
+&nbsp;&nbsp;&nbsp;//&nbsp;输出id为1的Info的XML数据<br />
+}<br />
+&nbsp;&nbsp;&nbsp;Public&nbsp;function&nbsp;read_xml(){<br />
+&nbsp;&nbsp;&nbsp;//&nbsp;输出id为1的Info的XML数据<br />
+}<br />
+&nbsp;&nbsp;&nbsp;Public&nbsp;function&nbsp;read_json(){<br />
+&nbsp;&nbsp;&nbsp;//&nbsp;输出id为1的Info的json数据<br />
+}<br />
+}</code>项目配置中设置了如下rest相关参数：<code class="prettyprint linenums lang-php">'REST_METHOD_LIST'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'get,post,put',&nbsp;//&nbsp;允许的请求类型列表<br />
+'REST_DEFAULT_METHOD'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'get',&nbsp;//&nbsp;默认请求类型<br />
+'REST_DEFAULT_TYPE'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;'html',&nbsp;//&nbsp;默认的资源类型<br />
+'REST_CONTENT_TYPE_LIST'&nbsp;=&gt;'html,xml,json',&nbsp;//&nbsp;REST允许请求的资源类型列表</code>如果我们访问的URL是：<code class="prettyprint linenums lang-php">http://www.domain.com/Info/read/id/1.xml</code>假设我们没有定义路由，这样访问的是Info模块的read操作，那么上面的请求会调用InfoAction类的 read_get_xml方法，而不是read_xml方法，但是如果访问的URL是：<code class="prettyprint linenums lang-php">http://www.domain.com/Info/read/id/1.json</code>那么则会调用read_json方法。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="183.html">上一页</a><a title="下一页" class="next" href="185.html">下一页</a></div>
+		</div>
+	</body>
+</html>

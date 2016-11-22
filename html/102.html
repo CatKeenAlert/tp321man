@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>For标签</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/102.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>For标签</h1>
+			<div class="page"><a title="上一页" class="prev" href="101.html">上一页</a><a title="下一页" class="next" href="103.html">下一页</a></div>
+		</div>
+		<div class="book-content">For标签用于实现for循环，格式为：<table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">for标签（循环输出数据）</th></tr><tr><td>闭合</td><td>非闭合标签</td></tr><tr><td>属性</td><td>start（必须）：循环变量开始值<br />
+end（必须）：循环变量结束值<br />
+name（可选）：循环变量名，默认值为i<br />
+step（可选）：步进值，默认值为1<br />
+comparison（可选）：判断条件，默认为lt</td></tr></table>用法：<code class="prettyprint linenums lang-php">&lt;for&nbsp;start="开始值"&nbsp;end="结束值"&nbsp;comparison=""&nbsp;step="步进值"&nbsp;name="循环变量名"&nbsp;&gt;<br />
+&lt;/for&gt;</code>开始值、结束值、步进值和循环变量都可以支持变量，开始值和结束值是必须，其他是可选。comparison 的默认值是lt;；name的默认值是i，步进值的默认值是1，举例如下：<code class="prettyprint linenums lang-php">&lt;for&nbsp;start="1"&nbsp;end="100"&gt;<br />
+{$i}<br />
+&lt;/for&gt;</code>解析后的代码是<code class="prettyprint linenums lang-php">for&nbsp;($i=1;$i&lt;100;$i+=1){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;$i;<br />
+}</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="101.html">上一页</a><a title="下一页" class="next" href="103.html">下一页</a></div>
+		</div>
+	</body>
+</html>

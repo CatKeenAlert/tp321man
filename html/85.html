@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模板赋值</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/85.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模板赋值</h1>
+			<div class="page"><a title="上一页" class="prev" href="84.html">上一页</a><a title="下一页" class="next" href="86.html">下一页</a></div>
+		</div>
+		<div class="book-content">要在模板中输出变量，必须在在Action类中把变量传递给模板，视图类提供了assign方法对模板变量赋值，无论何种变量类型都统一使用assign赋值。<code class="prettyprint linenums lang-php">$this-&gt;assign('name',$value);<br />
+//下面的写法是等效的<br />
+$this-&gt;name&nbsp;=&nbsp;$value;</code>系统只会输出设定的变量，其它变量不会输出，一定程度上保证了变量的安全性。<br />
+<br />
+如果要同时输出多个模板变量，可以使用下面的方式： <code class="prettyprint linenums lang-php">$array['name']&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;'thinkphp';<br />
+$array['email']&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;'liu21st@gmail.com';<br />
+$array['phone']&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;'12335678';<br />
+$this-&gt;assign($array);</code>这样，就可以在模板文件中同时输出name、email和phone三个变量。<br />
+模板变量赋值后，怎么在模板文件中输出，需要根据选择的模板引擎来用不同的方法，如果使用的是内置的模板引擎，请参考后面的模板指南部分。如果你使用的是PHP本身作为模板引擎的话 ，就可以直接在模板文件里面输出了，如下：<code class="prettyprint linenums lang-php">&lt;?php&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;$name.'['.$email.''.$phone.']';</code>如果要或者全部的模板变量，可以调用View类的get方法支持获取全部模板变量的值，例如：<code class="prettyprint linenums lang-php">$this-&gt;get('name');&nbsp;//&nbsp;获取name模板变量的值<br />
+$this-&gt;get();&nbsp;//&nbsp;获取所有模板赋值变量的值</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="84.html">上一页</a><a title="下一页" class="next" href="86.html">下一页</a></div>
+		</div>
+	</body>
+</html>

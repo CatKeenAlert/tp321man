@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>动态模型</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/80.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>动态模型</h1>
+			<div class="page"><a title="上一页" class="prev" href="79.html">上一页</a><a title="下一页" class="next" href="81.html">下一页</a></div>
+		</div>
+		<div class="book-content">新版的模型可以在不同的类型之间切换，例如你可以从基本模型切换到高级模型或者视图模型，而当前的数据不会丢失，并可以控制要传递的参数和动态赋值。<br />
+要切换模型，可以使用：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象&nbsp;是基础模型类的实例<br />
+//&nbsp;动态切换到高级模型类&nbsp;执行top10查询操作<br />
+$User-&gt;switchModel("Adv")-&gt;top10();</code>上面的写法也可以改成<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("AdvModel:User");&nbsp;//&nbsp;实例化User对象&nbsp;是基础模型类的实例<br />
+$User-&gt;top10();</code>如果要传递参数，可以使用：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;D("User");&nbsp;//&nbsp;实例化User对象&nbsp;是基础模型类的实例<br />
+//&nbsp;动态切换到视图模型类&nbsp;并传入viewFields属性<br />
+$UserView&nbsp;=&nbsp;$User-&gt;switchModel("View",array("viewFields"));</code>如果要动态赋值，可以使用：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M("User");&nbsp;//&nbsp;实例化User对象&nbsp;是基础模型类的实例<br />
+//&nbsp;动态切换到关联模型类&nbsp;并传入data属性<br />
+$advUser&nbsp;=&nbsp;$User-&gt;switchModel("Relation");<br />
+//&nbsp;或者在切换模型后再动态赋值给新的模型<br />
+$advUser-&gt;setProperty("_link",$link);<br />
+//&nbsp;查找关联数据<br />
+$user&nbsp;=&nbsp;$advUser-&gt;relation(true)-&gt;find(1);</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="79.html">上一页</a><a title="下一页" class="next" href="81.html">下一页</a></div>
+		</div>
+	</body>
+</html>

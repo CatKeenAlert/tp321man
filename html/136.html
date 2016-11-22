@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>动态缓存</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/136.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>动态缓存</h1>
+			<div class="page"><a title="上一页" class="prev" href="135.html">上一页</a><a title="下一页" class="next" href="137.html">下一页</a></div>
+		</div>
+		<div class="book-content">所有的缓存方式都被统一使用公共的调用接口，这个接口就是Cache缓存类。<br />
+缓存类的使用很简单，首先实例化缓存类：<code class="prettyprint linenums lang-php">$Cache&nbsp;=&nbsp;Cache::getInstance('缓存方式','缓存参数'),</code><table border="0" cellspacing="1" cellpadding="0">	<tr>		<td width="150"><b>缓存方式 </b></td>		<td colspan="2">可以支持File、Apachenote、Apc、Eaccelerator、Memcache、Shmop、Sqlite、Db、Redis和Xcache</td>	</tr>	<tr>		<td rowspan="12"><b>缓存参数</b> <br /><br />
+			（根据不同的缓存方式存在不同的参数） </td>		<td><b>通用缓存参数</b> </td>		<td>expire 缓存有效期（默认由DATA_CACHE_TIME参数配置） <br /><br />
+			length 缓存队列长度（默认为0） <br /><br />
+			queue 缓存队列方式（默认为file 还支持xcache和apc） </td>	</tr>	<tr>		<td><b>缓存方式 </b></td>		<td><b>额外支持的缓存参数</b> </td>	</tr>	<tr>		<td>File（文件缓存） </td>		<td>temp 缓存目录（默认由DATA_CACHE_PATH参数配置） </td>	</tr>	<tr>		<td>Apachenote缓存 </td>		<td>host 缓存服务器地址（ 默认为127.0.0.1） </td>	</tr>	<tr>		<td>Apc缓存 </td>		<td>暂无其他参数 </td>	</tr>	<tr>		<td>Eaccelerator缓存 </td>		<td>暂无其他参数 </td>	</tr>	<tr>		<td>Xcache缓存 </td>		<td>暂无其他参数 </td>	</tr>	<tr>		<td>Memcache</td>		<td>host 缓存服务器地址（ 默认为127.0.0.1） <br /><br />
+			port 端口（默认为MEMCACHE_PORT参数或者11211） <br /><br />
+			timeout 缓存超时（默认由DATA_CACHE_TIME参数设置） <br /><br />
+			persistent 长连接（默认为false） </td>	</tr>	<tr>		<td>Shmop</td>		<td>size（默认由SHARE_MEM_SIZE参数设置） <br /><br />
+			tmp（默认为TEMP_PATH） <br /><br />
+			project （默认为s） <br /><br />
+			length 缓存队列长度（默认为0） </td>	</tr>	<tr>		<td>Sqlite</td>		<td>db 数据库名称（默认:memory:） <br /><br />
+			table 表名（默认为sharedmemory） <br /><br />
+			persistent 长连接（默认为false） </td>	</tr>	<tr>		<td>Db</td>		<td>db 数据库名称（默认由DB_NAME参数配置） <br /><br />
+			table 数据表名称（默认由DATA_CACHE_TABLE参数配置） </td>	</tr>	<tr>		<td>Redis</td>		<td>host 服务器地址（默认由REDIS_HOST参数配置或者127.0.0.1） <br /><br />
+			port端口（默认由REDIS_PORT参数配置或者6379） <br /><br />
+			timeout 超时时间（默认由DATA_CACHE_TIME配置或者false） <br /><br />
+			persistent长连接（默认为false） </td>	</tr></table>例如，使用Xcache作为缓存方式，缓存有效期60秒。<code class="prettyprint linenums lang-php">$Cache&nbsp;=&nbsp;Cache::getInstance('Xcache',array('expire'=&gt;'60')),</code> <br />
+<br />
+设置缓存参数<br />
+实例化缓存类的时候如果没有指定缓存参数，可以通过setOptions方法具体指定：<code class="prettyprint linenums lang-php">$Cache-&gt;setOptions('temp','ThinkPHP');</code>具体缓存参数根据不同的缓存方式有所区别。<br />
+如果需要获取当前缓存驱动的参数，可以使用：<code class="prettyprint linenums lang-php">$value&nbsp;=&nbsp;$Cache-&gt;getOptions('temp');</code> <br />
+<br />
+存取缓存数据<code class="prettyprint linenums lang-php">$Cache-&gt;set('name','ThinkPHP');&nbsp;&nbsp;//&nbsp;缓存name数据<br />
+$value&nbsp;=&nbsp;$Cache-&gt;get('name');&nbsp;&nbsp;//&nbsp;获取缓存的name数据<br />
+$Cache-&gt;rm('name');&nbsp;&nbsp;//&nbsp;删除缓存的name数据</code>或者使用下面的方法是等效的：<code class="prettyprint linenums lang-php">$Cache-&gt;name&nbsp;=&nbsp;'ThinkPHP';&nbsp;<br />
+$value&nbsp;=&nbsp;$Cache-&gt;name;&nbsp;<br />
+Unset($Cache-&gt;name);</code>缓存设置方法可以重新指定缓存有效期，例如：<code class="prettyprint linenums lang-php">$Cache-&gt;set('name','ThinkPHP',3600);&nbsp;&nbsp;//&nbsp;缓存name数据3600秒</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="135.html">上一页</a><a title="下一页" class="next" href="137.html">下一页</a></div>
+		</div>
+	</body>
+</html>

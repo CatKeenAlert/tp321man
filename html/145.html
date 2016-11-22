@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>类库扩展</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/145.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>类库扩展</h1>
+			<div class="page"><a title="上一页" class="prev" href="144.html">上一页</a><a title="下一页" class="next" href="146.html">下一页</a></div>
+		</div>
+		<div class="book-content">类库扩展包括基类库扩展、应用类库扩展和第三方类库扩展，所有扩展类库不会自动加载，需要手动加载或者定义别名和配置自动加载（详细可以参考4.2.3类库导入和4.2.5自动加载）。<h3>基类库扩展</h3>目前支持的基类库扩展包括ORG（第三方公共类库包）和Com（企业类库包）。你可以在ORG类库目录下面添加自己需要的类库，你甚至还可以创建属于自己企业的类库，只需要在Extend/Library目录下面创建Com目录，然后在里面增加相应的类库就可以方便的使用import方法导入了。例如，我们在Extend/Library/Com下面创建了Sina目录，并且放了Util\UnitTest.class.php类库文件，可以使用下面的方式导入 <code class="prettyprint linenums lang-php">import('Com.Sina.Util.UnitTest');</code>目前官方提供的扩展或者第三方扩展都在ORG类库包下面。<h3>应用类库扩展</h3>项目类库的扩展，和基类库的扩展一样，我们可以在项目类库目录增加你想要的子目录，也只有在项目类库目录下面增加的类库才能使用import方法导入。例如，我们在MyApp的项目类库目录Lib下面增加Common和Util目录，就可以这样加载这些目录下面的类库文件了：<code class="prettyprint linenums lang-php">import('MyApp.Util.UnitTest');<br />
+import('@.Common.CommonUtil');</code><h3>第三方类库扩展</h3>如果你直接使用的是第三方的类库包，或者是类名和后缀和ThinkPHP的默认规则不符合的，我们建议你放到第三方类库扩展目录Extend/Vendor目录下面，并使用vendor方法来导入。<br />
+例如，我们把Zend的Filter\Dir.php 放到Vendor目录下面，这个时候Dir文件的路径就是<br />
+Vendor\Zend\Filter\Dir.php，我们使用vendor方法导入就是：<code class="prettyprint linenums lang-php">Vendor('Zend.Filter.Dir');</code>需要注意的是，vendor方法默认导入的类库后缀是php的而不是class.php的，如果你的第三方类库的后缀是class.php，可以使用：<code class="prettyprint linenums lang-php">Vendor('Zend.Filter.Dir','','.class.php');</code>或者使用：<code class="prettyprint linenums lang-php">import('Zend.Filter.Dir',VENDOR_PATH);</code>通过使用第三方类库扩展，我们可以直接使用Zend、CI或者其他框架中的类库。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="144.html">上一页</a><a title="下一页" class="next" href="146.html">下一页</a></div>
+		</div>
+	</body>
+</html>

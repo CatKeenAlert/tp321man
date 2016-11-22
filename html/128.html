@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>异常模板</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/128.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>异常模板</h1>
+			<div class="page"><a title="上一页" class="prev" href="127.html">上一页</a><a title="下一页" class="next" href="129.html">下一页</a></div>
+		</div>
+		<div class="book-content">系统内置的异常模板在系统目录的Tpl/think_exception.tpl，可以通过修改系统模板来修改异常页面的显示。也通过设置TMPL_EXCEPTION_FILE 配置参数来修改系统默认的异常模板文件， 例如：<code class="prettyprint linenums lang-php">'TMPL_EXCEPTION_FILE'&nbsp;=&gt;&nbsp;APP_PATH.'/Public/exception.tpl'</code>异常模板中可以使用的异常变量有：<br />
+$e['file']异常文件名<br />
+$e['line'] 异常发生的文件行数<br />
+$e['message'] 异常信息<br />
+$e['trace'] 异常的详细Trace信息<br />
+因为异常模板使用的是原生PHP代码，所以还可以支持任何的PHP方法和系统变量使用。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="127.html">上一页</a><a title="下一页" class="next" href="129.html">下一页</a></div>
+		</div>
+	</body>
+</html>

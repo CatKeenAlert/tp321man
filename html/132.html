@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>页面Trace</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/132.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>页面Trace</h1>
+			<div class="page"><a title="上一页" class="prev" href="131.html">上一页</a><a title="下一页" class="next" href="133.html">下一页</a></div>
+		</div>
+		<div class="book-content">页面Trace功能是ThinkPHP提供给开发人员的一个用于开发调试的辅助手段。可以实时显示当前页面的操作的请求信息、运行情况、SQL执行、错误提示等，并支持自定义显示。<br />
+页面Trace功能无论是调试模式还是部署模式都有效，要开启页面Trace功能，需要在项目配置文件中设置：<code class="prettyprint linenums lang-php">'SHOW_PAGE_TRACE'&nbsp;=&gt;true,&nbsp;//&nbsp;显示页面Trace信息</code>系统默认的Trace信息包括：请求时间、当前页面、请求协议、运行信息、会话ID、日志记录和文件加载情况。默认的页面Trace的显示如图所示：<br />
+<img src="../images/img/4.png" /><br />
+新版的页面Trace信息显示中已经包含了运行状态时间显示，所以开启页面Trace功能后无需再开启运行时间显示了。我们的建议是运行时间显示功能用于部署模式需要的时候开启。<b>Trace页面定制</b><br />
+页面Trace信息的显示模板是可以定制的，默认位于系统目录的Tpl/page_trace.tpl，可以根据项目自身的需要定制，更改TMPL_TRACE_FILE进行配置即可。<br />
+例如：<code class="prettyprint linenums lang-php">'TMPL_TRACE_FILE'&nbsp;=&gt;&nbsp;APP_PATH.'Public/trace.php'</code>关键的输出代码是：<code class="prettyprint linenums lang-php">&lt;?php<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$_trace&nbsp;=&nbsp;trace();&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;($_trace&nbsp;as&nbsp;$key=&gt;$info){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;$key.'&nbsp;:&nbsp;'.$info.'&lt;br/&gt;';<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}</code><b>Trace信息定制</b><br />
+如果需要扩展自己的Trace信息，有下面几种方式：<br />
+第一种方式：在当前项目的配置目录下面定义 trace.php 文件，返回数组方式的定义，例如：<code class="prettyprint linenums lang-php">return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'当前页面'=&gt;$_SERVER['PHP_SELF'],<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'通信协议'=&gt;$_SERVER['SERVER_PROTOCOL'],...<br />
+);</code>在显示页面Trace信息的时候会把这个部分定义的信息合并到系统默认的Trace信息，所以不需要再添加系统默认的页面trace信息，这种方式通常用于Trace项目的公共信息。第二种方式：在Action方法里面使用trace方法来增加Trace信息，该部分可以用于系统的开发阶段调试。例如：<code class="prettyprint linenums lang-php">trace('执行时间',$runTime);<br />
+trace('Name的值',$name);<br />
+trace('GET变量',dump($_GET,false));</code>trace方法支持批量设置，例如：<code class="prettyprint linenums lang-php">$info['执行时间']=$runTime;<br />
+$info['Name的值']&nbsp;=&nbsp;$name;<br />
+$info['GET变量']=dump($_GET,false);</code>trace($info);这种方式的trace信息显示在页面Trace信息的最开始。<h3>3.1版本的页面Trace</h3>3.1版本对页面Trace功能进行了增强，更加方便开发过程中的调试，并接管了一部分日志功能。<h3>使用</h3>页面Trace功能是ThinkPHP框架为开发人员精心设计的一个方便调试的内置行为扩展工具，经历了多个版本的改进后，由开始的具备简单页面信息到现在的全面调试支持。<br />
+页面Trace功能分为两个层面：一、是页面Trace的显示界面；二、是提供调试支持的trace方法。<br />
+要开启页面Trace显示界面，需要开启SHOW_PAGE_TRACE参数：<code class="prettyprint linenums lang-php">'SHOW_PAGE_TRACE'=&gt;true</code>该配置参数默认关闭。开启后，页面的右下角会出现TP的logo，<img src="../images/img/5.png" />点击即可打开页面Trace窗口。<br />
+<img src="../images/img/6.png" /><br />
+页面Trace框架有6个选项卡，分别是基本、文件、流程、错误、SQL和调试，点击不同的选项卡会切换到不同的Trace信息窗口。<br />
+基本：当前页面的基本摘要信息，例如执行时间、内存开销、文件加载数、查询次数等等。<br />
+文件：详细列出当前页面执行过程中加载的文件及其大小。<br />
+流程：会列出当前页面执行到的行为和相关流程（待完善）。<br />
+错误：当前页面执行过程中的一些错误信息，包括警告错误。<br />
+SQL：当前页面执行到的SQL语句信息。<br />
+调试：开发人员在程序中进行的调试输出。<br />
+要在调试选项卡中显示调试信息，则是通过trace方法，该方法可以加到应用程序的任意位置，调用格式如下：<br />
+<b>trace('调试变量','显示标签')</b><br />
+例如，<br />
+trace($user,'用户信息');<br />
+$user变量可能是一个用户信息数组，那么该变量的值就会显示到页面Trace窗口的调试选项卡中。<br />
+<br />
+页面Trace的选项卡是可以定制和扩展的，默认的配置为：<code class="prettyprint linenums lang-php">'TRACE_PAGE_TABS'=&gt;array('base'=&gt;'基本','file'=&gt;'文件','think'=&gt;'流程','error'=&gt;'错误','sql'=&gt;'SQL','debug'=&gt;'调试')</code>也就是我们看到的默认情况下显示的选项卡，如果你希望增加新的选项卡：用户，则可以修改配置如下：<code class="prettyprint linenums lang-php">'TRACE_PAGE_TABS'=&gt;array('base'=&gt;'基本','file'=&gt;'文件','think'=&gt;'流程','error'=&gt;'错误','sql'=&gt;'SQL','debug'=&gt;'调试','user'=&gt;'用户')</code>我们把刚才的用户信息调试输出到用户选项卡，trace方法的用法修改如下：<br />
+trace($user,'用户信息','user');<br />
+第三个参数表示选项卡的标识，和我们在TRACE_PAGE_TABS中配置的对应。<br />
+默认情况下，页面Trace窗口显示的信息是不会保存的，如果希望保存这些trace信息，我们可以配置PAGE_TRACE_SAVE参数：<code class="prettyprint linenums lang-php">'PAGE_TRACE_SAVE'=&gt;true</code>开启页面trace信息保存后，每次的页面Trace信息会以日志形式保存到项目的日志目录中，命名格式是：<br />
+<b>当前日期_trace.log</b><br />
+例如：<code class="prettyprint linenums lang-php">12-06-21_trace.log</code>如果不希望保存所有的选项卡的信息，可以设置需要保存的选项卡，例如：<code class="prettyprint linenums lang-php">'PAGE_TRACE_SAVE'=&gt;array('base','file','sql');</code>设置后只会保存base、file和sql三个选项卡的信息。<br />
+3.1版本的trace方法不支持批量赋值操作。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="131.html">上一页</a><a title="下一页" class="next" href="133.html">下一页</a></div>
+		</div>
+	</body>
+</html>

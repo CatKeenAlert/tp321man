@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>模式扩展</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/150.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>模式扩展</h1>
+			<div class="page"><a title="上一页" class="prev" href="149.html">上一页</a><a title="下一页" class="next" href="151.html">下一页</a></div>
+		</div>
+		<div class="book-content">模式扩展属于系统核心级别的扩展，可以改变底层的架构体系。在众多扩展中，也只有模式扩展具有改变和替换核心MVC的可能，其他扩展只是在标准模式基础之上的增强和替换，无法从根本上改变底层的架构。所以，大家会看到不同的模式扩展可能具有很大的用法区别，有些模式扩展是为某个特别的应用环境而定制的，例如CLI模式、AMF模式和PHPRPC模式。<br />
+新版对模式扩展的改进和行为扩展的增强使得开发人员对底层框架的DIY更加方便，也正是因为支持对框架底层进行DIY，使得ThinkPHP能够满足企业开发中更加复杂的项目需求。<h3>使用模式扩展</h3>我们前面所涉及的所有用法都是基于框架内置的标准模式的，除了标准模式之外，官方还提供了一些常用的模式扩展，模式扩展的目录位于Extend/Mode下面，已经提供的包括：Cli（命令模式）、Lite（精简模式）、Thin（简洁模式）、AMF模式、PHPRPC模式和REST模式，他们为不同的需求提供了不同的底层框架解决方案。通常来说不同的模式之间是无法进行切换。<br />
+要使用某个扩展模式，需要修改项目的入口文件，添加一行定义代码：<code class="prettyprint linenums lang-php">define('MODE_NAME','模式扩展名称');</code>每个项目只能使用一个模式扩展，所以即使采用了分组，不同的分组也只能采用相同的模式扩展。使用了模式扩展后，项目的编译缓存文件有所变化，例如，如果你当前用的是REST模式，那么生成的编译缓存文件则会变成~rest_runtime.php。<br />
+具体不同模式的用法需要参考每个模式扩展的帮助文件。<h3>简洁模式</h3>简洁模式相当于标准模式的主要区别在于：<br />
+默认不使用任何模板引擎（可以自己在操作方法里面调用）；<br />
+模型仅支持原生SQL操作和事务；<br />
+支持多数据库切换和连接；<br />
+默认仅支持MySQL数据库；<br />
+不支持语言包、模块分组、模板主题和Dispatch功能；<br />
+去除了大部分扩展机制；<br />
+如果你的应用选择了Mysql数据库，并且完全使用原生SQL操作，并希望有一个轻巧的核心，那么简洁模式是一个很好的选择。<br />
+要使用简洁模式，需要在项目的入口文件中添加模式定义：<code class="prettyprint linenums lang-php">define('MODE_NAME','Thin');//采用简洁模式运行</code><h3>精简模式</h3>精简模式在简洁模式的基础上，增加了：<br />
+默认使用PHP模板；<br />
+支持不带路由的Dispatch；<br />
+支持不带回调接口的CURD操作；<br />
+支持连贯操作、统计查询；<br />
+精简模式比简洁模式在模型方面多了CURD和连贯操作，如果你习惯于使用PHP作为模板，并且还是喜欢使用模型的CURD功能，但又不希望核心那么庞大，那么精简模式是一个不错的选择。<br />
+要使用精简模式，需要在项目的入口文件中添加模式定义：<code class="prettyprint linenums lang-php">define('MODE_NAME','Lite');//采用精简模式运行</code><h3>命令模式</h3>命令模式用于支持命令行模式下面的PHP应用，需要在入口文件设置：<code class="prettyprint linenums lang-php">define('MODE_NAME',&nbsp;'cli')&nbsp;//采用CLI运行模式运行</code>在命令模式下面，支持两种命令行的参数模式，<br />
+一、PATHINFO参数模式（URL_MODEL为1）<br />
+在PATHINFO参数模式下面，我们可以这样调用模块和操作<code class="prettyprint linenums lang-php">index.php&nbsp;module/action/id/4</code>二、普通参数模式（URL_MODEL设置为其它）<br />
+在普通参数模式下面 ，我们需要这样调用模块和操作<code class="prettyprint linenums lang-php">index.php&nbsp;module&nbsp;action&nbsp;id&nbsp;4</code>在命令行模式下面，系统会自动把参数转换为GET变量，无论采用哪种命令行参数模式，我们可以直接使用GET变量获取参数，例如，采用下面的方式调用<code class="prettyprint linenums lang-php">index.php&nbsp;Info/read/category/2/id/4</code>在控制器中，我们可以直接获取$_GET['category']（这里传入的是2）和$_GET['id']（这里传入的是4）参数，如果你需要自己解析传入的参数顺序和值，就需要采用原生的系统变量$_SERVER['argv']来获取参数了。<h3>AMF模式</h3>AMF模式采用了ZendAMF类库，支持AMF开发和Flash进行通讯。首先，我们需要设置当前运行模式为Amf模式，在入口文件中增加下面代码：<code class="prettyprint linenums lang-php">define('MODE_NAME',&nbsp;'amf')&nbsp;//采用Amf运行模式运行</code>然后在项目配置文件中定义<code class="prettyprint linenums lang-php">'APP_AMF_ACTIONS'=&gt;'Index,User,Shop…'//&nbsp;定义AMF模式的模块列表</code>只有在APP_AMF_ACTIONS中定义的模块才能在Amf模式中调用到。<br />
+最后一步就是在你的Flash客户端或者AS脚本中修改Amf的网关地址为当前项目的入口地址即可。<h3>PHPRPC模式</h3>首先，我们设置当前运行模式为Phprpc模式：<code class="prettyprint linenums lang-php">define('MODE_NAME',&nbsp;'phprpc')&nbsp;//采用Phprpc运行模式运行</code>然后在项目配置文件中定义<code class="prettyprint linenums lang-php">'APP_PHPRPC_ACTIONS'=&gt;'Index,User,Shop…'//&nbsp;定义PHPRPC模式的模块列表</code>只有在APP_PHPRPC_ACTIONS中定义的模块才能在PHPRPC模式中调用到。<h3>REST模式</h3>Rest模式主要是为了支持RESTFul的开发，鉴于目前Rest主要用来提供接口服务，所以单独作为模式扩展来使用。首先，我们设置当前运行模式为rest模式：<code class="prettyprint linenums lang-php">define('MODE_NAME',&nbsp;'rest')&nbsp;//采用rest模式运行</code>关于Rest的更多用法，请参考16.2 REST支持部分。<h3>定制模式扩展</h3>要定制自己的模式扩展，首先要定义模式扩展的定义文件，定义文件位于Extend/Mode目录下面，命名就是模式扩展的名称（全部为小写），定义文件是一个数组，包括：<table border="0" cellspacing="1" cellpadding="0">        <tr>            <th>core</th>            <th>系统核心列表文件定义</th>        </tr>        <tr>            <td>config</td>            <td>模式配置文件</td>        </tr>        <tr>            <td>alias</td>            <td>模式别名定义文件</td>        </tr>        <tr>            <td>extends</td>            <td>模式系统行为定义</td>        </tr>        <tr>            <td>tags</td>            <td>应用行为定义文件</td>        </tr></table>core是模式核心列表文件，如果core没有定义，则表示采用标准模式的核心列表文件，被定义的文件列表会纳入编译缓存，核心列表可以包含函数文件和类库文件，注意下面的文件无需定义：系统的Common公共文件、Think类、ThinkException类和Behavior类。下面的类必须定义：App类和Action类。<br />
+config是模式配置定义，可以采用文件名或者直接用数组定义的方式。<br />
+alias是模式别名定义，可以采用文件名或者直接用数组定义的方式。<br />
+extends是模式系统行为定义，可以采用文件名或者直接用数组定义的方式。<br />
+tags是应用行为定义，可以采用文件名或者直接用数组定义的方式。<br />
+上面这些定义，只有需要的时候才要定义，如果没有则可不必定义，一般core定义是模式扩展必须的，改变核心列表文件的定义就能起到自定义MVC的目的。<br />
+例如，命令行模式的模式定义文件为：<code class="prettyprint linenums lang-php">//&nbsp;命令行模式定义文件<br />
+return&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'core'&nbsp;=&gt;&nbsp;&nbsp;&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODE_PATH.'Cli/functions.php',&nbsp;&nbsp;&nbsp;//&nbsp;命令行系统函数库<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODE_PATH.'Cli/Log.class.php',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODE_PATH.'Cli/App.class.php',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODE_PATH.'Cli/Action.class.php',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;项目别名定义文件&nbsp;[支持数组直接定义或者文件名定义]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'alias'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Model'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;MODE_PATH.'Cli/Model.class.php',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Db'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;MODE_PATH.'Cli/Db.class.php',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Cache'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;CORE_PATH.'Core/Cache.class.php',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Debug'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;CORE_PATH.'Util/Debug.class.php',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;系统行为定义文件<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'extends'&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;&nbsp;array(),<br />
+);</code>模式扩展本身是一个扩展的集成，自身还可以包含其他扩展，例如行为扩展、函数扩展、类库扩展等。如果模式扩展中包含了自己的行为扩展，那么可以放到模式扩展目录下面的Behavior目录下面，系统可以自动加载该目录下面的行为类库。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="149.html">上一页</a><a title="下一页" class="next" href="151.html">下一页</a></div>
+		</div>
+	</body>
+</html>

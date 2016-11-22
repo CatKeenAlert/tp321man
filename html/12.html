@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>系统流程</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/12.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>系统流程</h1>
+			<div class="page"><a title="上一页" class="prev" href="11.html">上一页</a><a title="下一页" class="next" href="13.html">下一页</a></div>
+		</div>
+		<div class="book-content">我们以访问网址 http://serverName.com/index.php/User/read/id/8  为例，分两种情况来解析下系统的执行流程，首先是调试模式下面的主要执行流程：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>序号</th>    <th>流程说明</th>  </tr>  <tr>    <td>1</td>    <td>用户访问网站URL地址</td>  </tr>  <tr>    <td>2</td>    <td>调用项目的入口文件（这里是index.php）</td>  </tr>  <tr>    <td>3</td>    <td>载入系统入口文件ThinkPHP.php</td>  </tr>  <tr>    <td>4</td>    <td>判断系统常量，如果没有定义则自动生成</td>  </tr>  <tr> <br />
+    <td>5</td>    <td>载入系统运行时文件runtime.php并定义项目路径常量</td>  </tr>  <tr>    <td>6</td>    <td>加载运行时所需的文件（通过调用load_runtime_file函数）</td>  </tr>  <tr>    <td>7</td>    <td>后面的流程和调试模式基本相同，只是模板编译过程省略了</td>  </tr>  <tr>    <td>8</td>    <td>读取核心基础文件列表和加载系统别名定义文件</td>  </tr>  <tr>    <td>9</td>    <td>检查项目相关目录是否存在，不存在则自动生成</td>  </tr>  <tr>    <td>10</td>    <td>调用Think::start执行入口</td>  </tr>  <tr>    <td>11</td>    <td>设置异常和错误处理机制</td>  </tr>  <tr>    <td>12</td>    <td>注册系统自动加载机制</td>  </tr>  <tr>    <td>13</td>    <td>预编译当前项目</td>  </tr>  <tr>    <td>14</td>    <td>加载框架惯例配置文件</td>  </tr>  <tr>    <td>15</td>    <td>读取当前的运行模式如果不是标准模式则加载模式的配置文件（如果存在）</td>  </tr>  <tr>    <td>16</td>    <td>加载模式和项目配置文件</td>  </tr>  <tr>    <td>17</td>    <td>加载框架底层语言包文件</td>  </tr>  <tr>    <td>18</td>    <td>加载当前模式的系统行为定义文件</td>  </tr>  <tr>    <td>19</td>    <td>加载当前模式的项目行为定义文件（如果存在）</td>  </tr>  <tr>    <td>20</td>    <td>读取核心编译文件列表</td>  </tr>  <tr>    <td>21</td>    <td>载入项目公共函数文件</td>  </tr>  <tr>    <td>22</td>    <td>加载模式和项目别名定义文件</td>  </tr>  <tr>    <td>23</td>    <td>加载系统调试模式配置文件</td>  </tr>  <tr>    <td>24</td>    <td>加载项目调试模式配置文件（如果存在）</td>  </tr>  <tr>    <td>25</td>    <td>执行当前模式的App::run();运行项目</td>  </tr>  <tr>    <td>26</td>    <td>如果定义了动态载入则载入动态项目配置文件和公共文件</td>  </tr>  <tr>    <td>27</td>    <td>URL调度，根据URL模式设置分析当前URL地址</td>  </tr>  <tr>    <td>28</td>    <td>URL路由检测</td>  </tr>  <tr>    <td>29</td>    <td>获取当前URL地址的分组、模块和操作名&nbsp;及其他参数并生成URL相关常量定义</td>  </tr>  <tr>    <td>30</td>    <td>如果检测到分组，则加载分组的配置文件和公共文件</td>  </tr>  <tr>    <td>31</td>    <td>检测模板主题并生成模板系统常量</td>  </tr>  <tr>    <td>32</td>    <td>设置SESSION_ID&nbsp;开启Session</td>  </tr>  <tr>    <td>33</td>    <td>根据分组和模块名，定位到控制器类并且实例化</td>  </tr>  <tr>    <td>34</td>    <td>检查并执行当前操作的前置方法</td>  </tr>  <tr>    <td>35</td>    <td>检查当前模块的_initialize方法</td>  </tr>  <tr>    <td>36</td>    <td>执行当前操作方法</td>  </tr>  <tr>    <td>37</td>    <td>调用控制器的Display方法输出</td>  </tr>  <tr>    <td>38</td>    <td>定位当前操作方法的模板文件</td>  </tr>  <tr>    <td>39</td>    <td>调用模板引擎解析模板内容并生成模板编译缓存文件</td>  </tr>  <tr>    <td>40</td>    <td>读取模板缓存文件进行变量输出，替换解析返回的内容中的需要替换的特殊字符串</td>  </tr>  <tr>    <td>41</td>    <td>生成表单令牌哈希</td>  </tr>  <tr>    <td>42</td>    <td>输出模板内容到浏览器</td>  </tr>  <tr>    <td>43</td>    <td>如果开启页面Trace显示则调用trace信息显示</td>  </tr>  <tr>    <td>44</td>    <td>检查并执行当前操作的后置方法</td>  </tr>   <tr>    <td>45</td>    <td>项目运行结束，记录内存中的日志信息到文件</td>  </tr></table>如果在部署模式下面（假设已经生成项目编译缓存），基本的系统流程是：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>序号</th>    <th>流程说明</th>  </tr>  <tr>    <td>1</td>    <td>用户访问网站URL地址</td>  </tr>  <tr>    <td>2</td>    <td>调用项目的入口文件，如果替换了入口文件，则调用项目编译缓存文件，并跳过下面的3、4、5流程，直接执行后面的流程。</td>  </tr>  <tr>    <td>3</td>    <td>载入系统入口文件ThinkPHP.php</td>  </tr>  <tr>    <td>4</td>    <td>判断系统常量，如果没有定义则自动生成</td>  </tr>  <tr>    <td>5</td>    <td>载入系统运行时文件runtime.php并定义项目路径常量</td>  </tr>  <tr>    <td>6</td>    <td>加载运行时所需的文件（通过调用load_runtime_file函数）</td>  </tr>  <tr>    <td>7</td>    <td>加载系统基础函数库文件common.php</td>  </tr></table>系统执行流程根据不同的设置、行为和模式影响，可能存在差异，并不一定完整。但是开启页面Trace功能后，你就可以比较直观的看到当前的文件载入流程，能够帮助你了解系统的执行流程，例如新版的blog示例在关闭调试模式下面一共加载了20个文件，列表如下：<code class="prettyprint linenums lang-shell">[0]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\index.php<br />
+[1]&nbsp;=&gt;&nbsp;E:\www\App\ThinkPHP\ThinkPHP.php<br />
+[2]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Runtime\~runtime.php<br />
+[3]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Lib\Behavior\CheckLangBehavior.class.php<br />
+[4]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Lib\Action\BlogAction.class.php<br />
+[5]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Lib\Action\PublicAction.class.php<br />
+[6]&nbsp;=&gt;&nbsp;E:\www\App\ThinkPHP\Lib\Core\Model.class.php<br />
+[7]&nbsp;=&gt;&nbsp;E:\www\App\ThinkPHP\Lib\Core\Db.class.php<br />
+[8]&nbsp;=&gt;&nbsp;E:\www\App\ThinkPHP\Lib\Driver\Db\DbMysql.class.php<br />
+[9]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Runtime\Data\_fields\examples.Category.php<br />
+[10]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Lib\Model\AdvModel.class.php<br />
+[11]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Runtime\Data\_fields\examples.Blog.php<br />
+[12]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Runtime\Data\_fields\examples.Comment.php<br />
+[13]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Runtime\Data\_fields\examples.Tag.php<br />
+[14]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Lib\Model\BlogViewModel.class.php<br />
+[15]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Lib\Model\ViewModel.class.php<br />
+[16]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Lib\Model\BlogModel.class.php<br />
+[17]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Lib\Model\CategoryModel.class.php<br />
+[18]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Lib\ORG\Page.class.php<br />
+[19]&nbsp;=&gt;&nbsp;E:\www\App\Examples\Blog\Runtime\Cache\2ab73b774a28fab5232b8c752b654018.php</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="11.html">上一页</a><a title="下一页" class="next" href="13.html">下一页</a></div>
+		</div>
+	</body>
+</html>

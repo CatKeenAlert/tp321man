@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>系统变量</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/93.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>系统变量</h1>
+			<div class="page"><a title="上一页" class="prev" href="92.html">上一页</a><a title="下一页" class="next" href="94.html">下一页</a></div>
+		</div>
+		<div class="book-content">除了常规变量的输出外，模板引擎还支持系统变量和系统常量、以及系统特殊变量的输出。它们的输出不需要事先赋值给某个模板变量。系统变量的输出必须以$Think.打头，并且仍然可以支持使用函数。常用的系统变量输出包括下面：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th>用法</th>    <th>含义</th>    <th>例子</th>  </tr>  <tr>    <td>$Think.server</td>    <td>获取$_SERVER</td>    <td>{$Think.server.php_self}</td>  </tr>  <tr>    <td>$Think.get</td>    <td>获取$_GET</td>    <td>{$Think.get.id}</td>  </tr>  <tr>    <td>$Think.post</td>    <td>获取$_POST</td>    <td>{$Think.post.name}</td>  </tr>  <tr>    <td>$Think.request</td>    <td>获取$_REQUEST</td>    <td>{$Think.request.user_id}</td>  </tr>  <tr>    <td>$Think.cookie</td>    <td>获取$_COOKIE</td>    <td>{$Think.cookie.username}</td>  </tr>  <tr>    <td>$Think.session</td>    <td>获取$_SESSION</td>    <td>{$Think.session.user_id}</td>  </tr>  <tr>    <td>$Think.config</td>    <td>获取系统配置参数</td>    <td>{$Think.config.app_status}</td>  </tr>  <tr>    <td>$Think.lang</td>    <td>获取系统语言变量</td>    <td>{$Think.lang.user_type}</td>  </tr>  <tr>    <td>$Think.const</td>    <td>获取系统常量</td>    <td>{$Think.const.app_name}或{$Think.APP_NAME}</td>  </tr>  <tr>    <td>$Think.env</td>    <td>获取环境变量</td>    <td>{$Think.env.HOSTNAME}</td>  </tr>  <tr>    <td>$Think.version</td>    <td>获取框架版本号</td>    <td>{$Think.version}</td>  </tr>  <tr>    <td>$Think.now</td>    <td>获取当前时间</td>    <td>{$Think.now}</td>  </tr>  <tr>    <td>$Think.template</td>    <td>获取当前模板</td>    <td>{$Think.template}</td>  </tr>  <tr>    <td>$Think.ldelim</td>    <td>获取模板左界定符</td>    <td>{$Think.ldelim}</td>  </tr>  <tr>    <td>$Think.rdelim</td>    <td>获取模板右界定符</td>    <td>{$Think.rdelim}</td>  </tr></table>1、系统变量：包括server、session、post、get、request、cookie<code class="prettyprint linenums lang-php">{$Think.server.script_name}&nbsp;//&nbsp;输出$_SERVER变量<br />
+{$Think.session.session_id|md5}&nbsp;//&nbsp;输出$_SESSION变量<br />
+{$Think.get.pageNumber}&nbsp;//&nbsp;输出$_GET变量<br />
+{$Think.cookie.name}&nbsp;&nbsp;//&nbsp;输出$_COOKIE变量</code>支持输出$_SERVER、$_ENV、 $_POST、 $_GET、 $_REQUEST、$_SESSION和 $_COOKIE变量。后面的server、cookie、config不区分大小写，但是变量区分大小写。例如：<br />
+{$Think.server.script_name }和{$Think.SERVER.script_name }等效<br />
+SESSION 、COOKIE还支持二维数组的输出，例如：<code class="prettyprint linenums lang-php">{$Think.CONFIG.user.user_name}<br />
+{$Think.session.user.user_name}</code>系统不支持三维以上的数组输出，请使用下面的方式输出。<br />
+ <br />
+以上方式还可以写成：<code class="prettyprint linenums lang-php">{$_SERVER.script_name}&nbsp;//&nbsp;输出$_SERVER变量<br />
+{$_SESSION.session_id|md5}&nbsp;//&nbsp;输出$_SESSION变量<br />
+{$_GET.pageNumber}&nbsp;//&nbsp;输出$_GET变量<br />
+{$_COOKIE.name}&nbsp;&nbsp;//&nbsp;输出$_COOKIE变量</code>如果配置了session和cookie前缀的话，会自动支持，例如：<br />
+设置参数如下：<code class="prettyprint linenums lang-php">'SESSION_PREFIX'=&gt;'think',<br />
+'COOKIE_PREFIX'=&gt;'think_',</code>那么<br />
+{$Think.session.name}会自动解析成 $_SESSION['think']['name']<br />
+{$Think.cookie.name}会自动解析成 $_COOKIE['think_name']2、系统常量：使用$Think.const 输出<code class="prettyprint linenums lang-php">{$Think.const.__SELF__}&nbsp;<br />
+{$Think.const.MODULE_NAME}</code>或者直接使用<code class="prettyprint linenums lang-php">{$Think.__SELF__}&nbsp;<br />
+{$Think.MODULE_NAME}</code>3、特殊变量：由ThinkPHP系统内部定义的常量 <code class="prettyprint linenums lang-php">{$Think.version}&nbsp;&nbsp;//版本&nbsp;<br />
+{$Think.now}&nbsp;//现在时间&nbsp;<br />
+{$Think.template|basename}&nbsp;//模板页面&nbsp;<br />
+{$Think.LDELIM}&nbsp;//模板标签起始符号&nbsp;<br />
+{$Think.RDELIM}&nbsp;//模板标签结束符号</code>4、配置参数：输出项目的配置参数值<code class="prettyprint linenums lang-php">{$Think.config.db_charset}</code>输出的值和C('db_charset') 的返回结果是一样的。<br />
+也可以输出二维的配置参数，例如：<code class="prettyprint linenums lang-php">{$Think.config.user.user_name}</code>5、语言变量：输出项目的当前语言定义值<code class="prettyprint linenums lang-php">{$Think.lang.page_error}</code>输出的值和L('page_error')的返回结果是一样的。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="92.html">上一页</a><a title="下一页" class="next" href="94.html">下一页</a></div>
+		</div>
+	</body>
+</html>

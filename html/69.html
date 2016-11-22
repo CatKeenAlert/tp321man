@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>自动验证</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/69.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>自动验证</h1>
+			<div class="page"><a title="上一页" class="prev" href="68.html">上一页</a><a title="下一页" class="next" href="70.html">下一页</a></div>
+		</div>
+		<div class="book-content">类型检查只是针对数据库级别的验证，所以系统还内置了数据对象的自动验证功能来完成模型的业务规则验证，而大多数情况下面，数据对象是由表单提交的$_POST数据创建。需要使用系统的自动验证功能，只需要在Model类里面定义$_validate属性，是由多个验证因子组成的二维数组。<br />
+验证因子格式： <code class="prettyprint linenums lang-php">array(验证字段,验证规则,错误提示,[验证条件,附加规则,验证时间])</code><b>说明</b><table border="0" cellspacing="1" cellpadding="0">  <tr>    <td>验证字段</td>    <td>必须</td>    <td width="550">需要验证的表单字段名称，这个字段不一定是数据库字段，也可以是表单的一些辅助字段，例如确认密码和验证码等等。有个别验证规则和字段无关的情况下，验证字段是可以随意设置的，例如expire有效期规则是和表单字段无关的。</td>  </tr>  <tr>    <td>验证规则</td>    <td>必须</td>    <td>要进行验证的规则，需要结合附加规则，如果在使用正则验证的附加规则情况下，系统还内置了一些常用正则验证的规则，可以直接作为验证规则使用，包括：require&nbsp;字段必须、email&nbsp;邮箱、url&nbsp;URL地址、currency&nbsp;货币、number&nbsp;数字。</td>  </tr>  <tr>    <td>提示信息</td>    <td>必须</td>    <td>用于验证失败后的提示信息定义</td>  </tr>  <tr>    <td>验证条件</td>    <td>可选</td>    <td><p>包含下面几种情况：</p><br />
+      <p>Model::EXISTS_VALIDATE&nbsp;或者0&nbsp;存在字段就验证&nbsp;（默认）</p><br />
+      <p>Model::MUST_VALIDATE&nbsp;或者1&nbsp;必须验证</p><br />
+    <p>Model::VALUE_VALIDATE或者2&nbsp;值不为空的时候验证</p></td>  </tr>  <tr>    <td>附加规则</td>    <td>可选</td>    <td><p>配合验证规则使用，包括下面一些规则：</p><br />
+      <p>regex&nbsp;正则验证，定义的验证规则是一个正则表达式（默认）</p><br />
+      <p>function函数验证，定义的验证规则是一个函数名</p><br />
+      <p>callback方法验证，定义的验证规则是当前模型类的一个方法</p><br />
+      <p>confirm验证表单中的两个字段是否相同，定义的验证规则是一个字段名</p><br />
+      <p>equal&nbsp;验证是否等于某个值，该值由前面的验证规则定义</p><br />
+      <p>in验证是否在某个范围内，定义的验证规则必须是一个数组</p><br />
+      <p>length验证长度，定义的验证规则可以是一个数字（表示固定长度）或者数字范围（例如3,12&nbsp;表示长度从3到12的范围）</p><br />
+      <p>between验证范围，定义的验证规则表示范围，可以使用字符串或者数组，例如1,31或者array(1,31)</p><br />
+      <p>expire验证是否在有效期，定义的验证规则表示时间范围，可以到时间，例如可以使用&nbsp;2012-1-15,2013-1-15&nbsp;表示当前提交有效期在2012-1-15到2013-1-15之间，也可以使用时间戳定义</p><br />
+    <p>ip_allow&nbsp;验证IP是否允许，定义的验证规则表示允许的IP地址列表，用逗号分隔，例如&nbsp;201.12.2.5,201.12.2.6</p><br />
+    <p>ip_deny&nbsp;验证IP是否禁止，定义的验证规则表示禁止的ip地址列表，用逗号分隔，例如201.12.2.5,201.12.2.6</p><br />
+    <p>unique&nbsp;验证是否唯一，系统会根据字段目前的值查询数据库来判断是否存在相同的值。</p></td>  </tr>  <tr>    <td>验证时</td>    <td>可选</td>    <td><p>Model::&nbsp;MODEL_INSERT&nbsp;或者1新增数据时候验证</p><br />
+      <p>Model::&nbsp;MODEL_UPDATE&nbsp;或者2编辑数据时候验证</p><br />
+    <p>Model::&nbsp;MODEL_BOTH&nbsp;或者3&nbsp;全部情况下验证（默认）</p></td>  </tr></table><b>示例</b>： <code class="prettyprint linenums lang-php">protected&nbsp;$_validate&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('verify','require','验证码必须！'),&nbsp;//默认情况下用正则进行验证<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('name','','帐号名称已经存在！',0,'unique',1),&nbsp;//&nbsp;在新增的时候验证name字段是否唯一<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('value',array(1,2,3),'值的范围不正确！',2,'in'),&nbsp;//&nbsp;当值不为空的时候判断是否在一个范围内<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('repassword','password','确认密码不正确',0,'confirm'),&nbsp;//&nbsp;验证确认密码是否和密码一致<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('password','checkPwd','密码格式不正确',0,'function'),&nbsp;//&nbsp;自定义函数验证密码格式<br />
+);</code>当使用系统的create方法创建数据对象的时候会自动进行数据验证操作，代码示例： <code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;D("User");&nbsp;//&nbsp;实例化User对象<br />
+if&nbsp;(!$User-&gt;create()){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;如果创建失败&nbsp;表示验证没有通过&nbsp;输出错误提示信息<br />
+exit($User-&gt;getError());<br />
+}else{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;验证通过&nbsp;可以进行其他数据操作<br />
+}</code>通常来说，每个数据表对应的验证规则是相对固定的，但是有些特殊的情况下面可能会改变验证规则，我们可以动态的改变验证规则来满足不同条件下面的验证：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;D("User");&nbsp;//&nbsp;实例化User对象<br />
+$validate&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('verify','require','验证码必须！'),&nbsp;//&nbsp;仅仅需要进行验证码的验证<br />
+);<br />
+$User-&gt;&nbsp;setProperty("_validate",$validate);<br />
+$result&nbsp;=&nbsp;$User-&gt;create();<br />
+if&nbsp;(!$result){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;如果创建失败&nbsp;表示验证没有通过&nbsp;输出错误提示信息<br />
+&nbsp;&nbsp;&nbsp;&nbsp;exit($User-&gt;getError());<br />
+}else{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;验证通过&nbsp;可以进行其他数据操作<br />
+}</code><b>多字段验证</b><br />
+自动验证功能中的function和callback规则可以支持多字段。<br />
+例子：<code class="prettyprint linenums lang-php">protected&nbsp;$_validate&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;array('user_id,good_id',&nbsp;'checkIfOrderToday',&nbsp;'今天已经购买过，请明天再来',&nbsp;1,'callback',&nbsp;1),<br />
+);<br />
+<br />
+protected&nbsp;function&nbsp;checkIfOrderToday($data){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$map&nbsp;=&nbsp;$data;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;$map['ctime']&nbsp;=&nbsp;array(array('gt',[开始时间]),&nbsp;array('lt',&nbsp;[结束时间]));<br />
+&nbsp;&nbsp;&nbsp;&nbsp;if($this-&gt;where($map)-&gt;find())<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;else<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br />
+}</code><b>批量验证</b><br />
+新版支持数据的批量验证功能，只需要在模型类里面设置patchValidate属性为true（ 默认为false），设置批处理验证后，getError() 方法返回的错误信息是一个数组，返回格式是：<code class="prettyprint linenums lang-php">array("字段名1"=&gt;"错误提示1","字段名2"=&gt;"错误提示2"...&nbsp;)</code>前端可以根据需要需要自行处理。<b>手动验证</b><br />
+3.1版本开始，可以使用validate方法实现动态和批量手动验证，例如：<code class="prettyprint linenums lang-php">$this-&gt;validate($validate)-&gt;create();</code>其中$validate变量的规范和_validate属性的定义规则一致，而且还可以支持函数调用（由于PHP本身的限制，在类的属性定义中不能调用函数）。<br />
+通过这一改进，以前需要支持数据自动验证，必须定义模型类的情况已经不再出现，你完全可以通过M方法实例化模型类后使用动态设置完成自动验证操作。<br />
+<br />
+另外还有一个check方法，用于对单个数据的手动验证，支持部分自动验证的规则，用法如下：<code class="prettyprint linenums lang-php">&nbsp;check('验证数据','验证规则','验证类型')&nbsp;</code>验证类型支持 in between equal length regex expire ip_allow ip_deny，默认为regex <br />
+结果返回布尔值 <code class="prettyprint linenums lang-php">$model-&gt;check($value,'email');&nbsp;<br />
+$model-&gt;check($value,'1,2,3','in');</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="68.html">上一页</a><a title="下一页" class="next" href="70.html">下一页</a></div>
+		</div>
+	</body>
+</html>

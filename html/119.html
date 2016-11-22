@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>引入标签库</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/119.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>引入标签库</h1>
+			<div class="page"><a title="上一页" class="prev" href="118.html">上一页</a><a title="下一页" class="next" href="120.html">下一页</a></div>
+		</div>
+		<div class="book-content">前面我们所讲述的标签用法都是内置的标签库的用法，事实上，内置模板引擎的标签库是可以扩展和增加标签的，一旦你扩展和使用了新的标签库，就必须要告诉模板当前要使用的标签库名称，否则不会自动导入，防止以后标签库大量扩展后增加解析工作量，导入标签库使用tagLib标签。<br />
+格式：<b>&lt;tagLib name="标签库1[,标签库2,…]"/&gt;</b><br />
+可以同时导入多个标签库，用逗号分隔，例如：<code class="prettyprint linenums lang-php">&lt;tagLib&nbsp;name="html"/&gt;</code>表示在当前模板文件需要引入html标签库。要引入标签库必须确保有Html标签库的定义文件和解析类库（如何扩展这种方式请参考前面的标签库扩展部分）。<br />
+引入后，html标签库的所有标签在当前模板页面中都可以使用了。外部导入的标签库必须使用标签库前缀的xml标签，避免两个不同的标签库中存在同名的标签定义，例如（假设Html标签库中已经有定义select和link标签）：<code class="prettyprint linenums lang-php">&lt;html:select&nbsp;options='name'&nbsp;selected='value'&nbsp;/&gt;<br />
+&lt;html:link&nbsp;href='/path/to/common.js'&nbsp;/&gt;</code>标签库使用的时候忽略大小写，因此下面的方式一样有效：<code class="prettyprint linenums lang-php">&lt;HTML:LINK&nbsp;href='/path/to/common.js'&nbsp;/&gt;</code>如果你的每个模板页面都需要加载Html标签库的话，也可以通过配置直接预先加载Html标签库。<code class="prettyprint linenums lang-php">&nbsp;'TAGLIB_PRE_LOAD'&nbsp;=&gt;&nbsp;'html'&nbsp;,</code>如果有多个标签库需要预先加载的话，用逗号分隔。定义之后，每个模板页面都可以直接使用：<code class="prettyprint linenums lang-php">&lt;html:select&nbsp;options='name'&nbsp;selected='value'&nbsp;/&gt;</code>而不需手动引入Html标签库。<br />
+假设你确信Html标签库无论在现在还是将来都不会和系统内置的标签库存在相同的标签，那么可以配置TAGLIB_BUILD_IN的值把Html标签库作为内置标签库引入，例如：<code class="prettyprint linenums lang-php">'TAGLIB_BUILD_IN'&nbsp;=&gt;&nbsp;'cx,html'&nbsp;,</code>这样，也无需在模板文件页面引入Html标签库了，并且可以不带前缀直接使用Html标签库的标签：<code class="prettyprint linenums lang-php">&lt;select&nbsp;options='name'&nbsp;selected='value'&nbsp;/&gt;</code>注意，cx标签库是系统内置标签库，不能删除定义。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="118.html">上一页</a><a title="下一页" class="next" href="120.html">下一页</a></div>
+		</div>
+	</body>
+</html>

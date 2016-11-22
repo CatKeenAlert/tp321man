@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>目录安全文件</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/160.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>目录安全文件</h1>
+			<div class="page"><a title="上一页" class="prev" href="159.html">上一页</a><a title="下一页" class="next" href="161.html">下一页</a></div>
+		</div>
+		<div class="book-content">对于某些服务器开启了目录浏览权限的话，用户就可以直接在浏览器输入URL地址查看目录了。系统内建了目录安全文件机制，可以有效的解决此类问题。<br />
+为了添加目录安全文件，我们需要在入口文件里面定义了BUILD_DIR_SECURE 常量，例如：<code class="prettyprint linenums lang-php">define('BUILD_DIR_SECURE',&nbsp;true);</code>重新运行项目后会自动给项目的相关目录生成目录安全文件（在相关的目录下面生成空白的htm文件），并且可以自定义安全文件的文件名 DIR_SECURE_FILENAME ，默认是index.html，如果你想给你们的安全文件定义为default.html可以使用 <code class="prettyprint linenums lang-php">define('DIR_SECURE_FILENAME',&nbsp;'default.html');</code>还可以支持多个安全文件写入，例如你想同时写入index.html和index.htm 两个文件，以满足不同的服务器部署环境，可以这样定义： <code class="prettyprint linenums lang-php">define('DIR_SECURE_FILENAME',&nbsp;'index.html,index.htm');</code>默认的安全文件只是写入一个空白字符串，如果需要写入其他内容，可以通过DIR_SECURE_CONTENT参数来指定，例如： <code class="prettyprint linenums lang-php">define('DIR_SECURE_CONTENT',&nbsp;'deney&nbsp;Access!');</code>下面是一个完整的使用目录安全写入的例子 <code class="prettyprint linenums lang-php">define('BUILD_DIR_SECURE',true);<br />
+define('DIR_SECURE_FILENAME',&nbsp;'default.html');<br />
+define('DIR_SECURE_CONTENT',&nbsp;'deney&nbsp;Access!');</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="159.html">上一页</a><a title="下一页" class="next" href="161.html">下一页</a></div>
+		</div>
+	</body>
+</html>

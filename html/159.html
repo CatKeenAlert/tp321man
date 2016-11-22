@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>其他安全建议</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/159.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>其他安全建议</h1>
+			<div class="page"><a title="上一页" class="prev" href="158.html">上一页</a><a title="下一页" class="next" href="160.html">下一页</a></div>
+		</div>
+		<div class="book-content">下面的一些安全建议也是非常重要的：<ul><li>对所有公共的操作方法做必要的安全检查，防止用户通过URL直接调用；</li><li>不要缓存需要用户认证的页面；</li><li>对用户的上传文件，做必要的安全检查，例如上传路径和非法格式，官方的扩展类库中的ORG.Net.UploadFile类提供了上传类的安全解决方案。</li><li>如非必要，不要开启服务器的目录浏览权限；</li><li>对于项目进行充分的测试，不要生成业务逻辑的安全隐患（这可能是最大的安全问题）；</li></ul></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="158.html">上一页</a><a title="下一页" class="next" href="160.html">下一页</a></div>
+		</div>
+	</body>
+</html>

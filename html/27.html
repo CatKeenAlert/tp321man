@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>动态配置</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/27.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>动态配置</h1>
+			<div class="page"><a title="上一页" class="prev" href="26.html">上一页</a><a title="下一页" class="next" href="28.html">下一页</a></div>
+		</div>
+		<div class="book-content">之前的方式都是通过预先定义配置文件的方式，而在具体的Action方法里面，我们仍然可以对某些参数进行动态配置，主要是指那些还没有被使用的参数。 <br />
+设置新的值：<code class="prettyprint linenums lang-php">C('参数名称','新的参数值');</code>例如，我们需要动态改变数据缓存的有效期的话，可以使用<code class="prettyprint linenums lang-php">C('DATA_CACHE_TIME','60');</code>动态改变配置参数的方法和读取配置的方法在使用上面非常接近，都是使用C方法，只是参数的不同（类似的双关用法在ThinkPHP的系统设计中较为常见）。因此掌握C方法的使用对于掌握配置有着关键的作用。<br />
+也可以支持二维数组的读取和设置，使用点语法进行操作，如下：<br />
+获取已经设置的参数值：<code class="prettyprint linenums lang-php">C('USER_CONFIG.USER_TYPE');</code>设置新的值：<code class="prettyprint linenums lang-php">C('USER_CONFIG.USER_TYPE','1');</code>3.1版本开始，C函数支持配置保存功能，仅对批量设置有效，使用方法：<code class="prettyprint linenums lang-php">C($array,'name');</code>其中array是一个数组变量，会把批量设置后的配置参数列表保存到name标识的缓存数据中<br />
+<br />
+获取缓存的设置列表数据 可以用<code class="prettyprint linenums lang-php">C('','name');&nbsp;//或者C(null,'name');</code>会读取name标识的缓存配置数据到当前配置数据（合并）。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="26.html">上一页</a><a title="下一页" class="next" href="28.html">下一页</a></div>
+		</div>
+	</body>
+</html>

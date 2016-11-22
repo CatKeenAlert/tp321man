@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>字段映射</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/65.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>字段映射</h1>
+			<div class="page"><a title="上一页" class="prev" href="64.html">上一页</a><a title="下一页" class="next" href="66.html">下一页</a></div>
+		</div>
+		<div class="book-content">ThinkPHP的字段映射功能可以让你在表单中隐藏真正的数据表字段，而不用担心放弃自动创建表单对象的功能，假设我们的User表里面有username和email字段，我们需要映射成另外的字段，定义方式如下：<code class="prettyprint linenums lang-php">Class&nbsp;UserModel&nbsp;extends&nbsp;Model{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;$_map&nbsp;=&nbsp;array(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'name'&nbsp;=&gt;'username',&nbsp;//&nbsp;把表单中name映射到数据表的username字段<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'mail'&nbsp;&nbsp;=&gt;'email',&nbsp;//&nbsp;把表单中的mail映射到数据表的email字段<br />
+&nbsp;&nbsp;&nbsp;&nbsp;);<br />
+}</code>这样，在表单里面就可以直接使用name和mail名称作为表单数据提交了。在保存的时候会字段转换成定义的实际数据表字段。字段映射还可以支持对主键的映射。<br />
+如果我们需要把数据库中的数据显示在表单中，并且也支持字段映射的话，需要对查询的数据进行一下处理，处理方式是调用Model类的parseFieldsMap方法，例如：<code class="prettyprint linenums lang-php">//&nbsp;实例化User模型<br />
+$User&nbsp;=&nbsp;M('User');<br />
+$data&nbsp;=&nbsp;$User-&gt;find(3);</code>这个时候取出的data数据包含的是实际的username和email字段，为了方便便表单输出，我们需要处理成字段映射显示在表单中，就需要使用下面的代码处理：<code class="prettyprint linenums lang-php">$data&nbsp;=&nbsp;$User-&gt;parseFieldsMap($data);</code>这样一来，data数据中就包含了name和mail字段数据了，而不再有username和email字段数据了。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="64.html">上一页</a><a title="下一页" class="next" href="66.html">下一页</a></div>
+		</div>
+	</body>
+</html>

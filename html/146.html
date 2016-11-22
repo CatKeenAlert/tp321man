@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>控制器扩展</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/146.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>控制器扩展</h1>
+			<div class="page"><a title="上一页" class="prev" href="145.html">上一页</a><a title="下一页" class="next" href="147.html">下一页</a></div>
+		</div>
+		<div class="book-content">系统内置的Action基础类完成的功能有限，有时候，我们在项目经常需要扩展一个用于项目的公共Action，又或者我们需要为某些特殊应用增加功能，这些都可以使用控制器扩展来实现。<h3>控制器扩展接口</h3>系统Action类提供了一个初始化方法_initialize接口，可以用于扩展需要，_initialize方法会在所有操作方法调用之前首先执行，用法：<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">_initialize&nbsp;&nbsp;控制器初始化方法</th>  </tr>  <tr>    <td>用法</td>    <td>_initialize()</td>  </tr>  <tr>    <td>参数</td>    <td>无</td>  </tr>  <tr>    <td>返回值</td>    <td>无</td>  </tr>  <tr>    <td>相关方法</td>    <td>可以和getActionName方法配合使用</td>  </tr></table>除了初始化接口外，Action类还提供了两个用于行为扩展的标签位置action_begin和action_end，因此你还可以通过行为扩展来扩展控制器的功能。<br />
+控制器扩展只需要继承Action，例如：<code class="prettyprint linenums lang-php">Class&nbsp;ExtendAction&nbsp;extends&nbsp;Action{<br />
+&nbsp;&nbsp;&nbsp;Public&nbsp;function&nbsp;_initialize(){<br />
+&nbsp;&nbsp;&nbsp;//&nbsp;初始化的时候检查用户权限<br />
+&nbsp;&nbsp;&nbsp;$this-&gt;checkRbac();<br />
+}<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;检查用户权限<br />
+&nbsp;&nbsp;protected&nbsp;function&nbsp;checkRbac()&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;这里是具体的检测代码<br />
+&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;添加新的上传操作方法<br />
+&nbsp;&nbsp;protected&nbsp;function&nbsp;upload()&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;这里是具体的上传实现代码<br />
+&nbsp;}<br />
+}</code>在有些情况下面，控制器扩展并不一定要继承基础的Action。<h3>Hack方法</h3>新版提供了两个hack方法用于对模块和操作方法进行扩展，这些hack函数可以定义到项目的公共函数库里面。<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">__hack_module&nbsp;&nbsp;模块hack函数</th>  </tr>  <tr>    <td>用法</td>    <td>__hack_module&nbsp;()</td>  </tr>  <tr>    <td>参数</td>    <td>无</td>  </tr>  <tr>    <td width="50">返回值</td>    <td>如果返回一个对象，则会继续执行该对象的对应当前操作的方法。否则，将在执行完__hack_module函数后中止当前操作的执行，但不影响app_end标签的行为执行。</td>  </tr></table>__hack_module仅在访问一个不存在的模块的时候会被调用，优先级大于空模块。简单的说，如果定义了__hack_module 则当前模块不存在的情况下操作会被接管。<br />
+下面是一个定义的示例：<code class="prettyprint linenums lang-php">function&nbsp;__hack_module(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;('Test'==&nbsp;MODULE_NAME){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$module&nbsp;=&nbsp;New&nbsp;MyAction();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;$module;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+}</code><table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">__hack_action&nbsp;&nbsp;操作hack函数</th>  </tr>  <tr>    <td>用法</td>    <td>__hack_action&nbsp;()</td>  </tr>  <tr>    <td>参数</td>    <td>无</td>  </tr>  <tr>    <td>返回值</td>    <td>无</td>  </tr></table>__hack_action函数定义后仅在访问一个不存在的操作方法，而且当前控制器没有定义空操作方法和对应的默认模板文件的时候才会被执行。在__hack_action 函数中获取当前的操作名可以调用常量ACTION_NAME，你可以根据情况自行处理当前的操作。<br />
+下面是一个定义的示例：<code class="prettyprint linenums lang-php">function&nbsp;__hack_action(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;('Test'==&nbsp;ACTION_NAME){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;'Hello,Just&nbsp;Test!&nbsp;You&nbsp;can&nbsp;do&nbsp;anything&nbsp;here…';<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+}</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="145.html">上一页</a><a title="下一页" class="next" href="147.html">下一页</a></div>
+		</div>
+	</body>
+</html>

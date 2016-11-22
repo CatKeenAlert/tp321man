@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>PATH_INFO支持</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/170.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>PATH_INFO支持</h1>
+			<div class="page"><a title="上一页" class="prev" href="169.html">上一页</a><a title="下一页" class="next" href="171.html">下一页</a></div>
+		</div>
+		<div class="book-content">如果发生在本地测试正常，但是一旦部署到服务器环境后会发生只能访问首页的情况，很有可能是你的服务器或者空间不支持PATH_INFO所致。<br />
+新版内置提供了对PATH_INFO的兼容判断处理，但是不能确保在所有的环境下面都可以支持。如果你确认你的空间不支持PATH_INFO的URL方式的话，有下面几种方式可以处理：<br />
+<b>修改URL_PATHINFO_FETCH配置参数</b><br />
+新版内置了通过对ORIG_PATH_INFO,REDIRECT_PATH_INFO,REDIRECT_URL三个系统$_SERVER变量的判断处理来兼容读取$_SERVER['PATH_INFO']，如果你的主机环境有更特殊的设置，可以修改URL_PATHINFO_FETCH参数，改成你的环境配置对应的PATH_INFO的系统变量兼容获取名称，例如：<br />
+'URL_PATHINFO_FETCH'     =&gt;   'ORIG_PATH_INFO,REDIRECT_URL,其他参数…'<br />
+如果你的环境没有任何对应的系统变量，那么可以封装一个获取方法，例如：<code class="prettyprint linenums lang-php">function&nbsp;get_path_info(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;根据你的环境兼容获取PATH_INFO&nbsp;具体代码略<br />
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;$path;&nbsp;//&nbsp;直接返回获取到的PATH_INFO信息<br />
+}</code>然后我们修改下URL_PATHINFO_FETCH参数的配置值，改为：<code class="prettyprint linenums lang-php">'URL_PATHINFO_FETCH'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;&nbsp;&nbsp;':get_path_info'</code>配置后，系统会自动读取get_path_info方法来获取$_SERVER['PATH_INFO']的值。<br /><br />
+<br />
+<b>配置你的WEB服务器重写规则模拟PATH_INFO实现</b><br />
+如果你有服务器或者空间的配置权限，可以考虑通过配置URL重写规则来模拟实现。<br />
+具体可以参考后面的隐藏index.php中的内容。<br /><br />
+<br />
+<b>采用兼容URL模式运行</b>（这是不得已的方法）<br />
+这是最坏的方法，配置你的URL模式为3（表示兼容URL模式）<br />
+然后在需要生成URL的地方采用U方法动态生成即可。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="169.html">上一页</a><a title="下一页" class="next" href="171.html">下一页</a></div>
+		</div>
+	</body>
+</html>

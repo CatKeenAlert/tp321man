@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>空模块</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/37.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>空模块</h1>
+			<div class="page"><a title="上一页" class="prev" href="36.html">上一页</a><a title="下一页" class="next" href="38.html">下一页</a></div>
+		</div>
+		<div class="book-content">空模块的概念是指当系统找不到指定的模块名称的时候，系统会尝试定位空模块(EmptyAction)，利用这个机制我们可以用来定制错误页面和进行URL的优化。<br />
+现在我们把前面的需求进一步，把URL由原来的<br />
+http://serverName/index.php/City/shanghai/<br />
+变成 <br />
+http://serverName/index.php/shanghai/<br />
+这样更加简单的方式，如果按照传统的模式，我们必须给每个城市定义一个Action类，然后在每个Action类的index方法里面进行处理。 可是如果使用空模块功能，这个问题就可以迎刃而解了。 我们可以给项目定义一个EmptyAction类<code class="prettyprint linenums lang-php">&lt;?php<br />
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;EmptyAction&nbsp;extends&nbsp;Action{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;index(){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//根据当前模块名来判断要执行那个城市的操作<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$cityName&nbsp;=&nbsp;MODULE_NAME;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;city($cityName);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//注意&nbsp;city方法&nbsp;本身是&nbsp;protected&nbsp;方法<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;function&nbsp;city($name){<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//和$name这个城市相关的处理<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;'当前城市'&nbsp;.&nbsp;$name;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}</code>接下来，我们就可以在浏览器里面输入<br />
+http://serverName/index.php/beijing/<br />
+http://serverName/index.php/shanghai/<br />
+http://serverName/index.php/shenzhen/<br />
+由于系统并不存在beijing、shanghai或者shenzhen模块，因此会定位到空模块（EmptyAction）去执行，会看到依次输出的结果是：<br />
+当前城市:beijing<br />
+当前城市:shanghai<br />
+当前城市:shenzhen<br />
+<br />
+空模块和空操作还可以同时使用，用以完成更加复杂的操作。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="36.html">上一页</a><a title="下一页" class="next" href="38.html">下一页</a></div>
+		</div>
+	</body>
+</html>

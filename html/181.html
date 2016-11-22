@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>REST模式</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/181.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>REST模式</h1>
+			<div class="page"><a title="上一页" class="prev" href="180.html">上一页</a><a title="下一页" class="next" href="182.html">下一页</a></div>
+		</div>
+		<div class="book-content">新版增加了Rest模式用于支持RESTFul开发，REST模式主要提供下面的一些功能：<ul><li>路由增加请求类型和资源类型判断支持；</li><li>支持资源类型自动检测；</li><li>支持请求类型自动检测；</li><li>RESTFul方法支持；</li><li>可以设置允许的请求类型列表；</li><li>可以设置允许请求和输出的资源类型；</li><li>可以设置默认请求类型和默认资源类型；</li></ul>要使用REST模式，需要在入口文件中设置<code class="prettyprint linenums lang-php">define('MODE_NAME',&nbsp;'rest')&nbsp;&nbsp;//&nbsp;采用rest模式运行</code>REST模式更多情况下作为接口应用提供支持，我们来陆续了解下REST模式和标准模式的主要区别和使用。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="180.html">上一页</a><a title="下一页" class="next" href="182.html">下一页</a></div>
+		</div>
+	</body>
+</html>

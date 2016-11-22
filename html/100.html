@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>Volist标签</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/100.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>Volist标签</h1>
+			<div class="page"><a title="上一页" class="prev" href="99.html">上一页</a><a title="下一页" class="next" href="101.html">下一页</a></div>
+		</div>
+		<div class="book-content">Volist标签主要用于在模板中循环输出数据集或者多维数组。<table border="0" cellspacing="1" cellpadding="0">  <tr>    <th colspan="2">volist标签（循环输出数据）</th>  </tr>  <tr>    <td>闭合</td>    <td>非闭合标签</td>  </tr>  <tr>    <td>属性</td>    <td><p>name（必须）：要输出的数据模板变量</p><br />
+      <p>id（必须）：循环变量</p><br />
+      <p>offset（可选）：要输出数据的offset</p><br />
+    <p>length（可选）：输出数据的长度</p><br />
+<p>key（可选）：循环的key变量，默认值为i</p><br />
+      <p>mod（可选）：对key值取模，默认为2</p><br />
+    <p>empty（可选）：如果数据为空显示的字符串</p></td>  </tr></table>通常模型的select方法返回的结果是一个二维数组，可以直接使用volist标签进行输出。<br />
+在Action中首先对模版赋值：<code class="prettyprint linenums lang-php">$User&nbsp;=&nbsp;M('User');<br />
+$list&nbsp;=&nbsp;$User-&gt;select();<br />
+$this-&gt;assign('list',$list);</code>在模版定义如下，循环输出用户的编号和姓名：<code class="prettyprint linenums lang-php">&lt;volist&nbsp;name="list"&nbsp;id="vo"&gt;<br />
+{$vo.id}<br />
+{$vo.name}<br />
+&lt;/volist&gt;</code>Volist标签的name属性表示模板赋值的变量名称，因此不可随意在模板文件中改变。id表示当前的循环变量，可以随意指定，但确保不要和name属性冲突，例如：<code class="prettyprint linenums lang-php">&lt;volist&nbsp;name="list"&nbsp;id="data"&gt;<br />
+{$data.id}<br />
+{$data.name}<br />
+&lt;/volist&gt;</code>支持输出部分数据，例如输出其中的第5～15条记录 <code class="prettyprint linenums lang-php">&lt;volist&nbsp;name="list"&nbsp;id="vo"&nbsp;offset="5"&nbsp;length='10'&gt;<br />
+{$vo.name}<br />
+&lt;/volist&gt;</code>输出偶数记录 <code class="prettyprint linenums lang-php">&lt;volist&nbsp;name="list"&nbsp;id="vo"&nbsp;mod="2"&nbsp;&gt;<br />
+&lt;eq&nbsp;name="mod"&nbsp;value="1"&gt;{$vo.name}&lt;/eq&gt;<br />
+&lt;/volist&gt;</code>Mod属性还用于控制一定记录的换行，例如：<code class="prettyprint linenums lang-php">&lt;volist&nbsp;name="list"&nbsp;id="vo"&nbsp;mod="5"&nbsp;&gt;<br />
+{$vo.name}<br />
+&lt;eq&nbsp;name="mod"&nbsp;value="4"&gt;&lt;br/&gt;&lt;/eq&gt;<br />
+&lt;/volist&gt;</code>为空的时候输出提示：<code class="prettyprint linenums lang-php">&lt;volist&nbsp;name="list"&nbsp;id="vo"&nbsp;empty="暂时没有数据"&nbsp;&gt;<br />
+{$vo.id}|{$vo.name}<br />
+&lt;/volist&gt;</code>empty属性不支持直接传入html语法，但可以支持变量输出，例如：<code class="prettyprint linenums lang-php">$this-&gt;assign('empty','&lt;span&nbsp;class="empty"&gt;没有数据&lt;/span&gt;');<br />
+$this-&gt;assign('list',$list);</code>然后在模板中使用：<code class="prettyprint linenums lang-php">&lt;volist&nbsp;name="list"&nbsp;id="vo"&nbsp;empty="$empty"&nbsp;&gt;<br />
+{$vo.id}|{$vo.name}<br />
+&lt;/volist&gt;</code>输出循环变量<code class="prettyprint linenums lang-php">&lt;volist&nbsp;name="list"&nbsp;id="vo"&nbsp;key="k"&nbsp;&gt;<br />
+{$k}.{$vo.name}<br />
+&lt;/volist&gt;</code>如果没有指定key属性的话，默认使用循环变量i，例如：<code class="prettyprint linenums lang-php">&lt;volist&nbsp;name="list"&nbsp;id="vo"&nbsp;&nbsp;&gt;<br />
+{$i}.{$vo.name}<br />
+&lt;/volist&gt;</code>如果要输出数组的索引，可以直接使用key变量，和循环变量不同的是，这个key是由数据本身决定，而不是循环控制的，例如：<code class="prettyprint linenums lang-php">&lt;volist&nbsp;name="list"&nbsp;id="vo"&nbsp;&nbsp;&gt;<br />
+{$key}.{$vo.name}<br />
+&lt;/volist&gt;</code>从2.1版开始允许在模板中直接使用函数设定数据集，而不需要在控制器中给模板变量赋值传入数据集变量，如： <code class="prettyprint linenums lang-php">&lt;volist&nbsp;name=":fun('arg')"&nbsp;id="vo"&gt;{$vo.name}&lt;/volist&gt;</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="99.html">上一页</a><a title="下一页" class="next" href="101.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>比较标签</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/104.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>比较标签</h1>
+			<div class="page"><a title="上一页" class="prev" href="103.html">上一页</a><a title="下一页" class="next" href="105.html">下一页</a></div>
+		</div>
+		<div class="book-content">模板引擎提供了丰富的判断标签：<table border="0" cellspacing="1" cellpadding="0"><tr><th colspan="2">比较标签（判断输出数据）包括（eq,equal,notequal,neq,gt,lt,egt,elt,heq,nheq）</th></tr><tr><td>闭合</td><td>非闭合标签</td></tr><tr><td>属性</td><td>name（必须）：变量名<br />
+value（必须）：要比较的值，支持变量</td></tr></table>用法：<code class="prettyprint linenums lang-php">&lt;比较标签&nbsp;name="变量"&nbsp;value="值"&gt;内容&lt;/比较标签&gt;</code>系统支持的比较标签以及所表示的含义分别是：<table border="0" cellspacing="1" cellpadding="0"><tr><td>eq或者 equal</td><td>等于</td></tr><tr><td>neq 或者notequal</td><td>不等于</td></tr><tr><td>gt</td><td>大于</td></tr><tr><td>egt</td><td>大于等于</td></tr><tr><td>lt</td><td>小于</td></tr><tr><td>elt</td><td>小于等于</td></tr><tr><td>heq</td><td>恒等于</td></tr><tr><td>nheq</td><td>不恒等于</td></tr></table>他们的用法基本是一致的，区别在于判断的条件不同。<br />
+例如，要求name变量的值等于value就输出，可以使用：<code class="prettyprint linenums lang-php">&lt;eq&nbsp;name="name"&nbsp;value="value"&gt;value&lt;/eq&gt;</code>或者<code class="prettyprint linenums lang-php">&lt;equal&nbsp;name="name"&nbsp;value="value"&gt;value&lt;/equal&gt;</code>也可以支持和else标签混合使用：<code class="prettyprint linenums lang-php">&lt;eq&nbsp;name="name"&nbsp;value="value"&gt;相等&lt;else/&gt;不相等&lt;/eq&gt;</code>当 name变量的值大于5就输出<code class="prettyprint linenums lang-php">&lt;gt&nbsp;name="name"&nbsp;value="5"&gt;value&lt;/gt&gt;</code>当name变量的值不小于5就输出<code class="prettyprint linenums lang-php">&lt;egt&nbsp;name="name"&nbsp;value="5"&gt;value&lt;/egt&gt;</code>比较标签中的变量可以支持对象的属性或者数组，甚至可以是系统变量：<br />
+举例说明：<br />
+ 当vo对象的属性（或者数组，或者自动判断）等于5就输出<code class="prettyprint linenums lang-php">&lt;eq&nbsp;name="vo.name"&nbsp;value="5"&gt;{$vo.name}&lt;/eq&gt;</code>当vo对象的属性等于5就输出<code class="prettyprint linenums lang-php">&lt;eq&nbsp;name="vo:name"&nbsp;value="5"&gt;{$vo.name}&lt;/eq&gt;</code>当$vo['name']等于5就输出<code class="prettyprint linenums lang-php">&lt;eq&nbsp;name="vo['name']"&nbsp;value="5"&gt;{$vo.name}&lt;/eq&gt;</code>而且还可以支持对变量使用函数 <br />
+ 当vo对象的属性值的字符串长度等于5就输出<code class="prettyprint linenums lang-php">&lt;eq&nbsp;name="vo:name|strlen"&nbsp;value="5"&gt;{$vo.name}&lt;/eq&gt;</code>变量名可以支持系统变量的方式，例如：<code class="prettyprint linenums lang-php">&lt;eq&nbsp;name="Think.get.name"&nbsp;value="value"&gt;相等&lt;else/&gt;不相等&lt;/eq&gt;</code>通常比较标签的值是一个字符串或者数字，如果需要使用变量，只需要在前面添加“$”标志：<br />
+当vo对象的属性等于$a就输出<code class="prettyprint linenums lang-php">&lt;eq&nbsp;name="vo:name"&nbsp;value="$a"&gt;{$vo.name}&lt;/eq&gt;</code>所有的比较标签可以统一使用compare标签（其实所有的比较标签都是compare标签的别名），例如：<br />
+当name变量的值等于5就输出<code class="prettyprint linenums lang-php">&lt;compare&nbsp;name="name"&nbsp;value="5"&nbsp;type="eq"&gt;value&lt;/compare&gt;</code>等效于 <code class="prettyprint linenums lang-php">&lt;eq&nbsp;name="name"&nbsp;value="5"&nbsp;&gt;value&lt;/eq&gt;</code>其中type属性的值就是上面列出的比较标签名称</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="103.html">上一页</a><a title="下一页" class="next" href="105.html">下一页</a></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>使用函数</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/94.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>使用函数</h1>
+			<div class="page"><a title="上一页" class="prev" href="93.html">上一页</a><a title="下一页" class="next" href="95.html">下一页</a></div>
+		</div>
+		<div class="book-content">仅仅是输出变量并不能满足模板输出的需要，内置模板引擎支持对模板变量使用调节器和格式化功能，其实也就是提供函数支持，并支持多个函数同时使用。用于模板标签的函数可以是PHP内置函数或者是用户自定义函数，和smarty不同，用于模板的函数不需要特别的定义。<br />
+模板变量的函数调用格式为：<code class="prettyprint linenums lang-php">{$varname|function1|function2=arg1,arg2,###&nbsp;}</code>说明： <br />
+{ 和 $ 符号之间不能有空格 ，后面参数的空格就没有问题<br />
+###表示模板变量本身的参数位置 <br />
+支持多个函数，函数之间支持空格 <br />
+支持函数屏蔽功能，在配置文件中可以配置禁止使用的函数列表 <br />
+支持变量解析缓存功能，重复变量字串不多次解析<br />
+使用例子： <code class="prettyprint linenums lang-php">{$webTitle|md5|strtoupper|substr=0,3}</code>编译后的PHP代码就是：<code class="prettyprint linenums lang-php">&lt;?php&nbsp;echo&nbsp;(substr(strtoupper(md5($webTitle)),0,3));&nbsp;?&gt;</code>注意函数的定义和使用顺序的对应关系，通常来说函数的第一个参数就是前面的变量或者前一个函数调用的返回结果，如果你的变量并不是函数的第一个参数，需要使用定位符号，例如：<code class="prettyprint linenums lang-php">{$create_time|date="y-m-d",###}</code>编译后的PHP是：<code class="prettyprint linenums lang-php">&lt;?php&nbsp;echo&nbsp;(date("y-m-d",$create_time));&nbsp;?&gt;</code>函数的使用没有个数限制，但是可以允许配置TMPL_DENY_FUNC_LIST定义禁用函数列表，系统默认禁用了exit和echo函数，以防止破坏模板输出，我们也可以增加额外的定义，例如：<code class="prettyprint linenums lang-php">TMPL_DENY_FUNC_LIST=&gt;"echo,exit,halt"</code>多个函数之间使用半角逗号分隔即可。并且还提供了在模板文件中直接调用函数的快捷方法，这种方式更加直接明了，而且无需通过模板变量，包括两种方式：<br />
+<b>1、执行函数并输出返回值</b>：<br />
+格式：{:function(…)}<br />
+例如，输出U函数的返回值：<code class="prettyprint linenums lang-php">{:U('User/insert')}</code>编译后的PHP代码是<code class="prettyprint linenums lang-php">&lt;?php&nbsp;echo&nbsp;U('User/insert');?&gt;</code><b>2、执行函数但不输出</b>：<br />
+格式：{~function(…)}<br />
+例如，调用say_hello函数：<code class="prettyprint linenums lang-php">{~say_hello('ThinkPHP')}</code>编译后的PHP代码是：<code class="prettyprint linenums lang-php">&lt;?php&nbsp;say_hello('ThinkPHP');?&gt;</code></div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="93.html">上一页</a><a title="下一页" class="next" href="95.html">下一页</a></div>
+		</div>
+	</body>
+</html>

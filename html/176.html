@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+	<head>
+		<meta charset="GB2312">
+		<title>SAE介绍</title>
+		<link rel="stylesheet" href="../images/css/book.css">
+		<link rel="stylesheet" href="../images/css/prettify.css">
+		<script type="text/javascript" src="../images/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../images/js/prettify.js"></script>
+		<script type="text/javascript">
+			$(function(){	
+				$(window).resize(function(){
+					$('.book-content').css('min-height', $(window).height() - 130);
+				}).resize();
+				
+				//表格隔行变色
+				$('table').TableColor();
+				
+				//代码高亮
+				prettyPrint();
+			});
+			
+			//表格隔行变色插件
+			$.fn.TableColor = function(){
+				return $(this).each(function(){
+					if(this.nodeName.toLowerCase() != 'table') return;
+					var self = $(this);
+					self.find('tr').each(function(index) {
+						var _this = $(this);
+						if(index % 2 == 0){
+							_this.addClass('add');
+						} else {
+							_this.addClass('even');	
+						}
+						_this.hover(
+							function(){_this.addClass('hover')},
+							function(){_this.removeClass('hover')}
+						);
+					});	
+				});
+			}
+		</script>
+	</head>
+	<body><script language="javascript">
+		if ((window.name != "content") && (navigator.userAgent.indexOf("Opera") <= -1) )
+		document.write("<center><a href='../index.html?page=html/176.html'>show framing</a></center>")
+		</script>
+		<div class="book-title">
+			<h1>SAE介绍</h1>
+			<div class="page"><a title="上一页" class="prev" href="175.html">上一页</a><a title="下一页" class="next" href="177.html">下一页</a></div>
+		</div>
+		<div class="book-content">Sina App Engine（简称SAE）是新浪研发中心开发的国内首个公有云计算平台，是新浪云计算战略的核心组成部分，作为一个简单高效的分布式Web服务开发、运行平台越来越受开发者青睐。<br />
+SAE环境和普通环境有所不同，它是一个分布式服务器集群，能让你的程序同时运行在多台服务器中。并提供了很多高效的分布式服务。SAE为了提升性能和安全，禁止了本地IO写操作，使用MemcacheX、Storage等存储型服务代替传统IO操作，效率比传统IO读写操作高，有效解决因IO瓶颈导致程序性能低下的问题。<br />
+正是因为SAE和普通环境的不同，使得普通程序不能直接放在SAE上，需要经过移植才能放在SAE上运行。也使得很多能在SAE上运行的程序不能在普通环境下运行。<br />
+ThinkPHP对SAE平台的支持是采用了引擎扩展的方式，具有自己的独创特性。采用SAE引擎扩展能最大程度的使用ThinkPHP的标准版的特性，让开发人员感受不到SAE和普通环境的差别。甚至可以不学习任何SAE知识，只要会ThinkPHP开发，就能将你的程序运行在SAE上。SAE版ThinkPHP具有以下特性：<br />
+<b>横跨性</b>：能让同样的代码既能在SAE环境下运行，也能在普通环境下运行。解决了使用SAE不能在本地调试代码的问题。SAE版ThinkPHP还自带SAE服务模拟功能。用户即使使用了原生的SAE服务（SaeStorage，SaeRank等）也能在本地运行。<br />
+<b>平滑性</b>：我们还是按照以前一样使用ThinkPHP，但是您已经不知不觉的使用了SAE服务，不用特意学习SAE服务，降低学习成本。比如你不用特意的去学习KVDB服务，你在SAE环境下使用ThinkPHP的F函数就已经使用了KVDB的服务。<br />
+<b>完整性</b>：SAE开发下面功能没有任何删减，支持ThinkPHP标准模式的所有功能。甚至在SAE上有些功能还有增强。<br />
+大多SAE移植程序都是使用Wrappers实现，SAE版ThinkPHP没有使用Wrappers，使用SAE的原始服务接口，运行效率比用Wrappers更高。</div>
+		<div class="book-footer">
+			<div class="page"><a title="上一页" class="prev" href="175.html">上一页</a><a title="下一页" class="next" href="177.html">下一页</a></div>
+		</div>
+	</body>
+</html>
